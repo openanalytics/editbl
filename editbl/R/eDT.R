@@ -31,6 +31,7 @@ eDTOutput <- function(id,...) {
   fluidPage(
       shinyjs::useShinyjs(),
       tags$script(js),
+      tags$head(tags$style(HTML(disableDoubleClickButtonCss))),
       actionButton(ns("addRow"), label = "add", icon = icon("plus")),
       shinyjs::disabled(actionButton(ns("undo"), label = "undo", icon = icon("rotate-left"))),
       shinyjs::disabled(actionButton(ns("redo"), label = "redo", icon = icon("rotate-right"))),
@@ -910,6 +911,12 @@ createButtons <- function(suffix, ns){
       ns("")
   )
 }
+
+# https://stackoverflow.com/questions/60406027/how-to-disable-double-click-reactivity-for-specific-columns-in-r-datatable
+disableDoubleClickButtonCss <-  "
+    table tbody td:nth-child(1) {pointer-events: none;}
+    table tbody td:nth-child(1)>div {pointer-events: auto;}
+    "
 
 keyTableJS <- c(
     # Trigger doubleclick by enter
