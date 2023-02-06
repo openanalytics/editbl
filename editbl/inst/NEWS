@@ -1,0 +1,16 @@
+0.6.1
+    o increase package test coverage + various fixes
+    o checkForeignTbls() more verbose
+    o error for utility column name clashes
+0.5.5
+    o fix integer64 NA values
+0.5.2
+    o Make input modal more integerated (follow colnames argument, hide hidden / non-editable columns)
+0.5.1
+    o shinyjs disabling of buttons
+    o bugfixes POSIXct
+0.5.0
+    o automatic casting to and from `tbl`
+    o edit buttons with modal
+0.4.0
+    o dev version

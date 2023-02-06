@@ -1,0 +1,28 @@
+Package: editbl
+Type: Package
+Version: 0.6.1
+Date: 2023-02-06
+Title: editbl
+Author: jschelfhout
+Maintainer: jschelfhout <jasper.schelfhout@openanalytics.eu> 
+Description: Edit, add and delete data from a tbl interactively.
+License: MIT + file LICENSE
+Imports:
+	shiny,
+	shinyjs,
+	DT,
+	tibble,
+	dplyr,
+	uuid
+Suggests:
+	testthat,
+	dtplyr,
+	data.table,
+	vctrs,
+	RSQLite,
+	dbplyr,
+	glue,
+	DBI,
+	bit64
+Encoding: UTF-8
+RoxygenNote: 7.2.2
