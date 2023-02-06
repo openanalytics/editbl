@@ -1,3 +1,5 @@
+0.6.2
+    o use getNonNaturalKeys() to block editing of deducted columns
 0.6.1
     o increase package test coverage + various fixes
     o checkForeignTbls() more verbose
