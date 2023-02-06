@@ -209,11 +209,7 @@ eDTServer <- function(
         )
         
         deductedColnames <- reactive({
-              unique(unlist(lapply(foreignTbls(), function(ft){
-                            ycols <- setdiff(base::colnames(ft$y), ft$naturalKey)
-                            xcols <- names(ft$by)[which(ft$by %in% ycols)]
-                            xcols
-                          })))
+              getNonNaturalKeyCols(foreignTbls())
             })
         
         # When source data changes, reset module
