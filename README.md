@@ -2,7 +2,7 @@
 
 `editbl` allows you to do exactly what is says: 'edit tibbles'.
 
-It builds around the `DT` package as light weight as possible to provide you with a nice UI to edit your data,
+It builds around the [DT](https://cran.r-project.org/web/packages/DT/index.html) package as light weight as possible to provide you with a nice UI to edit your data,
 while still keeping as much flexibility as possible to customize the table yourself.
 
 Main features by which it distinguishes itself from other CRUD (create, read, update, delete) packages:
