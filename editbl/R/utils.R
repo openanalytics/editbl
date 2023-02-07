@@ -174,3 +174,18 @@ fixInteger64 <- function(x){
   }
   x
 }
+
+#' Get types of columns in a tbl
+#' @param tbl tbl
+#' @return named list with types of the colums
+#' 
+#' @importFrom dplyr type_sum collect
+#' @importFrom utils head
+#' 
+#' @author Jasper Schelfhout
+getColumnTypeSums <- function(tbl){
+  tbl %>% 
+      head %>% 
+      collect %>% 
+      lapply(dplyr::type_sum)
+}

@@ -36,8 +36,8 @@ test_that("passing on a foreign tibble works", {
 test_that("Can use foreign tibbles to fill in non natural key values.",{
       tbl <- tibble::as_tibble(data.frame(
               a = c(1,2),
-              key1 = c(NA,NA),
-              key2 = c(NA,NA)
+              key1 = as.double(c(NA,NA)),
+              key2 = as.double(c(NA,NA))
           ))
       
       merged_tbl <- tibble::as_tibble(cbind(tbl, data.frame(
@@ -76,7 +76,7 @@ test_that("Can use foreign tibbles to fill in non natural key values.",{
 test_that("Contradicting foreign tibbles give error when filling in data.",{
       tbl <- tibble::as_tibble(data.frame(
               a = c(1,2),
-              key = c(NA,NA)
+              key = as.double(c(NA,NA))
           ))
       
       merged_tbl <- tibble::as_tibble(cbind(tbl,
@@ -111,7 +111,7 @@ test_that("Contradicting foreign tibbles give error when filling in data.",{
 test_that("Empty foreign tibbles list returns given tibble",{
       tbl <- tibble::as_tibble(data.frame(
               a = c(1,2),
-              key = c(NA,NA),
+              key = as.double(c(NA,NA)),
               color = c("blue", "orange")
           ))
       

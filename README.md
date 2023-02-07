@@ -121,10 +121,11 @@ dependencies.
 * https://github.com/tidyverse/dtplyr/issues/260 might cause errors / warnings when using `eDT` with `dtplyr`. If possible convert to normal tibble first.
 * `editbl` assumes that **all rows in your table are unique**. This assumption is the key (ba dum tss) to allow for only having the data partially in memory.
 
-## What can you expect to be included in this package in the future?
+## General future goals for this package
 
-* Trying to achieve  full dplyr compatibility so support for different backends is easily facilitated. Now there are 3 methods (`rows_update` / `rows_delete` / `rows_insert`) that need to be implemented to support a new backend.
-* Better editing / display options for time values.
+* Full `dplyr` compatibility so support for different backends is easily facilitated. Now there are 3 methods (`rows_update` / `rows_delete` / `rows_insert`) that need to be implemented to support a new backend.
+* Full `DT` compatibility, including all extensions.
+* Better editing / display options for time values. E.g. control over timezone and format of display / storage + nicer input forms.
 
 ## References
 
@@ -177,3 +178,5 @@ https://cran.r-project.org/web/packages/tibble/index.html
 https://thatdatatho.com/adding-action-buttons-in-rows-of-dt-data-table-in-r-shiny/
 
 https://appsilon.com/forget-about-excel-use-r-shiny-packages-instead/
+
+https://github.com/garrylachman/ElectroCRUD

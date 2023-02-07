@@ -12,12 +12,13 @@
 #' 
 #' @param x  `tbl`. The child table.
 #' @param y `tbl`. The referenced table.
-#' @param by (named) `character`. Names are the columns in x, values are the columns in y.
+#' @param by `character`. Column names to match on.
+#' Note that you should rename and/or typecast the columns in y should they not exactly match the columns in x.
 #' @param naturalKey `character`. The columns that form the natural key in y.
 #' These are the only ones that can actually get modified, other columns will be deducted from these.
 #' @return list
 #' 
-#' @importFrom dplyr tbl_vars
+#' @importFrom dplyr tbl_vars all_of select
 #' 
 #' @author Jasper Schelfhout
 #' @export
@@ -39,6 +40,16 @@ foreignTbl <- function(
   )
   if(length(clashingNames)){
     stop(sprintf("Name clashes on: %s. Please rename.", paste(clashingNames, collapse = ", ")))
+  }
+  
+  x_types <- x %>% select(all_of(by)) %>% getColumnTypeSums %>% unlist()
+  y_types <- y %>% select(all_of(by)) %>% getColumnTypeSums %>% unlist()
+  typeMisMatches <- names(x_types[x_types != y_types])
+  if(length(typeMisMatches)){
+    stop(sprintf("%s is not of the same type: %s vs %s. Try casting with dplyr::mutate()",
+            typeMisMatches,
+            x_types[typeMisMatches],
+            y_types[typeMisMatches]))
   }
   
   foreignTbl <- list(
@@ -79,7 +90,7 @@ foreignTbl <- function(
 #' 
 #' }
 #' 
-#' @importFrom dplyr left_join
+#' @importFrom dplyr left_join inner_join filter union
 #' 
 #' @author Jasper Schelfhout
 joinForeignTbl <- function(
@@ -172,14 +183,17 @@ fillDeductedColumns <- function(tbl, foreignTbls){
 #' @param tbl tibble
 #' @param foreignTbls list
 #' @return boolean if tbl fufills constraint of all foreign tbls.
+#' @importFrom dplyr count pull anti_join
 #' 
 #' @author Jasper Schelfhout
 checkForeignTbls <- function(tbl, foreignTbls){
+  n <- NULL # R CMD CHECK fix
+  
   for(foreignTbl in foreignTbls){
     nonExisting <- dplyr::anti_join(tbl, foreignTbl$y,
         by = unique(unname(c(foreignTbl$by, foreignTbl$naturalKey))),
         copy = TRUE)
-    if(nrow(nonExisting)){
+    if(dplyr::pull(dplyr::count(nonExisting), n)){
      stop(sprintf("Invalid %s: %s",
              paste(foreignTbl$naturalKey, collapse = ", "),
              paste(as.character(nonExisting[1,foreignTbl$naturalKey]), collapse = ", ")

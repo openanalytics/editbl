@@ -16,7 +16,8 @@ foreignTbl(
 
 \item{y}{`tbl`. The referenced table.}
 
-\item{by}{(named) `character`. Names are the columns in x, values are the columns in y.}
+\item{by}{`character`. Column names to match on.
+Note that you should rename and/or typecast the columns in y should they not exactly match the columns in x.}
 
 \item{naturalKey}{`character`. The columns that form the natural key in y.
 These are the only ones that can actually get modified, other columns will be deducted from these.}
