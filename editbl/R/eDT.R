@@ -403,7 +403,8 @@ eDTServer <- function(
                       footer = tagList(
                           actionButton(ns("confirmEdit"), "Ok"),
                           modalButton("cancel")
-                      )
+                      ),
+                      easyClose = TRUE
                   )
               )
             })
@@ -660,7 +661,8 @@ eDTServer <- function(
                       footer = tagList(
                           actionButton(ns("confirmCommit"), label = "Ok"),
                           modalButton("Cancel")
-                      )
+                      ),
+                      easyClose = TRUE
                   )
               
               )
