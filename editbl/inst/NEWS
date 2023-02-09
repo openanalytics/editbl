@@ -1,3 +1,6 @@
+0.6.3
+    o fix reactivity problem when switching data
+    o support editable = FALSE
 0.6.2
     o use getNonNaturalKeys() to block editing of deducted columns
 0.6.1
