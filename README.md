@@ -115,6 +115,11 @@ would be to fully rely on `dplyr` once these functions are not experimental anym
 These functions also explain the high amount of 'suggested' packages, while the core functionality of `editbl` has few
 dependencies.
 
+## Concurrent updates
+
+Editbl does not attempt to detect/give notifications on concurrent updates by other users to the same data, nor does it 'lock' the rows you are updating.
+It just sends its updates to the backend by matching on the keys of a row. If other users have in the meantime made conflicting adjustements,
+the changes you made might not be executed correctly or errors might be thrown.
 
 ## Notes
 
