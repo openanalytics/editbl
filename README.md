@@ -117,7 +117,7 @@ dependencies.
 
 ## Concurrent updates
 
-Editbl does not attempt to detect/give notifications on concurrent updates by other users to the same data, nor does it 'lock' the rows you are updating.
+`editbl` does not attempt to detect/give notifications on concurrent updates by other users to the same data, nor does it 'lock' the rows you are updating.
 It just sends its updates to the backend by matching on the keys of a row. If other users have in the meantime made conflicting adjustements,
 the changes you made might not be executed correctly or errors might be thrown.
 
@@ -131,7 +131,7 @@ the changes you made might not be executed correctly or errors might be thrown.
 * Full `dplyr` compatibility so support for different backends is easily facilitated. Now there are 3 methods (`rows_update` / `rows_delete` / `rows_insert`) that need to be implemented to support a new backend.
 * Full `DT` compatibility, including all extensions.
 * Better editing / display options for time values. E.g. control over timezone and format of display / storage + nicer input forms.
-* Any addition that supports the idea of allowing to edit data as flexible as possible while respecting backend schema's and constraints.
+* Any addition that supports the concept of editing data as flexible/easy as possible while respecting backend schema's and constraints.
 
 ## References
 
