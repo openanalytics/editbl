@@ -217,7 +217,7 @@ eDTServer <- function(
         # rv$committedData equals all changes
         # rv$checkPointData equals the committed data with additional utility columns
         # rv$modifiedData keeps track of the current modified/displayed status.
-        observe({
+        observe(priority = 1, label = "Reset module with new data",{
               rv$fullTableRefresh
               
               data <- data()
@@ -251,7 +251,7 @@ eDTServer <- function(
         
         # Update server side and client side data
         # rv$newState gets assigned by various actions in the app.
-        observe({
+        observe(label = "Replace front-end data",{
               rv$triggerNewState
               req(rv$newState)
               castCols <- base::colnames(isolate(data()))
