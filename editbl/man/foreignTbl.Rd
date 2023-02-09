@@ -36,8 +36,8 @@ It is the equivalent of a database table to which the core tbl of eDT has a fore
 It will be merged with the core tibble allowing to provide restrictions
 for certain columns.
 
-See also \code{\link{merge}} for explanation of the arguments. 
-A subset of these is used since not all functionality makes sense in this context.
+Note that it assumes that both the columns from `by` and `naturalKey` are unique in the foreignTbl.
+This assumption will not be checked since it is an expensive operation on big datasets.
 }
 \author{
 Jasper Schelfhout
