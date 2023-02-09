@@ -319,7 +319,7 @@ eDTServer <- function(
               # Make sure utility columns are not editable
               options$autoFill$columns <- c(options$autoFill$columns, baseColsI - 1 + rownames)
               
-              if(editable != FALSE){
+              if(!inherits(editable, "logical")){
                 if(!"disable" %in% names(editable)){
                   editable <- c(editable, list("disable" = list("columns" = c(buttonCol, deductedCols))))
                 } else {
