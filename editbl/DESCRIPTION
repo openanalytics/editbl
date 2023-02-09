@@ -13,7 +13,8 @@ Imports:
 	DT,
 	tibble,
 	dplyr,
-	uuid
+	uuid,
+	fontawesome (>= 0.4.0)
 Suggests:
 	testthat,
 	dtplyr,

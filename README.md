@@ -115,14 +115,11 @@ would be to fully rely on `dplyr` once these functions are not experimental anym
 These functions also explain the high amount of 'suggested' packages, while the core functionality of `editbl` has few
 dependencies.
 
-## Known bugs
+
+## Notes
 
 * https://github.com/tidyverse/dtplyr/issues/260 might cause errors / warnings when using `eDT` with `dtplyr`. If possible convert to normal tibble first.
-* The icons in the table might not show correctly due to your [fontawesome](https://cran.r-project.org/web/packages/fontawesome/index.html) (< 0.4.0) version.
-
-## Notes on assumptions
-
-* `editbl` assumes that the keys of your main `tbl` and optional `foreignTbl`'s are unique. Or in other words, the rows should be unique. It will not check this assumption explicitly since it is an expensive operation for big tables.
+* `editbl` assumes that **all rows in your table are unique**. This assumption is the key (ba dum tss) to allow for only having the data partially in memory.
 
 ## General future goals for this package
 
