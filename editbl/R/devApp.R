@@ -51,7 +51,8 @@ devServer <- function(id, conn) {
                 columnDefs = list(list(
                         visible = TRUE,
                         targets = "_all"))),
-            in_place = reactive(TRUE)
+            in_place = TRUE,
+            filter = "top"
         )
         
         

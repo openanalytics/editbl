@@ -319,14 +319,15 @@ eDTServer <- function(
               # Make sure utility columns are not editable
               options$autoFill$columns <- c(options$autoFill$columns, baseColsI - 1 + rownames)
               
-              if(!"disable" %in% names(editable)){
-                editable <- c(editable, list("disable" = list("columns" = c(buttonCol, deductedCols))))
-              } else {
-                editable$disable <- list("columns" = unique(c(editable$disable$columns,
-                            buttonCol,
-                            deductedCols)))
+              if(editable != FALSE){
+                if(!"disable" %in% names(editable)){
+                  editable <- c(editable, list("disable" = list("columns" = c(buttonCol, deductedCols))))
+                } else {
+                  editable$disable <- list("columns" = unique(c(editable$disable$columns,
+                              buttonCol,
+                              deductedCols)))
+                }
               }
-              
               
               # Deal with the fact that 'container' can be a missing argument
               # Which is why put arguments in a list and use do.call instead of passing on directly.
