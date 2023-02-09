@@ -126,6 +126,7 @@ dependencies.
 * Full `dplyr` compatibility so support for different backends is easily facilitated. Now there are 3 methods (`rows_update` / `rows_delete` / `rows_insert`) that need to be implemented to support a new backend.
 * Full `DT` compatibility, including all extensions.
 * Better editing / display options for time values. E.g. control over timezone and format of display / storage + nicer input forms.
+* Any addition that supports the idea of allowing to edit data as flexible as possible while respecting backend schema's and constraints.
 
 ## References
 
