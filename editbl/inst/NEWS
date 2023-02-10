@@ -1,3 +1,5 @@
+0.6.4
+    o checkForeignTbls() allow empty rows by default
 0.6.3
     o fix reactivity problem when switching data
     o support editable = FALSE

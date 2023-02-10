@@ -120,7 +120,7 @@ joinForeignTbl <- function(
   } else {
     stop("only inner and left join supported")
   }
-
+  
   
   if(keepNA && type == "inner"){
     naTbl <- tbl
@@ -133,7 +133,7 @@ joinForeignTbl <- function(
         y = foreignTbl$y,
         by = by,
         copy = copy
-        )
+    )
     result <- dplyr::union(result, naTbl)
   }
   
@@ -164,7 +164,7 @@ fillDeductedColumns <- function(tbl, foreignTbls){
     autoFill <- setdiff(colnames(foreignTbl$y), foreignTbl$naturalKey)
     tbl[,autoFill] <- NULL
   }
-
+  
   # Fill in columns
   for(foreignTbl in foreignTbls){
     tbl <- joinForeignTbl(tbl, foreignTbl, by = foreignTbl$naturalKey, type = "left")
@@ -183,21 +183,28 @@ fillDeductedColumns <- function(tbl, foreignTbls){
 #' @param tbl tibble
 #' @param foreignTbls list
 #' @return boolean if tbl fufills constraint of all foreign tbls.
-#' @importFrom dplyr count pull anti_join
+#' @importFrom dplyr count pull anti_join filter if_any
 #' 
 #' @author Jasper Schelfhout
 checkForeignTbls <- function(tbl, foreignTbls){
   n <- NULL # R CMD CHECK fix
   
+  
   for(foreignTbl in foreignTbls){
+    # match on combination on naturalKey and surrogateKey
+    # E.g. check that the row actually exists in the foreignTbl
+    by <- unique(unname(c(foreignTbl$by, foreignTbl$naturalKey)))
+    
     nonExisting <- dplyr::anti_join(tbl, foreignTbl$y,
-        by = unique(unname(c(foreignTbl$by, foreignTbl$naturalKey))),
-        copy = TRUE)
+            by = by,
+            copy = TRUE)  %>% 
+        dplyr::filter(if_any(by, ~ !is.na(.))) # Do not complain about empty rows, might be nice as a parameter.
+    
     if(dplyr::pull(dplyr::count(nonExisting), n)){
-     stop(sprintf("Invalid %s: %s",
-             paste(foreignTbl$naturalKey, collapse = ", "),
-             paste(as.character(nonExisting[1,foreignTbl$naturalKey]), collapse = ", ")
-             )) 
+      stop(sprintf("Invalid %s: %s",
+              paste(foreignTbl$naturalKey, collapse = ", "),
+              paste(as.character(nonExisting[1,foreignTbl$naturalKey]), collapse = ", ")
+          )) 
     }
   }
   TRUE
