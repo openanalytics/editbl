@@ -30,7 +30,7 @@ editbl::runDemoApp()
 ```
 ![](editbl.gif)
 
-More examples can be found [here](https://scm.openanalytics.eu/jschelfhout/editbl/src/branch/master/editbl/R/demoApp.R)
+More examples can be found [here](https://github.com/openanalytics/editbl/blob/main/editbl/R/demoApp.R)
 
 ## Switching from DT
 
@@ -40,7 +40,7 @@ What should you look out for?
 * `eDTOutput` uses an `id` argument instead of `outputId` since it's actually a module.
 * `eDT` adds extra (hidden) columns to your `datatable`. Try to format using column names instead of indexes.
 * Your `datatable` now exists within a module (e.g. child namespace). This means your own chosen `outputId` is now `moduleId-DT`. This influences for example the values accessible under `input`. Example: switch from `input$outputId_cell_clicked` to `input[["moduleId-DT_cell_clicked"]]`.
-* `eDT` accepts all arguments of `DT::datable`, but has some different defaults for convenience.
+* `eDT` accepts all arguments of `DT::datatable`, but has some different defaults for convenience.
 * Any additional formatting should be done by passing a function to  the `format` argument of `eDT`.
 * As always be careful when using extensions (https://datatables.net/extensions/index) or custom javascript, not everything works well together. The `KeyTable` and `AutoFill` extensions of datatable are used by default and should be well integrated. 
 
@@ -159,7 +159,7 @@ https://cran.r-project.org/web/packages/editData/index.html
 
 https://editor.datatables.net/
 
-*  Premium databable extension allowing for editing data.
+*  Premium datatable extension allowing for editing data.
 
 **DT-Editor**
 
