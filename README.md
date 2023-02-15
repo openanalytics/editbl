@@ -15,6 +15,12 @@ Main features by which it distinguishes itself from other CRUD (create, read, up
 
 ## Get started
 
+Installation:
+
+```
+remotes::install_github("https://github.com/openanalytics/editbl", ref = "main", subdir = "editbl")
+```
+
 Choose a dataset of your liking and use `eDT` to interactively explore and modify it!
 
 ```
