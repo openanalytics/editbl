@@ -1,4 +1,5 @@
 #' @importFrom tibble as_tibble
+#' @import fontawesome
 testImports <- NULL
 
 #' cast columns to the type of the template
