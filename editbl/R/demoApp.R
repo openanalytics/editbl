@@ -87,7 +87,7 @@ demoServer_DB <- function(id, conn) {
         modifiedData <- eDT(
             id = "editbl",
             data = data,
-            in_place = reactive(TRUE) 
+            in_place = TRUE 
             )
 
         invisible()
@@ -137,13 +137,11 @@ demoUI_custom <- function(id) {
 demoServer_custom <- function(id, x) {
   moduleServer(
       id,
-      function(input, output, session) {
-        data <- reactive({x})
-        
+      function(input, output, session) {        
         modifiedData <- eDT(
             id = "editbl",
-            data = data,
-            in_place = reactive(FALSE) 
+            data = x,
+            in_place = FALSE 
         )
         
         invisible()
