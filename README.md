@@ -1,3 +1,5 @@
+[![R-CMD-check](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml)
+
 <img src="editbl_logo.png" alt="editbl_logo" width="200"/>
 
 `editbl` allows you to do exactly what is says: 'edit tibbles'.
