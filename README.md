@@ -186,3 +186,5 @@ https://thatdatatho.com/adding-action-buttons-in-rows-of-dt-data-table-in-r-shin
 https://appsilon.com/forget-about-excel-use-r-shiny-packages-instead/
 
 https://github.com/garrylachman/ElectroCRUD
+
+https://www.sqlitetutorial.net/sqlite-sample-database/
