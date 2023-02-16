@@ -820,7 +820,7 @@ eDTServer <- function(
 #' @param deleteCol character name of the column with deletion status.
 #' @param iCol name of column with i
 #' @return data with extra columns buttons, status, i.
-#' @importFrom dplyr relocate
+#' @importFrom dplyr relocate all_of
 #' @importFrom uuid UUIDgenerate
 #' @author Jasper Schelfhout
 initData <- function(
@@ -843,7 +843,7 @@ initData <- function(
       df = data,
       columnName = buttonCol,
       ns = ns)
-  data <- relocate(data, buttonCol)
+  data <- relocate(data, all_of(buttonCol))
   data
 }
 
