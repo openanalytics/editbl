@@ -183,7 +183,7 @@ fillDeductedColumns <- function(tbl, foreignTbls){
 #' @param tbl tibble
 #' @param foreignTbls list
 #' @return boolean if tbl fufills constraint of all foreign tbls.
-#' @importFrom dplyr count pull anti_join filter if_any
+#' @importFrom dplyr count pull anti_join filter if_any all_of
 #' 
 #' @author Jasper Schelfhout
 checkForeignTbls <- function(tbl, foreignTbls){
@@ -198,7 +198,7 @@ checkForeignTbls <- function(tbl, foreignTbls){
     nonExisting <- dplyr::anti_join(tbl, foreignTbl$y,
             by = by,
             copy = TRUE)  %>% 
-        dplyr::filter(if_any(by, ~ !is.na(.))) # Do not complain about empty rows, might be nice as a parameter.
+        dplyr::filter(if_any(all_of(by), ~ !is.na(.))) # Do not complain about empty rows, might be nice as a parameter.
     
     if(dplyr::pull(dplyr::count(nonExisting), n)){
       stop(sprintf("Invalid %s: %s",

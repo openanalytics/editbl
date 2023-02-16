@@ -135,7 +135,7 @@ eDT <- function(
 #'  observeEvent actionButton icon renderPrint showNotification req
 #'  isolate is.reactive modalDialog modalButton renderUI uiOutput showModal
 #' @importFrom DT dataTableProxy renderDT formatStyle styleEqual hideCols
-#' @importFrom dplyr collect %>% relocate rows_update rows_insert rows_delete is.tbl
+#' @importFrom dplyr collect %>% relocate rows_update rows_insert rows_delete is.tbl all_of
 #' @importFrom utils str tail
 #' @importFrom uuid UUIDgenerate
 #' @importFrom shinyjs disable enable
@@ -257,7 +257,7 @@ eDTServer <- function(
               castCols <- base::colnames(isolate(data()))
               
               data <- rv$newState
-              data <- relocate(data,  "buttons")     
+              data <- relocate(data,  dplyr::all_of("buttons"))     
               rv$modifiedData <- data
               
               data <- castForDisplay(data, cols = castCols)
