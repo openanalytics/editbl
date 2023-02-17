@@ -382,11 +382,12 @@ eDTServer <- function(
                       }
                     }
                   }))
-              
+              notEditable <- names(data)[editable()$disable$columns + 1]
               data <- data[,setdiff(base::colnames(data), unique(c(
                               status,
                               deducted,
-                              invisible
+                              invisible,
+                              notEditable
                               )))]
                             
               data <- castToFactor(data, foreignTbls())

@@ -23,6 +23,7 @@ coerceColumns <- function(template, x){
 #' 
 #' @author Jasper Schelfhout
 coerceValue <- function(val,old){
+  
   if (inherits(old, c('POSIXlt', 'POSIXct'))) {  
     
     # Try a bunch of formats supported by ISO
@@ -39,6 +40,8 @@ coerceValue <- function(val,old){
     
     if (inherits(old, 'POSIXlt')) return(newVal)
     return(as.POSIXct(newVal))
+  } else if(inherits(old, "logical")){
+    newVal <- as.logical(val)
   } else {
     return(DT::coerceValue(val,old))
   }

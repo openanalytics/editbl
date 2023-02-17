@@ -82,13 +82,13 @@ inputServer.default <- function(id, data){
 #' @param inputId shiny input Id
 #' @param label character
 #' @param selected object of class of x
-#' @importFrom shiny checkboxInput numericInput dateInput selectInput textInput
+#' @importFrom shiny numericInput dateInput selectInput textInput
 #' @return shiny input
 #' 
 #' @author Jasper Schelfhout
 shinyInput <- function(x, inputId, label, selected){
   if(inherits(x, "logical")){
-    shiny::checkboxInput(inputId = inputId, label = label, value = selected)
+    selectInput(inputId = inputId, label = label, choices = c(" " = NA, "TRUE" = TRUE, "FALSE" = FALSE), selected = selected)
   }
   else if(inherits(x, "numeric")){
     numericInput(inputId = inputId, label = label, value = selected)

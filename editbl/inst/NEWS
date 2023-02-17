@@ -1,3 +1,6 @@
+0.6.6
+    o Disable modal editing for non-editable columns.
+    o Fix modal for NA logical values by using selectInput instead of checkbox.
 0.6.5
     o checkForeignTbls() allow empty rows by default
 0.6.4
