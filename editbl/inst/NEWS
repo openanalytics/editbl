@@ -1,3 +1,5 @@
+0.7.0
+    o Support multi-column natural key editing by table selection
 0.6.6
     o Disable modal editing for non-editable columns.
     o Fix modal for NA logical values by using selectInput instead of checkbox.
