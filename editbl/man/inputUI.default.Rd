@@ -4,16 +4,16 @@
 \alias{inputUI.default}
 \title{UI part for modal with input fields for editing}
 \usage{
-\method{inputUI}{default}(id, data, colnames, ...)
+\method{inputUI}{default}(id, ...)
 }
 \arguments{
 \item{id}{character module id}
 
+\item{...}{for compatibility with method}
+
 \item{data}{single row data.frame}
 
 \item{colnames}{named character}
-
-\item{...}{for compatibility with method}
 }
 \value{
 HTML. A set of input fields corresponding to the given row.

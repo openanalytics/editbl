@@ -4,12 +4,14 @@
 \alias{inputServer.default}
 \title{An input server for a data.frame}
 \usage{
-\method{inputServer}{default}(id, data)
+\method{inputServer}{default}(id, data, colnames, notEditable, foreignTbls, ...)
 }
 \arguments{
 \item{id}{character module id}
 
 \item{data}{single row data.frame}
+
+\item{nonEditable}{character columns that should not be edited}
 }
 \value{
 reactive modified version of data

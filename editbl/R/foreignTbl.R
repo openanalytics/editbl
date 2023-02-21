@@ -254,4 +254,3 @@ getNonNaturalKeyCols <- function(foreignTbls){
   }
   result
 }
-

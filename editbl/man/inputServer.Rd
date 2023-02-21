@@ -4,7 +4,7 @@
 \alias{inputServer}
 \title{An input server for a data.frame}
 \usage{
-inputServer(id, data)
+inputServer(id, ...)
 }
 \arguments{
 \item{id}{character module id}

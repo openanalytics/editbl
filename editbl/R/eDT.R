@@ -370,38 +370,45 @@ eDTServer <- function(
         
         proxyDT <- DT::dataTableProxy("DT")
         
-        output$inputUI <- renderUI({
-              data <- rv$modifiedData
-              # Columns that should not be edited
+        notInModalColumns <- reactive({              
+              # Columns that should not be edited through the modal
               status <- c("i", "buttons", "status", "deleted")
               deducted <- deductedColnames() # Therefore non-editable
               invisible <- unlist(lapply(options()$columnDefs, function(x){
-                    if(!is.null(x$visible)){
-                      if(!x$visible){
-                        x$targets
-                      }
-                    }
-                  }))
-              notEditable <- names(data)[editable()$disable$columns + 1]
-              data <- data[,setdiff(base::colnames(data), unique(c(
-                              status,
-                              deducted,
-                              invisible,
-                              notEditable
-                              )))]
-                            
-              data <- castToFactor(data, foreignTbls())
-              
-              inputUI()(
-                  id = ns("modalinput"),
-                  data = data[clickedRow(),],
-                  colnames = charColnames())
+                        if(!is.null(x$visible)){
+                          if(!x$visible){
+                            x$targets
+                          }
+                        }
+                      }))
+              notEditable <- names(rv$modifiedData)[editable()$disable$columns + 1]
+              unique(c(
+                      status,
+                      deducted,
+                      invisible,
+                      notEditable
+                  ))
             })
         
-        observeEvent(input$edit,{
+        # Use different id each time to prevent conflicts / flashing re-rendering due to renderUI
+        editModalId <- reactive({
+              input$edit
+              gsub("-", "_", uuid::UUIDgenerate())
+            })
+        
+        observeEvent(input$edit, {
+              rv$modalData <- inputServer(
+                  editModalId(),
+                  data = eventReactive(input$edit, {rv$modifiedData[clickedRow(),]}),
+                  notEditable = notInModalColumns,
+                  colnames = charColnames,
+                  foreignTbls = foreignTbls)
+            })
+   
+        observeEvent(input$edit, {
               showModal(
                   modalDialog(
-                      renderUI(uiOutput(ns("inputUI"))),
+                      inputUI()(id = ns(editModalId())),
                       footer = tagList(
                           actionButton(ns("confirmEdit"), "Ok"),
                           modalButton("cancel")
@@ -493,10 +500,7 @@ eDTServer <- function(
         observeEvent(input$confirmEdit, {
               i <- clickedRow()
               data <- rv$modifiedData
-              
-              data[i,] <-  fillDeductedColumns(
-                  inputServer("modalinput", data[i,])(),
-                  foreignTbls())
+              data[i,] <-  fillDeductedColumns(rv$modalData(), foreignTbls())
               
               currentStatus <- data[i,"status"]
               if(currentStatus == "unmodified"){

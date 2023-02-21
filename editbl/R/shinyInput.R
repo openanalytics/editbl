@@ -16,7 +16,7 @@ inputUI <- function(id, ...){
 #' @return modified version of data
 #' 
 #' @author Jasper Schelfhout
-inputServer <- function(id, data){
+inputServer <- function(id, ...){
   UseMethod("inputServer")
 }
 
@@ -32,24 +32,9 @@ inputServer <- function(id, data){
 #' 
 #' @author Jasper Schelfhout
 #' @export
-inputUI.default <- function(id, data, colnames, ...){
+inputUI.default <- function(id, ...){
   ns <- NS(id)
-  
-  inputs <- lapply(colnames(data), function(x){
-        if(x %in% colnames){
-          label = names(colnames)[which(colnames == x)]
-        } else {
-          label = x
-        }
-        
-        shinyInput(
-            x = data[[x]],
-            inputId = ns(x),
-            label = label, 
-            selected = data[,x]
-        )
-      })
-  do.call(tagList,inputs)
+  uiOutput(ns("inputUI"))
 }
 
 #' An input server for a data.frame
@@ -59,15 +44,109 @@ inputUI.default <- function(id, data, colnames, ...){
 #' 
 #' @param id character module id
 #' @param data single row data.frame
+#' @param nonEditable character columns that should not be edited
+#' @param foreignTbls
 #' @return reactive modified version of data
 #' 
 #' @author Jasper Schelfhout
-inputServer.default <- function(id, data){
+inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ...){  
   moduleServer(
       id,
       function(input, output, session) {
+        ns <- session$ns
+        rv <- reactiveValues(inputDTData = list())
+        
+        # Make arguments reactive
+        # Need to be explicit about environement. Otherwhise they overwrite themselves.
+        # This way users can pass on both reactive an non reactive arguments
+        argEnv <- parent.frame(3)
+        args <- c(as.list(argEnv))
+        args$id <- NULL
+        for(arg in names(args)){
+          if(!shiny::is.reactive(args[[arg]])){
+            eval(parse(text = sprintf("assign(arg, shiny::reactive(%s, env = argEnv))", arg)))
+          }
+        }
+        
+        inputDTs <- reactive({
+              inputDTs <- lapply(foreignTbls(), function(x){
+                    if(length(x$naturalKey) > 1){
+                      id <- gsub("-", "_", force(uuid::UUIDgenerate()))
+                      list(
+                          id = id,
+                          choices = dplyr::collect(
+                              dplyr::select(
+                                  x$y,
+                                  dplyr::all_of(x$naturalKey)
+                              )
+                          ),
+                          selected = data()[,x$naturalKey]
+                      )
+                    }
+                  })
+              if(length(inputDTs)){
+                inputDTs[sapply(inputDTs, is.null)] <- NULL
+              }
+              inputDTs
+            })
+        
+        observe({
+              inputDTData <- list()
+              for(inputDT in inputDTs()){
+                inputDTData[[inputDT$id]] <- do.call(selectInputDT_Server, inputDT)
+              }
+              rv$inputDTData <- inputDTData
+            })
+        
+        inputDTCols <- reactive({
+              unique(unlist(lapply(inputDTs(), function(x){
+                            names(x$choices)
+                          })))
+            })
+        
+        normalInputs <- reactive({
+              uiData <- data()[,setdiff(base::colnames(data()), notEditable())]
+              uiData <- castToFactor(uiData, foreignTbls())        
+              inputNormalCols <- setdiff(base::colnames(uiData), inputDTCols())
+              
+              inputs <- lapply(inputNormalCols, function(x){
+                    if(x %in% colnames()){
+                      label = names(colnames())[which(colnames() == x)]
+                    } else {
+                      label = x
+                    }
+                    
+                    shinyInput(
+                        x = uiData[[x]],
+                        inputId = ns(x),
+                        label = label, 
+                        selected = uiData[,x]
+                    )
+                  })
+              inputs
+            })
+        
+        DTInputs <- reactive({
+              lapply(inputDTs(), function(inputDT){
+                    selectInputDT_UI(id = ns(inputDT$id))                 
+                  })
+            })
+        
+        output$inputUI <- renderUI({
+              do.call(tagList,c(normalInputs(), DTInputs()))
+            })
+        
         newData <- reactive({
-              for(col in intersect(colnames(data), names(input))){
+              data <- data()
+              
+              # Table inputs
+              for(DTinput in rv$inputDTData){
+                newData <- DTinput()
+                data[,base::colnames(newData)] <- newData
+              }
+              
+              # Normal inputs
+              for(col in intersect(base::colnames(data), names(input))){
                 data[,col] = coerceValue(input[[col]], data[,col])
               }
               data
@@ -101,4 +180,111 @@ shinyInput <- function(x, inputId, label, selected){
   } else {
     textInput(inputId = inputId, label = label, value = as.character(selected))
   }
+}
+
+#' Create a DT select input
+#' @param inputId 
+#' @param label 
+#' @param data 
+#' @return HTML
+#' 
+#' @author Jasper Schelfhout
+#' @export
+selectInputDT_UI <- function(id){
+  ns <- NS(id)
+  uiOutput(ns("DT_UI"))
+}
+
+#' Server to use a datatable as select input
+#' @param id character
+#' @param choices data.frame
+#' @param label character
+#' @param selected data.frame
+#' @return data.frame
+#' 
+#' @author Jasper Schelfhout
+#' @export
+selectInputDT_Server <- function(id,
+    label = "",
+    choices,
+    selected = NULL,
+    multiple = FALSE){
+  moduleServer(
+      id,
+      function(input,output,session){
+        # Make arguments reactive
+        # Need to be explicit about environement. Otherwhise they overwrite themselves.
+        # This way users can pass on both reactive an non reactive arguments
+        argEnv <- parent.frame(3)
+        args <- c(as.list(argEnv))
+        args$id <- NULL
+        for(arg in names(args)){
+          if(!shiny::is.reactive(args[[arg]])){
+            eval(parse(text = sprintf("assign(arg, shiny::reactive(%s, env = argEnv))", arg)))
+          }
+        }
+        
+        ns <- session$ns
+        
+        hasSelection <- reactive({
+              if(is.null(selected())){
+                FALSE
+              } else if ({ all(is.na(selected()))}){
+                FALSE
+              } else {
+                TRUE
+              }
+            })
+        
+        data_selection_first <- reactive({
+              if(hasSelection()){
+                dt <- unique(rbind(selected(), choices()))
+              } else {
+                dt <- choices()
+              }
+              dt
+            })
+        
+        output$DT_UI <- renderUI({
+              tagList(
+                  label(),
+                  DT::DTOutput(ns("DT"))
+              )
+            })
+        
+        mode <- reactive({
+              if(multiple()){
+                mode = "multiple"
+              } else {
+                mode = "single"
+              }
+              mode
+            })
+        
+        rowNrs <- reactive({
+              if (hasSelection()){
+                rowNrs = seq_len(nrow(selected()))
+              } else {
+                c()
+              }
+              rowNrs
+            })
+        
+        
+        output$DT <- DT::renderDataTable({
+              DT::datatable(
+                  data_selection_first(),
+                  rownames = TRUE, # otherwhise buggy selection: https://github.com/rstudio/DT/issues/945
+                  options = list(scrollX = TRUE),
+                  filter = "top",
+                  selection = list(
+                      mode = mode(),
+                      selected = rowNrs(),
+                      target = 'row'))
+            })
+        
+        reactive({
+              choices()[input$DT_rows_selected,]
+            })
+      })
 }
