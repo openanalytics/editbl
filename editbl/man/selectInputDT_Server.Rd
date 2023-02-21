@@ -19,10 +19,12 @@ selectInputDT_Server(
 
 \item{choices}{data.frame}
 
-\item{selected}{data.frame}
+\item{selected}{data.frame single row}
+
+\item{multiple}{logical}
 }
 \value{
-data.frame
+data.frame single row, new selection
 }
 \description{
 Server to use a datatable as select input

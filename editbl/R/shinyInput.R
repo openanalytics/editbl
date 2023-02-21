@@ -13,10 +13,11 @@ inputUI <- function(id, ...){
 #' An input server for a data.frame
 #' @param id character module id
 #' @param data single row data.frame
+#' @param ... further arguments for methods
 #' @return modified version of data
 #' 
 #' @author Jasper Schelfhout
-inputServer <- function(id, ...){
+inputServer <- function(id, data, ...){
   UseMethod("inputServer")
 }
 
@@ -25,13 +26,10 @@ inputServer <- function(id, ...){
 #' @details The UI elements that have an id identical to a column name are used for updating the data.
 #' 
 #' @param id character module id
-#' @param data single row data.frame
-#' @param colnames named character
 #' @param ... for compatibility with method
 #' @return HTML. A set of input fields corresponding to the given row.
 #' 
 #' @author Jasper Schelfhout
-#' @export
 inputUI.default <- function(id, ...){
   ns <- NS(id)
   uiOutput(ns("inputUI"))
@@ -44,8 +42,10 @@ inputUI.default <- function(id, ...){
 #' 
 #' @param id character module id
 #' @param data single row data.frame
-#' @param nonEditable character columns that should not be edited
-#' @param foreignTbls
+#' @param notEditable character columns that should not be edited
+#' @param  colnames named character
+#' @param foreignTbls list of foreignTbls
+#' @param ... for compatibility with other methods
 #' @return reactive modified version of data
 #' 
 #' @author Jasper Schelfhout
@@ -183,13 +183,9 @@ shinyInput <- function(x, inputId, label, selected){
 }
 
 #' Create a DT select input
-#' @param inputId 
-#' @param label 
-#' @param data 
-#' @return HTML
+#' @param id character
 #' 
 #' @author Jasper Schelfhout
-#' @export
 selectInputDT_UI <- function(id){
   ns <- NS(id)
   uiOutput(ns("DT_UI"))
@@ -199,11 +195,11 @@ selectInputDT_UI <- function(id){
 #' @param id character
 #' @param choices data.frame
 #' @param label character
-#' @param selected data.frame
-#' @return data.frame
+#' @param selected data.frame single row
+#' @param multiple logical
+#' @return data.frame single row, new selection
 #' 
 #' @author Jasper Schelfhout
-#' @export
 selectInputDT_Server <- function(id,
     label = "",
     choices,

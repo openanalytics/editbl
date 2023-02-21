@@ -10,10 +10,6 @@
 \item{id}{character module id}
 
 \item{...}{for compatibility with method}
-
-\item{data}{single row data.frame}
-
-\item{colnames}{named character}
 }
 \value{
 HTML. A set of input fields corresponding to the given row.

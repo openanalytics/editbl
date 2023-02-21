@@ -399,7 +399,7 @@ eDTServer <- function(
         observeEvent(input$edit, {
               rv$modalData <- inputServer(
                   editModalId(),
-                  data = eventReactive(input$edit, {rv$modifiedData[clickedRow(),]}),
+                  data = rv$modifiedData[clickedRow(),],
                   notEditable = notInModalColumns,
                   colnames = charColnames,
                   foreignTbls = foreignTbls)

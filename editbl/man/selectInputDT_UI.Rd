@@ -7,14 +7,7 @@
 selectInputDT_UI(id)
 }
 \arguments{
-\item{inputId}{}
-
-\item{label}{}
-
-\item{data}{}
-}
-\value{
-HTML
+\item{id}{character}
 }
 \description{
 Create a DT select input

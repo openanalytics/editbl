@@ -11,7 +11,13 @@
 
 \item{data}{single row data.frame}
 
-\item{nonEditable}{character columns that should not be edited}
+\item{colnames}{named character}
+
+\item{notEditable}{character columns that should not be edited}
+
+\item{foreignTbls}{list of foreignTbls}
+
+\item{...}{for compatibility with other methods}
 }
 \value{
 reactive modified version of data

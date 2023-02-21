@@ -4,12 +4,14 @@
 \alias{inputServer}
 \title{An input server for a data.frame}
 \usage{
-inputServer(id, ...)
+inputServer(id, data, ...)
 }
 \arguments{
 \item{id}{character module id}
 
 \item{data}{single row data.frame}
+
+\item{...}{further arguments for methods}
 }
 \value{
 modified version of data
