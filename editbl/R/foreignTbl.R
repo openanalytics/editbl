@@ -16,7 +16,7 @@
 #' Note that you should rename and/or typecast the columns in y should they not exactly match the columns in x.
 #' @param naturalKey `character`. The columns that form the natural key in y.
 #' These are the only ones that can actually get modified, other columns will be deducted from these.
-#' @param allowInsert logical. Whether or not new values may be inserted in the foreign tibble.
+#' @param allowNew logical. Whether or not new values are allowed. If TRUE, the rows in the foreignTbl will only be used as suggestions, not restrictions.
 #' @return list
 #' 
 #' @importFrom dplyr tbl_vars all_of select
@@ -28,7 +28,7 @@ foreignTbl <- function(
     y,
     by = intersect(dplyr::tbl_vars(x), dplyr::tbl_vars(y)),
     naturalKey = dplyr::tbl_vars(y),
-    allowInsert = FALSE
+    allowNew = FALSE
 ){
   stopifnot(all(naturalKey %in% colnames(y)))
   stopifnot(is.logical(allowInsert))
@@ -58,7 +58,7 @@ foreignTbl <- function(
       y = y,
       by = by,
       naturalKey = naturalKey,
-      allowInsert = allowInsert
+      allowNew = allowNew
   )
   
   return(foreignTbl)
@@ -196,6 +196,9 @@ checkForeignTbls <- function(tbl, foreignTbls){
   for(foreignTbl in foreignTbls){
     # match on combination on naturalKey and surrogateKey
     # E.g. check that the row actually exists in the foreignTbl
+    if(foreignTbl$allowNew){
+      next()
+    }
     by <- unique(unname(c(foreignTbl$by, foreignTbl$naturalKey)))
     
     nonExisting <- dplyr::anti_join(tbl, foreignTbl$y,
