@@ -8,7 +8,8 @@ foreignTbl(
   x,
   y,
   by = intersect(dplyr::tbl_vars(x), dplyr::tbl_vars(y)),
-  naturalKey = dplyr::tbl_vars(y)
+  naturalKey = dplyr::tbl_vars(y),
+  allowNew = FALSE
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ Note that you should rename and/or typecast the columns in y should they not exa
 
 \item{naturalKey}{`character`. The columns that form the natural key in y.
 These are the only ones that can actually get modified, other columns will be deducted from these.}
+
+\item{allowNew}{logical. Whether or not new values are allowed. If TRUE, the rows in the foreignTbl will only be used as suggestions, not restrictions.}
 }
 \value{
 list
