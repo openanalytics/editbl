@@ -31,7 +31,7 @@ foreignTbl <- function(
     allowNew = FALSE
 ){
   stopifnot(all(naturalKey %in% colnames(y)))
-  stopifnot(is.logical(allowInsert))
+  stopifnot(is.logical(allowNew))
   if(is.null(names(by))){
     names(by) <- by
   }

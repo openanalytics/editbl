@@ -96,7 +96,7 @@ selectInputDT_Server <- function(id,
             })
         
         reactive({
-              choices()[input$DT_rows_selected,]
+              data_selection_first()[input$DT_rows_selected,]
             })
       })
 }
