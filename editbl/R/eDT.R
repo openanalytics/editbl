@@ -54,6 +54,7 @@ eDTOutput <- function(id,...) {
 #' @param foreignTbls `list`. List of objects created by \code{\link{foreignTbl}}
 #' @param statusColor named character. Colors to indicate status of the row.
 #' @param inputUI function. UI function of a shiny module with at least arguments `id` `data` and `...`.
+#' @param defaults tibble.
 #' elements with inputIds identical to one of the column names are used to update the data.
 #' 
 #' @return reactive modified version of \code{data}
@@ -106,7 +107,8 @@ eDT <- function(
     format = function(x){x},
     foreignTbls = list(),
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
-    inputUI = editbl::inputUI
+    inputUI = editbl::inputUI,
+    defaults = tibble()
 ) {
   args <- as.list(environment())
   
@@ -135,7 +137,7 @@ eDT <- function(
 #'  observeEvent actionButton icon renderPrint showNotification req
 #'  isolate is.reactive modalDialog modalButton renderUI uiOutput showModal
 #' @importFrom DT dataTableProxy renderDT formatStyle styleEqual hideCols
-#' @importFrom dplyr collect %>% relocate rows_update rows_insert rows_delete is.tbl all_of
+#' @importFrom dplyr collect %>% relocate rows_update rows_insert rows_delete is.tbl all_of tibble
 #' @importFrom utils str tail
 #' @importFrom uuid UUIDgenerate
 #' @importFrom shinyjs disable enable
@@ -170,7 +172,8 @@ eDTServer <- function(
     format = function(x){x},
     foreignTbls = list(),
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
-    inputUI = editbl::inputUI
+    inputUI = editbl::inputUI,
+    defaults = tibble()
 ) {
   moduleServer(
       id,
@@ -611,6 +614,14 @@ eDTServer <- function(
               newRow <- newRow[1,]
               newRow <- fixInteger64(newRow) # https://github.com/Rdatatable/data.table/issues/4561
               
+              defaults <- defaults()
+              for(col in base::colnames(defaults)){
+                if(!col %in% base::colnames(newRow)){
+                  stop(sprintf("Column %s not available. Not adding default.", col))
+                } else {
+                  newRow[[col]] <- defaults[[col]]
+                }
+              }
               newRow$status <- "inserted"
               newRow$deleted <- FALSE
               newRow$i <- uuid::UUIDgenerate()

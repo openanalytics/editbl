@@ -1,3 +1,5 @@
+0.7.2
+    o Add 'defaults' argument to eDT
 0.7.1
     o Bugfix selectInputDT()
     o Add `allowNew` argument to foreignTbl to support 'suggestions' instead of 'restrictions'.

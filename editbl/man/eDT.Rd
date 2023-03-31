@@ -34,7 +34,8 @@ eDT(
  },
   foreignTbls = list(),
   statusColor = c(insert = "#e6e6e6", update = "#32a6d3", delete = "#e52323"),
-  inputUI = editbl::inputUI
+  inputUI = editbl::inputUI,
+  defaults = tibble()
 )
 }
 \arguments{
@@ -174,7 +175,9 @@ columns and the text areas for some other columns by setting
 
 \item{statusColor}{named character. Colors to indicate status of the row.}
 
-\item{inputUI}{function. UI function of a shiny module with at least arguments `id` `data` and `...`.
+\item{inputUI}{function. UI function of a shiny module with at least arguments `id` `data` and `...`.}
+
+\item{defaults}{tibble.
 elements with inputIds identical to one of the column names are used to update the data.}
 }
 \value{
