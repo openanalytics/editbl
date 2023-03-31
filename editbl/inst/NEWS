@@ -1,3 +1,6 @@
+0.7.1
+    o Bugfix selectInputDT()
+    o Add `allowNew` argument to foreignTbl to support 'suggestions' instead of 'restrictions'.
 0.7.0
     o Support multi-column natural key editing by table selection
 0.6.6
