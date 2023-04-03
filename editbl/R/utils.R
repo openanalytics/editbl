@@ -136,31 +136,57 @@ castFromTbl <- function(tbl, template){
   result
 }
 
-#' Standardize to colnames argument to the format of named character vector
-#' @param x colnames argument to eDT
-#' @param data data argument to eDT
+#' Standardize colnames argument to the format of named character vector
+#' @inheritParams eDT
 #' @importFrom dplyr tbl_vars
 #' @return named character vector
 #' 
 #' @author Jasper Schelfhout
-standardizeColnamesArgument <- function(x, data){
-  if(is.null(x)){
+standardizeArgument_colnames <- function(colnames, data){
+  if(is.null(colnames)){
     result <- as.character(dplyr::tbl_vars(data))
     names(result) <- result
-  } else if (is.numeric(x)) {
-    result <- dplyr::tbl_vars(data)[x]
-    names(result) = names(x)
-  } else if (is.character(x)){
-    if(!is.null(names(x))){
-     result <- x
+  } else if (is.numeric(colnames)) {
+    result <- dplyr::tbl_vars(data)[colnames]
+    names(result) = names(colnames)
+  } else if (is.character(colnames)){
+    if(!is.null(names(colnames))){
+     result <- colnames
     } else {
-     result <- dplyr::tbl_vars(data)[seq_len(length(x))] 
-     names(result) <- x
+     result <- dplyr::tbl_vars(data)[seq_len(length(colnames))] 
+     names(result) <- colnames
     }
   }
   result
 }
 
+#' Standardized editable argument to be in the form of a list
+#' @inheritParams eDT
+#' @return list(target = foo, xxx = bar)
+#' 
+#' @author Jasper Schelfhout
+standardizeArgument_editable <- function(
+    editable,
+    data
+    ){
+  if(is.logical(editable)){
+    if(editable){
+      return(list(target = "cell"))
+    } else {
+      return(list(target = "cell", disable = list(columns = seq_len(ncol(data))))) 
+    }
+  }
+
+  if(is.character(editable)){
+      return(list(target = editable))
+  }
+  
+  if(is.list(editable)){
+    return(editable)
+  }
+  
+  stop("editable is not in a standard format.")
+}
 
 #' Replace instances of integer64 with actual NA values instead of weird default 9218868437227407266
 #' 

@@ -1,3 +1,6 @@
+0.7.3
+    o 'defaults' argument evaluated in calling environment for each now row. Allows for example id generation.
+    o Support for editable TRUE / FALSE
 0.7.2
     o Add 'defaults' argument to eDT
 0.7.1

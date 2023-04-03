@@ -43,7 +43,7 @@ eDTOutput <- function(id,...) {
 #' Server of eDT module
 #' 
 #' @details Can also be used as standalone app when not ran in reactive context.
-#' @details All arguments can be normal objects or reactive objects.
+#' @details All arguments except 'id' and 'env' can be normal objects or reactive objects.
 #' 
 #' @param id character module id
 #' @param data `tbl`. The function will automatically cast to tbl if needed.
@@ -54,8 +54,11 @@ eDTOutput <- function(id,...) {
 #' @param foreignTbls `list`. List of objects created by \code{\link{foreignTbl}}
 #' @param statusColor named character. Colors to indicate status of the row.
 #' @param inputUI function. UI function of a shiny module with at least arguments `id` `data` and `...`.
-#' @param defaults tibble.
+#' @param defaults expression that evaluates to a tibble with (a subset of) columns of the data.
+#'   It will be evaluated for each new row in the environment defined by 'env'.
+#'   This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
 #' elements with inputIds identical to one of the column names are used to update the data.
+#' @param env environment in which the server function is running. Should normally not be modified.
 #' 
 #' @return reactive modified version of \code{data}
 #' 
@@ -108,10 +111,11 @@ eDT <- function(
     foreignTbls = list(),
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
-    defaults = tibble()
+    defaults = tibble(),
+    env = environment()
 ) {
   args <- as.list(environment())
-  
+    
   # if not in reactive context start standalone app
   if(is.null(shiny::getDefaultReactiveDomain())){
     if(missing(id)){
@@ -173,7 +177,8 @@ eDTServer <- function(
     foreignTbls = list(),
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
-    defaults = tibble()
+    defaults = tibble(),
+    env = environment()
 ) {
   moduleServer(
       id,
@@ -184,13 +189,14 @@ eDTServer <- function(
             changeLogTracker = 0,
             fullTableRefresh = 0,
         )
-        
+                        
         # Make arguments reactive
         # Need to be explicit about environement. Otherwhise they overwrite themselves.
         # This way users can pass on both reactive an non reactive arguments
         argEnv <- parent.frame(3)
         args <- c(as.list(argEnv))
         args$id <- NULL
+        args$env <- NULL
         
         for(arg in names(args)){
           if(!shiny::is.reactive(args[[arg]])){
@@ -205,13 +211,20 @@ eDTServer <- function(
               })
         }
         
-        # The colnames argument can have different formats
-        # Unify format here so it can be re-used in edit modals as well
-        charColnames <- reactive({
-              standardizeColnamesArgument(colnames(),  data())
+        # Some arguments can have various formats.
+        # Standardize first to the most expressive format to make
+        # it easier to work with in downstream code.
+        colnames_std <- reactive({
+              standardizeArgument_colnames(colnames(),  data())
             }
         )
         
+        editable_std <- reactive({
+              standardizeArgument_editable(editable(), data())
+            })
+        
+        # Columns that are used as additional information but 
+        # are not part of the key, nor the original table.
         deductedColnames <- reactive({
               getNonNaturalKeyCols(foreignTbls())
             })
@@ -279,10 +292,10 @@ eDTServer <- function(
               # Reactive arguments that need slight modifications to work
               # with extra utitily columns
               options <- options()
-              colnames <- charColnames()
+              colnames <- colnames_std()
               rownames <- rownames()
               escape <- escape()
-              editable <- editable()
+              editable <- editable_std()
               
               data <- isolate(rv$modifiedData)
               
@@ -384,7 +397,7 @@ eDTServer <- function(
                           }
                         }
                       }))
-              notEditable <- names(rv$modifiedData)[editable()$disable$columns + 1]
+              notEditable <- names(rv$modifiedData)[editable_std()$disable$columns + 1]
               unique(c(
                       status,
                       deducted,
@@ -404,7 +417,7 @@ eDTServer <- function(
                   editModalId(),
                   data = rv$modifiedData[clickedRow(),],
                   notEditable = notInModalColumns,
-                  colnames = charColnames,
+                  colnames = colnames_std,
                   foreignTbls = foreignTbls)
             })
    
@@ -614,7 +627,10 @@ eDTServer <- function(
               newRow <- newRow[1,]
               newRow <- fixInteger64(newRow) # https://github.com/Rdatatable/data.table/issues/4561
               
-              defaults <- defaults()
+              defaults <- eval(substitute(defaults, env))
+              if(is.reactive(defaults)){
+                defaults <- defaults()
+              }
               for(col in base::colnames(defaults)){
                 if(!col %in% base::colnames(newRow)){
                   stop(sprintf("Column %s not available. Not adding default.", col))
