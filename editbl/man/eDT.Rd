@@ -6,8 +6,8 @@
 \usage{
 eDT(
   data,
-  options = list(keys = TRUE, ordering = FALSE, autoFill = list(update = FALSE, focus =
-    "focus")),
+  options = list(dom = "Bfrtip", keys = TRUE, ordering = FALSE, autoFill = list(update =
+    FALSE, focus = "focus"), buttons = list("add", "undo", "redo", "save")),
   class = "display",
   callback = NULL,
   rownames = FALSE,
@@ -23,7 +23,7 @@ eDT(
   fillContainer = getOption("DT.fillContainer", NULL),
   autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
   selection = "none",
-  extensions = c("KeyTable", "AutoFill"),
+  extensions = c("KeyTable", "AutoFill", "Buttons"),
   plugins = NULL,
   editable = list(target = "cell"),
   id,

@@ -14,8 +14,8 @@ test_that("passing on an empty tibble works", {
           app = eDTServer,
           args = list(data = data),
           expr = {
-            session$setInputs(addRow = 1)       
-            session$setInputs(commit = 1)
+            session$setInputs(add = 1)       
+            session$setInputs(save = 1)
             session$setInputs(confirmCommit = 1)
             expect_true(nrow(rv$committedData) == 1)
           })

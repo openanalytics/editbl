@@ -219,3 +219,33 @@ getColumnTypeSums <- function(tbl){
       collect %>% 
       lapply(dplyr::type_sum)
 }
+
+#' Generate a custom button for DT
+#' 
+#' @details
+#' Combines elements of shiny and options defined here:
+#' https://datatables.net/reference/option/
+#' 
+#' 
+#' @param id character, namespaced id
+#' @param label character
+#' @param icon shiny::icon
+#' @param disabled boolean. Wether or not the button should start in a disabled state.
+#' @return list to be used in eDT(options = list(buttons = xxx))
+#' 
+#' @author Jasper Schelfhout
+#' @export
+customButton <- function(id, label, icon = "", disabled = FALSE){
+      list(
+          attr = list(
+              id = id,
+              class = "btn btn-default action-button shiny-bound-input",
+              disabled = disabled
+              ),
+          extend = "",
+          text = paste(as.character(icon), label, sep = " "),
+          action = DT::JS(sprintf("function (e, dt, node, config ) {
+                      Shiny.setInputValue('%s', true, {priority: 'event'});
+                      }", id))
+      )
+}

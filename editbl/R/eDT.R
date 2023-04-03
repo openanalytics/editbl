@@ -32,10 +32,10 @@ eDTOutput <- function(id,...) {
       shinyjs::useShinyjs(),
       tags$script(js),
       tags$head(tags$style(HTML(disableDoubleClickButtonCss))),
-      actionButton(ns("addRow"), label = "add", icon = icon("plus")),
-      shinyjs::disabled(actionButton(ns("undo"), label = "undo", icon = icon("rotate-left"))),
-      shinyjs::disabled(actionButton(ns("redo"), label = "redo", icon = icon("rotate-right"))),
-      shinyjs::disabled(actionButton(ns("commit"), label = "save", icon = icon("floppy-disk"))),
+
+      # Hack that ensures fontawesome is properly loaded
+      shinyjs::hidden(actionButton(ns("activate_shiny_css"), label = "hidden", icon = icon("plus"))),
+      
       DT::DTOutput(outputId = ns("DT"), ...)
   )
 }
@@ -83,9 +83,12 @@ eDTOutput <- function(id,...) {
 eDT <- function(
     data,
     options = list(
+        dom = 'Bfrtip',
         keys = TRUE,
         ordering = FALSE,
-        autoFill = list(update = FALSE, focus = 'focus')),
+        autoFill = list(update = FALSE, focus = 'focus'),
+        buttons = list("add", "undo", "redo", "save")
+    ),
     class = "display",
     callback = NULL,
     rownames = FALSE,
@@ -101,7 +104,7 @@ eDT <- function(
     fillContainer = getOption("DT.fillContainer", NULL),
     autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
     selection = "none",
-    extensions = c('KeyTable', 'AutoFill'),
+    extensions = c('KeyTable', 'AutoFill', "Buttons"),
     plugins = NULL,
     editable = list(target = "cell"),
     id,
@@ -115,7 +118,7 @@ eDT <- function(
     env = environment()
 ) {
   args <- as.list(environment())
-    
+  
   # if not in reactive context start standalone app
   if(is.null(shiny::getDefaultReactiveDomain())){
     if(missing(id)){
@@ -150,9 +153,12 @@ eDTServer <- function(
     id,
     data,
     options = list(
+        dom = 'Bfrtip',
         keys = TRUE,
         ordering = FALSE,
-        autoFill = list(update = FALSE, focus = 'focus')),
+        autoFill = list(update = FALSE, focus = 'focus'),
+        buttons = list("add", "undo", "redo", "save")
+    ),
     class = "display",
     callback = NULL,
     rownames = FALSE,
@@ -168,7 +174,7 @@ eDTServer <- function(
     fillContainer = getOption("DT.fillContainer", NULL),
     autoHideNavigation = getOption("DT.autoHideNavigation", NULL),
     selection = "none",
-    extensions = c('KeyTable', 'AutoFill'),
+    extensions = c('KeyTable', 'AutoFill', "Buttons"),
     plugins = NULL,
     editable = list(target = "cell"),
     keys = NULL,
@@ -189,7 +195,7 @@ eDTServer <- function(
             changeLogTracker = 0,
             fullTableRefresh = 0,
         )
-                        
+        
         # Make arguments reactive
         # Need to be explicit about environement. Otherwhise they overwrite themselves.
         # This way users can pass on both reactive an non reactive arguments
@@ -344,7 +350,30 @@ eDTServer <- function(
                               deductedCols)))
                 }
               }
-              
+                            
+              options$buttons <- lapply(options$buttons, function(x){
+                    if(is.character(x) && x %in% c("add", "undo", "redo", "save")){
+                      icon = switch(x,
+                          "add" = icon("plus"),
+                          "undo" = icon("rotate-left"),
+                          "redo" = icon("rotate-right"),
+                          "save" = icon("floppy-disk"),
+                          ""
+                          )   
+                      disabled = switch(x,
+                              "add" = FALSE,
+                              "undo" = TRUE,
+                              "redo" =  TRUE,
+                              "save" = TRUE,
+                              TRUE
+                          )       
+                          
+                      customButton(ns(x), label = x, icon, disabled = disabled)
+                    } else {
+                      x
+                    }
+                  })
+                            
               # Deal with the fact that 'container' can be a missing argument
               # Which is why put arguments in a list and use do.call instead of passing on directly.
               # FIXME: there should be a better approach              
@@ -420,7 +449,7 @@ eDTServer <- function(
                   colnames = colnames_std,
                   foreignTbls = foreignTbls)
             })
-   
+        
         observeEvent(input$edit, {
               showModal(
                   modalDialog(
@@ -545,7 +574,7 @@ eDTServer <- function(
               req(rv$edits)
               edits <- unique(rv$edits)
               rv$edits <- NULL
-                    
+              
               data <- rv$modifiedData
               tryCatch({                    
                     newRows <- list()
@@ -617,7 +646,7 @@ eDTServer <- function(
               rv$newState <- data
             })
         
-        observeEvent(input$addRow,{
+        observeEvent(input$add,{
               data <- rv$modifiedData
               data$buttons <- NULL
               
@@ -679,7 +708,7 @@ eDTServer <- function(
                       modified$deleted == TRUE,]
             })
         
-        observeEvent(input$commit,{
+        observeEvent(input$save,{
               shiny::showModal(
                   modalDialog(
                       title = "Do you really want to make the changes?",
@@ -703,9 +732,9 @@ eDTServer <- function(
         
         observe({
               if(is.null(effectiveChanges())){
-                shinyjs::disable("commit")
+                shinyjs::disable("save")
               } else {
-                shinyjs::enable("commit")             
+                shinyjs::enable("save")             
               }
             })
         
