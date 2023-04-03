@@ -35,7 +35,8 @@ eDT(
   foreignTbls = list(),
   statusColor = c(insert = "#e6e6e6", update = "#32a6d3", delete = "#e52323"),
   inputUI = editbl::inputUI,
-  defaults = tibble()
+  defaults = tibble(),
+  env = environment()
 )
 }
 \arguments{
@@ -177,8 +178,12 @@ columns and the text areas for some other columns by setting
 
 \item{inputUI}{function. UI function of a shiny module with at least arguments `id` `data` and `...`.}
 
-\item{defaults}{tibble.
+\item{defaults}{expression that evaluates to a tibble with (a subset of) columns of the data.
+  It will be evaluated for each new row in the environment defined by 'env'.
+  This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
 elements with inputIds identical to one of the column names are used to update the data.}
+
+\item{env}{environment in which the server function is running. Should normally not be modified.}
 }
 \value{
 reactive modified version of \code{data}
@@ -189,7 +194,7 @@ Server of eDT module
 \details{
 Can also be used as standalone app when not ran in reactive context.
 
-All arguments can be normal objects or reactive objects.
+All arguments except 'id' and 'env' can be normal objects or reactive objects.
 }
 \examples{
 \dontrun{
