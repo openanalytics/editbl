@@ -14,6 +14,7 @@ Main features by which it distinguishes itself from other CRUD (create, read, up
 * No need to have all data in-memory.
 * Developed with focus on relational databases. Tackles challenges such as enforcing foreign keys and hiding of surrogate keys.
 * Transactional commits (currently for `tbl_dbi` class and non in-place editing).
+* Default values for new rows (UUID's, 'current date', 'inserted by', ...)
 
 ## Get started
 
