@@ -350,7 +350,16 @@ eDTServer <- function(
                               deductedCols)))
                 }
               }
-                            
+              
+              # For backwards compatibility
+              # Maybe remove at some point? E.g. just require to be explicit about options?
+              if(is.null(options$dom)){
+                options$dom <- "Bfrtip"
+              }
+              if(is.null(options$buttons)){
+                options$buttons <- list("add", "undo", "redo", "save")
+              }
+              
               options$buttons <- lapply(options$buttons, function(x){
                     if(is.character(x) && x %in% c("add", "undo", "redo", "save")){
                       icon = switch(x,
