@@ -116,7 +116,36 @@ castToTbl <- function(data){
   result
 }
 
-#' Cast data from tbl to class of template
+#' Cast tbl or data.frame x to the types of the template
+#' 
+#' @details If template is a tbl with database source, convert to an in-memory tibble with same data types instead.
+#' @details Rownames might show differing
+#' 
+#' @param x `data.frame`, `tbl` or `data.table`
+#' @param template `data.frame`, `tbl` or `data.table`
+#' @return object containing data of x in the class and structure of the template.
+#' 
+#' @author Jasper Schelfhout
+castToTemplate <- function(x, template){
+  if(!all(base::colnames(x) == base::colnames(template)))
+    stop("Template and casted tbl should have exactly the same colums")
+  
+  rowNames <- attr(x, 'row.names')
+  
+  result <- rbind(
+      dplyr::collect(dplyr::filter(template, dplyr::row_number()==1)),
+      x
+  )[-1,]
+  
+  # Tbl doesn't properly support row names
+  if(!inherits(template, 'tbl')){
+    try({rownames(result) <- rowNames}, silent = TRUE)
+  }
+ 
+  result
+}
+
+#' Cast tbl to class of template
 #' @param tbl tbl
 #' @param template tabular object 
 #' @return tbl cast to the type of template
@@ -126,12 +155,8 @@ castToTbl <- function(data){
 castFromTbl <- function(tbl, template){
   if(dplyr::is.tbl(template)){
     result <- tbl
-  } else if (inherits(template, "data.table")){
-    result <- data.table::as.data.table(tbl)
-  } else if (inherits(template, "data.frame")){
-    result <- as.data.frame(tbl)
   } else {
-    stop(sprintf("Can not convert tbl to class '%s'.",class(template)))
+    result <- castToTemplate(tbl,template)
   }
   result
 }

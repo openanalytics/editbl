@@ -39,7 +39,7 @@ eDT_app_server <- function(moduleId =  "nevergonnagiveyouup",...) {
   moduleServer(
       moduleId,
       function(input, output, session) {  
-        modifiedData <- do.call(eDTServer, args)
+        modifiedData <- do.call(eDTServer, args)$result
         
         observeEvent(input$close, {
               shiny::stopApp(modifiedData())

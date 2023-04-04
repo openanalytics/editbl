@@ -1,3 +1,8 @@
+0.8.3
+    o BREAKING: eDT returns list instead of reactive. Adjust to eDT()$result for old behavior.
+    o eDT now returns the state of the unsaved data as eDT()$state
+    o Add pagination selector by default. Is closer to native DT behavior
+    o Bugfix: dragging rows used to only work on the first page, now works for all pages.
 0.7.4
     o Make buttons part of datatable buttons extension. Allows for easy configuration and nicer display.
 0.7.3

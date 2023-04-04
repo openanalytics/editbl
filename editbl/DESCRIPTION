@@ -1,7 +1,7 @@
 Package: editbl
 Type: Package
-Version: 0.7.5
-Date: 2023-04-04
+Version: 0.8.4
+Date: 2023-08-22
 Title: editbl
 Author: jschelfhout
 Maintainer: jschelfhout <jasper.schelfhout@openanalytics.eu> 

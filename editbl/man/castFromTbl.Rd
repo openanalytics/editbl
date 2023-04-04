@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{castFromTbl}
 \alias{castFromTbl}
-\title{Cast data from tbl to class of template}
+\title{Cast tbl to class of template}
 \usage{
 castFromTbl(tbl, template)
 }
@@ -15,7 +15,7 @@ castFromTbl(tbl, template)
 tbl cast to the type of template
 }
 \description{
-Cast data from tbl to class of template
+Cast tbl to class of template
 }
 \author{
 Jasper Schelfhout

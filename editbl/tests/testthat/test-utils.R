@@ -10,6 +10,36 @@ test_that("castFromTbl can cast to data.table",{
       expect_equal(colnames(result), colnames(mtcars))
     })
 
+test_that("castToTemplate can cast from data.frame to data.table",{
+      result <- castToTemplate(x = iris, template = data.table::data.table(iris))
+      expect_equal(result, data.table::as.data.table(iris))
+    })
+
+test_that("castToTemplate can cast from data.frame to tbl",{
+      result <- castToTemplate(x = iris,  template = dplyr::as_tibble(iris))
+      expect_equal(result, dplyr::as_tibble(iris))
+    })
+
+test_that("castToTemplate can cast from tbl to data.frame",{
+      result <- castToTemplate(x = dplyr::as_tibble(iris), template = iris)
+      expect_equal(result, iris)
+    })
+
+test_that("castToTemplate can cast from data.table to data.frame",{
+      result <- castToTemplate(x = data.table::as.data.table(iris), template = iris)
+      expect_equal(result, iris)
+    })
+
+test_that("castToTemplate can cast from data.table to tbl",{
+      result <- castToTemplate(x = data.table::as.data.table(iris), template = dplyr::as_tibble(iris))
+      expect_equal(result, dplyr::as_tibble(iris))
+    })
+
+test_that("castToTemplate can cast from tbl to data.table",{
+      result <- castToTemplate(x = dplyr::as_tibble(iris), template = data.table::as.data.table(iris))
+      expect_equal(result, data.table::as.data.table(iris))
+    })
+
 test_that("standardizeArgument_colnames returns named character for named integer",{
       result <- standardizeArgument_colnames(c("test" = 1), dplyr::as_tibble(mtcars))
       expect_equal(result, c("test" = "mpg"))

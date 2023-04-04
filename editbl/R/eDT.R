@@ -60,7 +60,10 @@ eDTOutput <- function(id,...) {
 #' elements with inputIds identical to one of the column names are used to update the data.
 #' @param env environment in which the server function is running. Should normally not be modified.
 #' 
-#' @return reactive modified version of \code{data}
+#' @return list
+#' - result \code{reactive} modified version of \code{data} (saved)
+#' - state \code{reactive} current state of the \code{data} (unsaved)
+#' - selected \code{reactive} selected rows of the \code{data} (unsaved)
 #' 
 #' @examples 
 #' \dontrun{
@@ -83,7 +86,7 @@ eDTOutput <- function(id,...) {
 eDT <- function(
     data,
     options = list(
-        dom = 'Bfrtip',
+        dom = 'Bfrtlip',
         keys = TRUE,
         ordering = FALSE,
         autoFill = list(update = FALSE, focus = 'focus'),
@@ -115,8 +118,8 @@ eDT <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
-    env = environment()
-) {
+    env = parent.frame()
+) {  
   args <- as.list(environment())
   
   # if not in reactive context start standalone app
@@ -143,6 +146,7 @@ eDT <- function(
 #' @importFrom shiny moduleServer observe reactiveValues reactive 
 #'  observeEvent actionButton icon renderPrint showNotification req
 #'  isolate is.reactive modalDialog modalButton renderUI uiOutput showModal
+#'  freezeReactiveValue
 #' @importFrom DT dataTableProxy renderDT formatStyle styleEqual hideCols
 #' @importFrom dplyr collect %>% relocate rows_update rows_insert rows_delete is.tbl all_of tibble
 #' @importFrom utils str tail
@@ -153,7 +157,7 @@ eDTServer <- function(
     id,
     data,
     options = list(
-        dom = 'Bfrtip',
+        dom = 'Bfrtlip',
         keys = TRUE,
         ordering = FALSE,
         autoFill = list(update = FALSE, focus = 'focus'),
@@ -239,7 +243,7 @@ eDTServer <- function(
         # rv$committedData equals all changes
         # rv$checkPointData equals the committed data with additional utility columns
         # rv$modifiedData keeps track of the current modified/displayed status.
-        observe(priority = 1, label = "Reset module with new data",{
+        observe(priority = 2, label = "Reset module with new data",{
               rv$fullTableRefresh
               
               data <- data()
@@ -269,6 +273,9 @@ eDTServer <- function(
               rv$checkPointData <- data
               rv$modifiedData <- data
               rv$changelog <- list()
+              
+              DT::selectRows(proxyDT, NA)
+              freezeReactiveValue(input, "DT_rows_selected")
             })
         
         # Update server side and client side data
@@ -571,8 +578,11 @@ eDTServer <- function(
               shiny::removeModal()
             })
         
-        observe({              
-              rv$edits <- input$DT_cells_filled
+        observeEvent(input$DT_cells_filled, {      
+              req(input$DT_cells_filled)
+              edits <- input$DT_cells_filled
+              edits$row <- edits$row + min(input$DT_rows_current -1)
+              rv$edits <- edits     
             })
         
         observe({
@@ -658,7 +668,7 @@ eDTServer <- function(
         observeEvent(input$add,{
               data <- rv$modifiedData
               data$buttons <- NULL
-              
+                            
               # create new row
               newRow <- data %>%
                   dplyr::filter(FALSE)
@@ -876,7 +886,37 @@ eDTServer <- function(
               result
             })
         
-        return(result)
+        # Ensure selection holds while deleting / adding rows
+        observe(priority = 1,{
+              req(rv$modifiedData)
+              req(isolate(rv$selected))
+
+              currentSelection <- isolate(rv$selected)$i  
+              newIndexes <- which(rv$modifiedData$i %in% currentSelection)
+              if(length(newIndexes)){
+                DT::selectRows(proxyDT, newIndexes)
+              }
+            })
+        
+        observe({
+               rv$selected <- selected() # To force evaluation
+            })
+        
+        selected <- reactive({
+              rows <-input$DT_rows_selected
+              data <- isolate(rv$modifiedData)[rows,]
+              data
+            })
+        
+        dataVars <- reactive({
+              dplyr::tbl_vars(data())
+            })
+                
+        return(list(
+                result = result,
+                state = reactive({castToTemplate(rv$modifiedData[,dataVars()], data())}),
+                selected = reactive({castToTemplate(selected()[,dataVars()], data())})
+                ))
       }
   )
 }

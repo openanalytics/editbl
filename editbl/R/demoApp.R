@@ -142,7 +142,7 @@ demoServer_custom <- function(id, x) {
             id = "editbl",
             data = x,
             in_place = FALSE 
-        )
+        )$result
         
         invisible()
       }
