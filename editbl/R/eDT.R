@@ -198,27 +198,126 @@ eDTServer <- function(
             changelog = list(),
             changeLogTracker = 0,
             fullTableRefresh = 0,
+            edits_react = 0, # to force refreshing even when reactive value stays the same
+            changelog_react = 0 # # to force refreshing even when reactive value stays the same
         )
         
-        # Make arguments reactive
-        # Need to be explicit about environement. Otherwhise they overwrite themselves.
+        # Make arguments reactive / set defaults
         # This way users can pass on both reactive an non reactive arguments
+        # Need to be explicit about environement. Otherwhise they overwrite themselves.
         argEnv <- parent.frame(3)
-        args <- c(as.list(argEnv))
-        args$id <- NULL
-        args$env <- NULL
         
-        for(arg in names(args)){
-          if(!shiny::is.reactive(args[[arg]])){
-            eval(parse(text = sprintf("assign(arg, shiny::reactive(%s, env = argEnv))", arg)))
-          }
+        if(!shiny::is.reactive(data)){
+          data <- shiny::reactive(data, env = argEnv)
         }
         
-        # Default for keys is all columns
-        if(is.null(argEnv$keys)){
+        if(!shiny::is.reactive(options)){
+          options <- shiny::reactive(options, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(class)){
+          class <- shiny::reactive(class, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(callback)){
+          callback <- shiny::reactive(callback, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(rownames)){
+          rownames <- shiny::reactive(rownames, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(colnames)){
+          colnames <- shiny::reactive(colnames, env = argEnv)
+        }
+        
+        missingContainer <- isMissing(container)
+        if(!missingContainer && !shiny::is.reactive(container)){
+          container <- shiny::reactive(container, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(caption)){
+          caption <- shiny::reactive(caption, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(filter)){
+          filter <- shiny::reactive(filter, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(escape)){
+          escape <- shiny::reactive(escape, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(style)){
+          style <- shiny::reactive(style, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(width)){
+          width <- shiny::reactive(width, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(height)){
+          height <- shiny::reactive(height, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(elementId)){
+          elementId <- shiny::reactive(elementId, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(fillContainer)){
+          fillContainer <- shiny::reactive(fillContainer, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(autoHideNavigation)){
+          autoHideNavigation <- shiny::reactive(autoHideNavigation, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(selection)){
+          selection <- shiny::reactive(selection, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(extensions)){
+          extensions <- shiny::reactive(extensions, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(plugins)){
+          plugins <- shiny::reactive(plugins, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(editable)){
+          editable <- shiny::reactive(editable, env = argEnv)
+        }
+        
+        if(is.null(keys)){
           keys <- reactive({
                 as.character(dplyr::tbl_vars(data()))
               })
+        } else if (!shiny::is.reactive(keys)){
+          keys <- shiny::reactive(keys, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(in_place)){
+          in_place <- shiny::reactive(in_place, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(format)){
+          format <- shiny::reactive(format, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(foreignTbls)){
+          foreignTbls <- shiny::reactive(foreignTbls, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(statusColor)){
+          statusColor <- shiny::reactive(statusColor, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(inputUI)){
+          inputUI <- shiny::reactive(inputUI, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(defaults)){
+          defaults <- shiny::reactive(defaults, env = argEnv)
         }
         
         # Some arguments can have various formats.
@@ -414,9 +513,8 @@ eDTServer <- function(
                   plugins = plugins(),
                   editable = editable
               )
-              containerIsMissing <- tryCatch({container(); FALSE}, error = function(e){TRUE})
-              if(!containerIsMissing){
-                internalArgs <- c(internalArgs, list(container = container))
+              if(!missingContainer){
+                internalArgs <- c(internalArgs, list(container = container()))
               }
               
               do.call(DT::datatable, internalArgs) %>%
@@ -494,6 +592,8 @@ eDTServer <- function(
         
         observe({
               req(rv$changelog)
+              rv$changelog_react
+              
               rv$changeLogTracker <- length(rv$changelog)
             })
         
@@ -582,14 +682,16 @@ eDTServer <- function(
               req(input$DT_cells_filled)
               edits <- input$DT_cells_filled
               edits$row <- edits$row + min(input$DT_rows_current -1)
-              rv$edits <- edits     
+              rv$edits <- edits
+              rv$edits_react <-  rv$edits_react + 1
             })
         
-        observe({
+        observeEvent(input$DT_cell_edit, {
               rv$edits <- input$DT_cell_edit
+              rv$edits_react <-  rv$edits_react + 1
             })
-        
-        observeEvent(rv$edits, {
+         
+        observeEvent(rv$edits_react, {
               req(rv$edits)
               edits <- unique(rv$edits)
               rv$edits <- NULL
@@ -637,6 +739,7 @@ eDTServer <- function(
                     changelog <- rv$changelog[seq_len(rv$changeLogTracker)]
                     changelog[[rv$changeLogTracker +1]] <- newChanges
                     rv$changelog <- changelog
+                    rv$changelog_react <- rv$changelog_react + 1
                     
                     rv$newState <- data
                   },
@@ -680,8 +783,13 @@ eDTServer <- function(
                 defaults <- defaults()
               }
               for(col in base::colnames(defaults)){
+                currentClass <- base::class(data[[col]])
+                defaultClass <- base::class(defaults[[col]])
+                
                 if(!col %in% base::colnames(newRow)){
                   stop(sprintf("Column %s not available. Not adding default.", col))
+                } else if (! identical(currentClass, defaultClass)){
+                  stop(sprintf("Default set for %s is of type %s instead of %s", col, defaultClass, currentClass))
                 } else {
                   newRow[[col]] <- defaults[[col]]
                 }
@@ -774,7 +882,6 @@ eDTServer <- function(
             })
         
         observeEvent(input$confirmCommit, {
-              
               req(effectiveChanges())
               modified <- effectiveChanges()
               cols <- as.character(dplyr::tbl_vars(data()))
@@ -1078,7 +1185,7 @@ autoFillJs <- c(
     "      });",
     "    }",
     "  }",
-    "  Shiny.setInputValue(id + '_cells_filled:DT.cellInfo', out);",
+    "  Shiny.setInputValue(id + '_cells_filled:DT.cellInfo', out,  {priority: \"event\"});",
     "  table.rows().invalidate();", # this updates the column type
     "});"
 )

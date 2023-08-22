@@ -1,3 +1,7 @@
+0.8.5
+    o More explicit code instead of string evaluation
+    o Fix reactivity in case of identical edits
+    o Check classes of default values for columns
 0.8.3
     o BREAKING: eDT returns list instead of reactive. Adjust to eDT()$result for old behavior.
     o eDT now returns the state of the unsaved data as eDT()$state
