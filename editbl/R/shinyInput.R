@@ -43,7 +43,7 @@ inputUI.default <- function(id, ...){
 #' @param id character module id
 #' @param data single row data.frame
 #' @param notEditable character columns that should not be edited
-#' @param  colnames named character
+#' @param colnames named character
 #' @param foreignTbls list of foreignTbls
 #' @param ... for compatibility with other methods
 #' @return reactive modified version of data
@@ -60,12 +60,38 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
         # Need to be explicit about environement. Otherwhise they overwrite themselves.
         # This way users can pass on both reactive an non reactive arguments
         argEnv <- parent.frame(3)
-        args <- c(as.list(argEnv))
-        args$id <- NULL
-        for(arg in names(args)){
-          if(!shiny::is.reactive(args[[arg]])){
-            eval(parse(text = sprintf("assign(arg, shiny::reactive(%s, env = argEnv))", arg)))
-          }
+        
+        if(!shiny::is.reactive(data)){
+          data <- reactive(data, env = argEnv)
+        }
+        
+        if(isMissing(colnames)){
+          colnames <- reactive({
+                colnames <- base::colnames(data())
+                names(colnames) <- colnames
+                colnames
+              })
+        }
+        else if(!shiny::is.reactive(colnames)){
+          colnames <- reactive(colnames, env = argEnv)
+        }
+        
+        if(isMissing(notEditable)){
+          notEditable <- reactive({
+                character(0)
+              })
+        }
+        else if(!shiny::is.reactive(notEditable)){
+          notEditable <- reactive(notEditable, env = argEnv)
+        }
+        
+        if(isMissing(foreignTbls)){
+          foreignTbls <- reactive({
+                list()
+              })
+        }
+        else if(!shiny::is.reactive(foreignTbls)){
+          foreignTbls <- reactive(foreignTbls, env = argEnv)
         }
         
         inputDTs <- reactive({
@@ -77,7 +103,7 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
                           choices = dplyr::collect(
                               dplyr::select(
                                   x$y,
-                                  dplyr::all_of(x$naturalKey)
+                                  dplyr::all_of(as.character(x$naturalKey))
                               )
                           ),
                           selected = data()[,x$naturalKey]
@@ -105,7 +131,7 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
             })
         
         normalInputs <- reactive({
-              uiData <- data()[,setdiff(base::colnames(data()), notEditable())]
+              uiData <- data()[,setdiff(base::colnames(data()), notEditable()), drop = FALSE]
               uiData <- castToFactor(uiData, foreignTbls())        
               inputNormalCols <- setdiff(base::colnames(uiData), inputDTCols())
               
@@ -135,7 +161,7 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
         output$inputUI <- renderUI({
               do.call(tagList,c(normalInputs(), DTInputs()))
             })
-        
+
         newData <- reactive({
               data <- data()
               

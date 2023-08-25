@@ -7,9 +7,9 @@
 createButtonsHTML(suffix = "\%1$s", ns = "\%2$s")
 }
 \arguments{
-\item{suffix}{character sprintf placeholer for suffix}
+\item{suffix}{\code{character(1)} sprintf placeholer for suffix}
 
-\item{ns}{character sprintf placeholder for ns}
+\item{ns}{\code{character(1)} sprintf placeholder for ns}
 }
 \value{
 character HTML to be filled in with \code{sprintf}

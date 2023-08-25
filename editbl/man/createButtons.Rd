@@ -2,20 +2,20 @@
 % Please edit documentation in R/eDT.R
 \name{createButtons}
 \alias{createButtons}
-\title{Create buttons to modify the row. See \code{\link{character}}}
+\title{Create buttons to modify the row. See \code{\link{createButtonsHTML}}}
 \usage{
 createButtons(suffix, ns)
 }
 \arguments{
-\item{suffix}{character}
+\item{suffix}{\code{character(1)}}
 
-\item{ns}{namespace}
+\item{ns}{\code{character(1)} namespace}
 }
 \value{
-character HTML
+\code{character} HTML
 }
 \description{
-Create buttons to modify the row. See \code{\link{character}}
+Create buttons to modify the row. See \code{\link{createButtonsHTML}}
 }
 \details{
 buttons used per row in the app.

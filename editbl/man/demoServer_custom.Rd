@@ -7,9 +7,9 @@
 demoServer_custom(id, x)
 }
 \arguments{
-\item{id}{character}
+\item{id}{\code{character(1)}}
 
-\item{x}{tbl}
+\item{x}{\code{tbl}}
 }
 \description{
 Server of the mtcars demo app

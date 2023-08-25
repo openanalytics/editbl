@@ -7,7 +7,7 @@
 getColumnTypeSums(tbl)
 }
 \arguments{
-\item{tbl}{tbl}
+\item{tbl}{\code{tbl}}
 }
 \value{
 named list with types of the colums

@@ -93,11 +93,7 @@ selectInputDT_Server <- function(id,
             })
         
         output$DT <- DT::renderDataTable({
-              # put row names to empty character
-              # otherwhise buggy selection: https://github.com/rstudio/DT/issues/945
-             data <- data_selection_first()
-             attr(data, "row.names") <- rep("", nrow(data))
-             
+             data <- data_selection_first()             
               DT::datatable(
                   data,
                   rownames = TRUE,
@@ -105,8 +101,8 @@ selectInputDT_Server <- function(id,
                       scrollX = TRUE,
                       columnDefs = list(
                           list(
-                              width = '0px',
-                              targets = c(0)) # hide row names
+                              visible = FALSE,
+                              targets = c(0)) # hide row names https://github.com/rstudio/DT/issues/945
                       )
                   ),
                   filter = "top",

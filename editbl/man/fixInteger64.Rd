@@ -7,10 +7,10 @@
 fixInteger64(x)
 }
 \arguments{
-\item{x}{data.frame}
+\item{x}{\code{data.frame}}
 }
 \value{
-x with integer64 columns set to bit64::as.integer64(NA)
+x with \code{integer64} columns set to \code{bit64::as.integer64(NA)}
 }
 \description{
 Replace instances of integer64 with actual NA values instead of weird default 9218868437227407266

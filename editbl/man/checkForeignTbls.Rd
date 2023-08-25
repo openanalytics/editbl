@@ -7,12 +7,12 @@
 checkForeignTbls(tbl, foreignTbls)
 }
 \arguments{
-\item{tbl}{tibble}
+\item{tbl}{\code{tbl}}
 
-\item{foreignTbls}{list}
+\item{foreignTbls}{list of foreign tbls as created by \code{\link{foreignTbl}}}
 }
 \value{
-boolean if tbl fufills constraint of all foreign tbls.
+\code{logical} stating if tbl fufills all constraints imposed by all foreign tbls.
 }
 \description{
 Check if all rows in tbl fufill foreignTbl constraints

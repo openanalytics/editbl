@@ -13,17 +13,18 @@ foreignTbl(
 )
 }
 \arguments{
-\item{x}{`tbl`. The child table.}
+\item{x}{\code{tbl}. The referencing table.}
 
-\item{y}{`tbl`. The referenced table.}
+\item{y}{\code{tbl}. The referenced table.}
 
-\item{by}{`character`. Column names to match on.
+\item{by}{\code{character}. Column names to match on.
 Note that you should rename and/or typecast the columns in y should they not exactly match the columns in x.}
 
-\item{naturalKey}{`character`. The columns that form the natural key in y.
-These are the only ones that can actually get modified, other columns will be deducted from these.}
+\item{naturalKey}{\code{character}. The columns that form the natural key in y.
+These are the only ones that can actually get modified in \code{eDT}, other columns will be deducted from these.}
 
-\item{allowNew}{logical. Whether or not new values are allowed. If TRUE, the rows in the foreignTbl will only be used as suggestions, not restrictions.}
+\item{allowNew}{\code{logical}. Whether or not new values are allowed. If \code{TRUE},
+the rows in the foreignTbl will only be used as suggestions, not restrictions.}
 }
 \value{
 list
@@ -32,15 +33,40 @@ list
 Create a foreign tibble
 }
 \details{
-this is a tibble that can be passed onto eDT as a reference.
+This is a tibble that can be passed onto \code{\link{eDT}} as a referenced table.
 
-It is the equivalent of a database table to which the core tbl of eDT has a foreign key.
+It is the equivalent of a database table to which the \code{data} tbl of eDT has a foreign key.
 
-It will be merged with the core tibble allowing to provide restrictions
+It will be merged with the ``data` tibble allowing to provide restrictions
 for certain columns.
 
-Note that it assumes that both the columns from `by` and `naturalKey` are unique in the foreignTbl.
-This assumption will not be checked since it is an expensive operation on big datasets.
+Note that row uniqueness for the columns used in \code{by} and \code{naturalKey} is assumed.
+This assumption will however not be checked since it is an expensive operation on big datasets.
+However, if violated, it might give errors during usage of the eDT module.
+}
+\examples{
+\dontrun{
+a <- tibble::tibble(
+   first_name = c("Albert","Donald","Mickey"),
+   last_name_id = c(1,2,2)
+ ))
+
+b <-  foreignTbl(
+ a,
+ tibble::tibble(
+     last_name = c("Einstein", "Duck", "Mouse"),
+     last_name_id = c(1,2,3)
+   )),
+ by = "last_name_id",
+ naturalKey = "last_name"
+)
+
+eDT(a,
+ foreignTbls = list(b),
+ options = list(columnDefs = list(list(visible=FALSE, targets="last_name_id")))
+)
+}
+
 }
 \author{
 Jasper Schelfhout

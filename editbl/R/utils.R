@@ -2,22 +2,23 @@
 #' @import fontawesome
 testImports <- NULL
 
-#' cast columns to the type of the template
+#' Cast columns to the type of the template
 #' 
-#' @param template data.frame
-#' @param x data.frame
+#' @param template `data.frame`
+#' @param x `data.frame`
 #' 
 #' @details only affects columns in both the template and x
-#' 
-#' @importFrom DT coerceValue
 coerceColumns <- function(template, x){
   for(col in intersect(names(x), names(template))){
-    x[[col]] <-   DT::coerceValue(x[[col]], template[[col]])
+    x[[col]] <-   coerceValue(x[[col]], template[[col]])
   }
   x
 }
 
-#' DT coerceValue with better POSIXct support
+#' `DT::coerceValue` with better `POSIXct` support
+#' 
+#' @details Will assume UTC in case no timezone is specified.
+#' 
 #' @inheritParams DT::coerceValue
 #' @importFrom DT coerceValue
 #' 
@@ -49,7 +50,7 @@ coerceValue <- function(val,old){
 
 #' Connect to your database.
 #'  
-#' @param dbname \code{character(0)}
+#' @param dbname `character(0)`
 #' @param drv database driver
 #' @param ... arguments passed to `DBI::dbConnect`
 #' @importFrom utils packageName
@@ -66,7 +67,7 @@ connectDB <- function(
       )
 }
 
-#' Return first non null argument
+#' Return first non `NULL` argument
 #' @param ... set of arguments
 #' 
 #' @author Jasper Schelfhout
@@ -81,10 +82,10 @@ coalesce <- function(...){
   return(result)
 }
 
-#' Cast columns in data.frame to editable types in datatable
-#' @param data data.frame
-#' @param cols character columns perform casting on.
-#' @return data.frame with some columns cast to another type
+#' Cast columns in `data.frame` to editable types in datatable
+#' @param data `data.frame`
+#' @param cols `character` columns perform casting on.
+#' @return `data.frame` with some columns cast to another type
 #' 
 #' @author Jasper Schelfhout
 castForDisplay <- function(data, cols = colnames(data)){
@@ -116,10 +117,10 @@ castToTbl <- function(data){
   result
 }
 
-#' Cast tbl or data.frame x to the types of the template
+#' Cast `tbl` or `data.frame` x to the types of the template
 #' 
-#' @details If template is a tbl with database source, convert to an in-memory tibble with same data types instead.
-#' @details Rownames might show differing
+#' @details If template is a `tbl` with database source, convert to an in-memory tibble with same data types instead.
+#' @details Rownames might differ or get lost.
 #' 
 #' @param x `data.frame`, `tbl` or `data.table`
 #' @param template `data.frame`, `tbl` or `data.table`
@@ -146,7 +147,7 @@ castToTemplate <- function(x, template){
 }
 
 #' Cast tbl to class of template
-#' @param tbl tbl
+#' @param tbl `tbl`
 #' @param template tabular object 
 #' @return tbl cast to the type of template
 #' @importFrom dplyr is.tbl
@@ -187,7 +188,7 @@ standardizeArgument_colnames <- function(colnames, data){
 
 #' Standardized editable argument to be in the form of a list
 #' @inheritParams eDT
-#' @return list(target = foo, xxx = bar)
+#' @return list of the form `list(target = foo, ...)`
 #' 
 #' @author Jasper Schelfhout
 standardizeArgument_editable <- function(
@@ -217,8 +218,8 @@ standardizeArgument_editable <- function(
 #' 
 #' @details https://github.com/Rdatatable/data.table/issues/4561
 #' 
-#' @param x data.frame
-#' @return x with integer64 columns set to bit64::as.integer64(NA)
+#' @param x `data.frame`
+#' @return x with `integer64` columns set to `bit64::as.integer64(NA)`
 #' 
 #' @author Jasper Schelfhout
 fixInteger64 <- function(x){
@@ -231,7 +232,7 @@ fixInteger64 <- function(x){
 }
 
 #' Get types of columns in a tbl
-#' @param tbl tbl
+#' @param tbl `tbl`
 #' @return named list with types of the colums
 #' 
 #' @importFrom dplyr type_sum collect
@@ -252,11 +253,11 @@ getColumnTypeSums <- function(tbl){
 #' https://datatables.net/reference/option/
 #' 
 #' 
-#' @param id character, namespaced id
-#' @param label character
-#' @param icon shiny::icon
-#' @param disabled boolean. Wether or not the button should start in a disabled state.
-#' @return list to be used in eDT(options = list(buttons = xxx))
+#' @param id `character(1)`, namespaced id
+#' @param label `character(1)`
+#' @param icon `shiny::icon`
+#' @param disabled `logical`. Wether or not the button should start in a disabled state.
+#' @return list to be used in `eDT(options = list(buttons = xxx))`
 #' 
 #' @author Jasper Schelfhout
 #' @export
@@ -278,10 +279,10 @@ customButton <- function(id, label, icon = "", disabled = FALSE){
 
 #' Check if an argument is missing
 #' 
-#' @details in contrast to `missing`, this can also be used in a nested environment
+#' @details in contrast to `base::missing()`, this can also be used in a nested environment
 #' 
 #' @param x object
-#' @return boolean 
+#' @return `logical`
 #' 
 #' @author Jasper Schelfhout
 isMissing <- function(x){

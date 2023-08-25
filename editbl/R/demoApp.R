@@ -41,7 +41,7 @@ runDemoApp_mtcars <- function(){
 }
 
 #' Run a custom demo app
-#' @param x tbl
+#' @param x `tbl`
 #' @importFrom shiny shinyApp
 runDemoApp_custom <- function(x){
   ui <- demoUI_custom(id = "app")
@@ -52,7 +52,7 @@ runDemoApp_custom <- function(x){
 }
 
 #' UI of the DB demo app
-#' @param id character
+#' @param id `character(1)`
 #' @param conn database connection object as given by \code{\link[DBI]{dbConnect}}.
 #' @importFrom shiny NS tagList selectInput verbatimTextOutput
 #' @return HTML
@@ -70,7 +70,7 @@ demoUI_DB <- function(id, conn) {
 }
 
 #' Server of the DB demo app
-#' @param id character
+#' @param id `character(1)`
 #' @param conn database connection object as given by \code{\link[DBI]{dbConnect}}.
 #' @importFrom shiny reactive moduleServer renderPrint
 #' @importFrom dplyr tbl
@@ -96,7 +96,7 @@ demoServer_DB <- function(id, conn) {
 }
 
 #' UI of the demo mtcars app
-#' @param id character
+#' @param id `character(1)`
 #' @importFrom shiny NS tagList
 #' @return HTML
 #' 
@@ -106,8 +106,8 @@ demoUI_mtcars <- function(id) {
 }
 
 #' Server of the mtcars demo app
-#' @param id character
-#' @importFrom dplyr tbl
+#' @param id `character(1)`
+#' @importFrom dplyr tibble
 #' 
 #' @author Jasper Schelfhout
 demoServer_mtcars <- function(id) {
@@ -115,7 +115,7 @@ demoServer_mtcars <- function(id) {
 }
 
 #' UI of the demo mtcars app
-#' @param id character
+#' @param id `character(1)`
 #' @importFrom shiny NS tagList
 #' @return HTML
 #' 
@@ -128,10 +128,8 @@ demoUI_custom <- function(id) {
 }
 
 #' Server of the mtcars demo app
-#' @param id character
-#' @param x tbl
-#' @importFrom shiny reactive moduleServer renderPrint
-#' @importFrom dplyr tbl
+#' @param id `character(1)`
+#' @param x `tbl`
 #' 
 #' @author Jasper Schelfhout
 demoServer_custom <- function(id, x) {

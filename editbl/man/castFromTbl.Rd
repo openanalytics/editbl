@@ -7,7 +7,7 @@
 castFromTbl(tbl, template)
 }
 \arguments{
-\item{tbl}{tbl}
+\item{tbl}{\code{tbl}}
 
 \item{template}{tabular object}
 }

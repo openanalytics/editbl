@@ -7,7 +7,7 @@
 runDemoApp_custom(x)
 }
 \arguments{
-\item{x}{tbl}
+\item{x}{\code{tbl}}
 }
 \description{
 Run a custom demo app

@@ -10,9 +10,9 @@ runDevApp <- function(){
 }
 
 #' UI of the demo app
-#' @param id character
+#' @param id `character(1)`
 #' @param conn database connection object as given by \code{\link[DBI]{dbConnect}}.
-#' @importFrom shiny NS tagList selectInput verbatimTextOutput
+#' @importFrom shiny NS tagList selectInput verbatimTextOutput actionButton
 #' @return HTML
 #' 
 #' @author Jasper Schelfhout
@@ -30,7 +30,7 @@ devUI <- function(id, conn) {
 }
 
 #' Server of the demo app
-#' @param id character
+#' @param id `character(1)`
 #' @param conn database connection object as given by \code{\link[DBI]{dbConnect}}.
 #' @importFrom shiny reactive moduleServer renderPrint
 #' @importFrom dplyr tbl

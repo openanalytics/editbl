@@ -7,7 +7,7 @@
 devUI(id, conn)
 }
 \arguments{
-\item{id}{character}
+\item{id}{\code{character(1)}}
 
 \item{conn}{database connection object as given by \code{\link[DBI]{dbConnect}}.}
 }

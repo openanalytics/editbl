@@ -14,23 +14,26 @@ joinForeignTbl(
 )
 }
 \arguments{
-\item{tbl}{`tbl`}
+\item{tbl}{\code{tbl}}
 
-\item{foreignTbl}{`tbl`}
+\item{foreignTbl}{\code{list} as created by \code{\link{foreignTbl}}}
 
-\item{keepNA}{`boolean` keep rows from tbl with NA keys.}
+\item{keepNA}{\code{logical} keep rows from tbl with NA keys.}
 
-\item{by}{named character}
+\item{by}{named \code{character}}
 
-\item{copy}{boolean}
+\item{copy}{\code{logical}}
 
-\item{type}{character}
+\item{type}{\code{character}}
 }
 \value{
-tibble `tbl`
+tibble \code{tbl}
 }
 \description{
 Merge a tbl with it a foreignTbl
+}
+\details{
+see also \code{dplyr} join functions like for example \code{dplyr::left_join}
 }
 \examples{
 \dontrun{

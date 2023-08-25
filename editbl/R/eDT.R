@@ -1,9 +1,9 @@
 #' UI of the eDT module
-#' @param id character
+#' @param id `character(1)`
 #' @param ... arguments passed to  DT::DTOutput
 #' @importFrom DT DTOutput
-#' @importFrom shiny actionButton tagList HTML tags fluidPage
-#' @importFrom shinyjs disabled useShinyjs
+#' @importFrom shiny actionButton tagList HTML tags fluidPage tags
+#' @importFrom shinyjs disabled useShinyjs hidden
 #' @return HTML
 #' 
 #' @author Jasper Schelfhout
@@ -31,11 +31,10 @@ eDTOutput <- function(id,...) {
   fluidPage(
       shinyjs::useShinyjs(),
       tags$script(js),
-      tags$head(tags$style(HTML(disableDoubleClickButtonCss))),
-
       # Hack that ensures fontawesome is properly loaded
       shinyjs::hidden(actionButton(ns("activate_shiny_css"), label = "hidden", icon = icon("plus"))),
       
+      tags$style(HTML(disableDoubleClickButtonCss(ns("DT")))),   
       DT::DTOutput(outputId = ns("DT"), ...)
   )
 }
@@ -45,25 +44,25 @@ eDTOutput <- function(id,...) {
 #' @details Can also be used as standalone app when not ran in reactive context.
 #' @details All arguments except 'id' and 'env' can be normal objects or reactive objects.
 #' 
-#' @param id character module id
+#' @param id `character(1)` module id
 #' @param data `tbl`. The function will automatically cast to tbl if needed.
 #' @inheritParams DT::datatable
-#' @param keys character. Defaults to all columns under the assumption that at least every row is unique.
+#' @param keys `character`. Defaults to all columns under the assumption that at least every row is unique.
 #' @param format function accepting and returning a \code{\link[DT]{datatable}}
-#' @param in_place boolean.
+#' @param in_place `logical`
 #' @param foreignTbls `list`. List of objects created by \code{\link{foreignTbl}}
-#' @param statusColor named character. Colors to indicate status of the row.
-#' @param inputUI function. UI function of a shiny module with at least arguments `id` `data` and `...`.
-#' @param defaults expression that evaluates to a tibble with (a subset of) columns of the data.
+#' @param statusColor named `character`. Colors to indicate status of the row.
+#' @param inputUI `function`. UI function of a shiny module with at least arguments `id` `data` and `...`.
+#' @param defaults expression that evaluates to a `tibble` with (a subset of) columns of the data.
 #'   It will be evaluated for each new row in the environment defined by 'env'.
 #'   This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
-#' elements with inputIds identical to one of the column names are used to update the data.
-#' @param env environment in which the server function is running. Should normally not be modified.
+#'   elements with inputIds identical to one of the column names are used to update the data.
+#' @param env `environment` in which the server function is running. Should normally not be modified.
 #' 
 #' @return list
-#' - result \code{reactive} modified version of \code{data} (saved)
-#' - state \code{reactive} current state of the \code{data} (unsaved)
-#' - selected \code{reactive} selected rows of the \code{data} (unsaved)
+#' - result `reactive` modified version of `data` (saved)
+#' - state `reactive` current state of the `data` (unsaved)
+#' - selected `reactive` selected rows of the `data` (unsaved)
 #' 
 #' @examples 
 #' \dontrun{
@@ -1028,14 +1027,13 @@ eDTServer <- function(
   )
 }
 
-
 #' Add some extra columns to data to allow for / keep track of modifications
-#' @param data data.frame
+#' @param data `data.frame`
 #' @param ns namespace function
-#' @param buttonCol character name of column with buttons
-#' @param statusCol character name of column with general status (e.g. modified or not).
-#' @param deleteCol character name of the column with deletion status.
-#' @param iCol name of column with i
+#' @param buttonCol `character(1)` name of column with buttons
+#' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
+#' @param deleteCol `character(1)` name of the column with deletion status.
+#' @param iCol `character(1)` name of column with i
 #' @return data with extra columns buttons, status, i.
 #' @importFrom dplyr relocate all_of
 #' @importFrom uuid UUIDgenerate
@@ -1064,10 +1062,9 @@ initData <- function(
   data
 }
 
-
 #' Add modification buttons as a column
-#' @param df data.frame
-#' @param columnName character
+#' @param df `data.frame`
+#' @param columnName `character(1)`
 #' @param ns namespace function
 #' @return df with extra column containing buttons
 #' 
@@ -1087,8 +1084,8 @@ addButtons <- function(df, columnName, ns){
 #' Helper function to write HTML
 #' @details generate HTML as character once and reuse.
 #' Since buttons have to be generated a lot, this otherwhise slows down the app.
-#' @param suffix character sprintf placeholer for suffix
-#' @param ns character sprintf placeholder for ns
+#' @param suffix `character(1)` sprintf placeholer for suffix
+#' @param ns `character(1)` sprintf placeholder for ns
 #' @importFrom shiny div actionButton icon
 #' @return character HTML to be filled in with \code{sprintf}
 createButtonsHTML <- function(suffix = "%1$s", ns = "%2$s"){
@@ -1118,11 +1115,11 @@ createButtonsHTML <- function(suffix = "%1$s", ns = "%2$s"){
 
 buttonsHTML <- createButtonsHTML()
 
-#' Create buttons to modify the row. See \code{\link{character}}
+#' Create buttons to modify the row. See \code{\link{createButtonsHTML}}
 #' @details buttons used per row in the app.
-#' @param suffix character
-#' @param ns namespace
-#' @return character HTML
+#' @param suffix `character(1)`
+#' @param ns `character(1)` namespace
+#' @return `character` HTML
 createButtons <- function(suffix, ns){
   sprintf(
       # Can be generated with createButtonsHTML
@@ -1132,11 +1129,17 @@ createButtons <- function(suffix, ns){
   )
 }
 
-# https://stackoverflow.com/questions/60406027/how-to-disable-double-click-reactivity-for-specific-columns-in-r-datatable
-disableDoubleClickButtonCss <-  "
-    table tbody td:nth-child(1) {pointer-events: none;}
-    table tbody td:nth-child(1)>div {pointer-events: auto;}
-    "
+#' Function to generate CSS to disable clicking events on a column
+#' @param id `character(1)` namespaced id of the datatable
+#' @details https://stackoverflow.com/questions/60406027/how-to-disable-double-click-reactivity-for-specific-columns-in-r-datatable
+#' @details https://stackoverflow.com/questions/75406546/apply-css-styling-to-a-single-dt-datatable
+#' @return `character` CSS
+disableDoubleClickButtonCss <- function(id){
+  sprintf("
+      #%1$s > .dataTables_wrapper > table tbody td:nth-child(1) {pointer-events: none;}
+      #%1$s > .dataTables_wrapper > table tbody td:nth-child(1)>div {pointer-events: auto;}
+      ",id)
+} 
 
 keyTableJS <- c(
     # Trigger doubleclick by enter

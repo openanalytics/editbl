@@ -37,10 +37,10 @@ columns must have the \code{Date} type. If you don't set \code{date} in
 the \code{editable} list, the editing with the calendar is automatically
 set for all \code{Date} columns.}
 
-\item{data}{`tbl`. The function will automatically cast to tbl if needed.}
+\item{data}{\code{tbl}. The function will automatically cast to tbl if needed.}
 }
 \value{
-list(target = foo, xxx = bar)
+list of the form \code{list(target = foo, ...)}
 }
 \description{
 Standardized editable argument to be in the form of a list

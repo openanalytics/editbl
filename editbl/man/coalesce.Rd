@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{coalesce}
 \alias{coalesce}
-\title{Return first non null argument}
+\title{Return first non \code{NULL} argument}
 \usage{
 coalesce(...)
 }
@@ -10,7 +10,7 @@ coalesce(...)
 \item{...}{set of arguments}
 }
 \description{
-Return first non null argument
+Return first non \code{NULL} argument
 }
 \author{
 Jasper Schelfhout

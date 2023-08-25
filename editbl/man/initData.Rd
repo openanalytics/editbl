@@ -14,17 +14,17 @@ initData(
 )
 }
 \arguments{
-\item{data}{data.frame}
+\item{data}{\code{data.frame}}
 
 \item{ns}{namespace function}
 
-\item{buttonCol}{character name of column with buttons}
+\item{buttonCol}{\code{character(1)} name of column with buttons}
 
-\item{statusCol}{character name of column with general status (e.g. modified or not).}
+\item{statusCol}{\code{character(1)} name of column with general status (e.g. modified or not).}
 
-\item{deleteCol}{character name of the column with deletion status.}
+\item{deleteCol}{\code{character(1)} name of the column with deletion status.}
 
-\item{iCol}{name of column with i}
+\item{iCol}{\code{character(1)} name of column with i}
 }
 \value{
 data with extra columns buttons, status, i.

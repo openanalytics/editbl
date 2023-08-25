@@ -7,9 +7,9 @@
 addButtons(df, columnName, ns)
 }
 \arguments{
-\item{df}{data.frame}
+\item{df}{\code{data.frame}}
 
-\item{columnName}{character}
+\item{columnName}{\code{character(1)}}
 
 \item{ns}{namespace function}
 }

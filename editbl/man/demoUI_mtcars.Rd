@@ -7,7 +7,7 @@
 demoUI_mtcars(id)
 }
 \arguments{
-\item{id}{character}
+\item{id}{\code{character(1)}}
 }
 \value{
 HTML

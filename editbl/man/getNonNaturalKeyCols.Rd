@@ -7,10 +7,10 @@
 getNonNaturalKeyCols(foreignTbls)
 }
 \arguments{
-\item{foreignTbls}{list}
+\item{foreignTbls}{list of foreign tbls as created by \code{\link{foreignTbl}}}
 }
 \value{
-character
+\code{character}
 }
 \description{
 Get all columns that are not natural keys

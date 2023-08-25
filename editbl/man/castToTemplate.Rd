@@ -2,25 +2,25 @@
 % Please edit documentation in R/utils.R
 \name{castToTemplate}
 \alias{castToTemplate}
-\title{Cast tbl or data.frame x to the types of the template}
+\title{Cast \code{tbl} or \code{data.frame} x to the types of the template}
 \usage{
 castToTemplate(x, template)
 }
 \arguments{
-\item{x}{`data.frame`, `tbl` or `data.table`}
+\item{x}{\code{data.frame}, \code{tbl} or \code{data.table}}
 
-\item{template}{`data.frame`, `tbl` or `data.table`}
+\item{template}{\code{data.frame}, \code{tbl} or \code{data.table}}
 }
 \value{
 object containing data of x in the class and structure of the template.
 }
 \description{
-Cast tbl or data.frame x to the types of the template
+Cast \code{tbl} or \code{data.frame} x to the types of the template
 }
 \details{
-If template is a tbl with database source, convert to an in-memory tibble with same data types instead.
+If template is a \code{tbl} with database source, convert to an in-memory tibble with same data types instead.
 
-Rownames might show differing
+Rownames might differ or get lost.
 }
 \author{
 Jasper Schelfhout

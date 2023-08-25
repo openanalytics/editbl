@@ -2,17 +2,17 @@
 % Please edit documentation in R/utils.R
 \name{coerceColumns}
 \alias{coerceColumns}
-\title{cast columns to the type of the template}
+\title{Cast columns to the type of the template}
 \usage{
 coerceColumns(template, x)
 }
 \arguments{
-\item{template}{data.frame}
+\item{template}{\code{data.frame}}
 
-\item{x}{data.frame}
+\item{x}{\code{data.frame}}
 }
 \description{
-cast columns to the type of the template
+Cast columns to the type of the template
 }
 \details{
 only affects columns in both the template and x

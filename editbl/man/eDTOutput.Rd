@@ -7,7 +7,7 @@
 eDTOutput(id, ...)
 }
 \arguments{
-\item{id}{character}
+\item{id}{\code{character(1)}}
 
 \item{...}{arguments passed to  DT::DTOutput}
 }

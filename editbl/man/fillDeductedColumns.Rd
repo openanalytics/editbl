@@ -7,9 +7,9 @@
 fillDeductedColumns(tbl, foreignTbls)
 }
 \arguments{
-\item{tbl}{`tbl`}
+\item{tbl}{\code{tbl}}
 
-\item{foreignTbls}{list of foreign tbls}
+\item{foreignTbls}{list of foreign tbls as created by \code{\link{foreignTbl}}}
 }
 \value{
 tbl

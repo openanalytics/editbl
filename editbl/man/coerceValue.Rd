@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{coerceValue}
 \alias{coerceValue}
-\title{DT coerceValue with better POSIXct support}
+\title{\code{DT::coerceValue} with better \code{POSIXct} support}
 \usage{
 coerceValue(val, old)
 }
@@ -12,7 +12,10 @@ coerceValue(val, old)
 \item{old}{An old value, whose type is the target type of \code{val}.}
 }
 \description{
-DT coerceValue with better POSIXct support
+\code{DT::coerceValue} with better \code{POSIXct} support
+}
+\details{
+Will assume UTC in case no timezone is specified.
 }
 \author{
 Jasper Schelfhout

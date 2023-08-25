@@ -7,16 +7,16 @@
 customButton(id, label, icon = "", disabled = FALSE)
 }
 \arguments{
-\item{id}{character, namespaced id}
+\item{id}{\code{character(1)}, namespaced id}
 
-\item{label}{character}
+\item{label}{\code{character(1)}}
 
-\item{icon}{shiny::icon}
+\item{icon}{\code{shiny::icon}}
 
-\item{disabled}{boolean. Wether or not the button should start in a disabled state.}
+\item{disabled}{\code{logical}. Wether or not the button should start in a disabled state.}
 }
 \value{
-list to be used in eDT(options = list(buttons = xxx))
+list to be used in \code{eDT(options = list(buttons = xxx))}
 }
 \description{
 Generate a custom button for DT

@@ -7,7 +7,7 @@
 demoServer_mtcars(id)
 }
 \arguments{
-\item{id}{character}
+\item{id}{\code{character(1)}}
 }
 \description{
 Server of the mtcars demo app

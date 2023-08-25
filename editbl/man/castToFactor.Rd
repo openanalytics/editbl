@@ -7,9 +7,9 @@
 castToFactor(data, foreignTbls)
 }
 \arguments{
-\item{data}{data.frame}
+\item{data}{\code{data.frame}}
 
-\item{foreignTbls}{list of foreign tbls}
+\item{foreignTbls}{list of foreign tbls as created by \code{\link{foreignTbl}}}
 }
 \value{
 data.frame

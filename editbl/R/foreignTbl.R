@@ -1,22 +1,48 @@
 #' Create a foreign tibble
 #' 
-#' @details this is a tibble that can be passed onto eDT as a reference.
+#' @details This is a tibble that can be passed onto \code{\link{eDT}} as a referenced table.
 #' 
-#' It is the equivalent of a database table to which the core tbl of eDT has a foreign key.
+#' It is the equivalent of a database table to which the `data` tbl of eDT has a foreign key.
 #' 
-#' It will be merged with the core tibble allowing to provide restrictions
+#' It will be merged with the ``data` tibble allowing to provide restrictions
 #' for certain columns.
 #' 
-#' Note that it assumes that both the columns from `by` and `naturalKey` are unique in the foreignTbl.
-#' This assumption will not be checked since it is an expensive operation on big datasets.
+#' Note that row uniqueness for the columns used in `by` and `naturalKey` is assumed.
+#' This assumption will however not be checked since it is an expensive operation on big datasets.
+#' However, if violated, it might give errors during usage of the eDT module.
 #' 
-#' @param x  `tbl`. The child table.
+#' @param x  `tbl`. The referencing table.
 #' @param y `tbl`. The referenced table.
 #' @param by `character`. Column names to match on.
 #' Note that you should rename and/or typecast the columns in y should they not exactly match the columns in x.
 #' @param naturalKey `character`. The columns that form the natural key in y.
-#' These are the only ones that can actually get modified, other columns will be deducted from these.
-#' @param allowNew logical. Whether or not new values are allowed. If TRUE, the rows in the foreignTbl will only be used as suggestions, not restrictions.
+#' These are the only ones that can actually get modified in `eDT`, other columns will be deducted from these.
+#' @param allowNew `logical`. Whether or not new values are allowed. If `TRUE`,
+#' the rows in the foreignTbl will only be used as suggestions, not restrictions.
+#' 
+#' @examples 
+#' \dontrun{
+#' a <- tibble::tibble(
+#'    first_name = c("Albert","Donald","Mickey"),
+#'    last_name_id = c(1,2,2)
+#'  ))
+#'
+#' b <-  foreignTbl(
+#'  a,
+#'  tibble::tibble(
+#'      last_name = c("Einstein", "Duck", "Mouse"),
+#'      last_name_id = c(1,2,3)
+#'    )),
+#'  by = "last_name_id",
+#'  naturalKey = "last_name"
+#')
+#' 
+#'eDT(a,
+#'  foreignTbls = list(b),
+#'  options = list(columnDefs = list(list(visible=FALSE, targets="last_name_id")))
+#' )
+#'}
+#' 
 #' @return list
 #' 
 #' @importFrom dplyr tbl_vars all_of select
@@ -65,13 +91,15 @@ foreignTbl <- function(
 }
 
 #' Merge a tbl with it a foreignTbl
+#' 
+#' @details see also `dplyr` join functions like for example `dplyr::left_join`
 #'  
 #' @param tbl `tbl`
-#' @param foreignTbl `tbl`
-#' @param keepNA `boolean` keep rows from tbl with NA keys.
-#' @param by named character
-#' @param copy boolean
-#' @param type character
+#' @param foreignTbl `list` as created by \code{\link{foreignTbl}}
+#' @param keepNA `logical` keep rows from tbl with NA keys.
+#' @param by named `character`
+#' @param copy `logical` 
+#' @param type `character`
 #' @return tibble `tbl`
 #' 
 #' @examples 
@@ -154,7 +182,7 @@ joinForeignTbl <- function(
 #' checkForeignTbls to see if a valid result is obtained.
 #' 
 #' @param tbl `tbl`
-#' @param foreignTbls  list of foreign tbls
+#' @param foreignTbls  list of foreign tbls as created by \code{\link{foreignTbl}}
 #' @return tbl
 #' 
 #' @author Jasper Schelfhout
@@ -183,9 +211,9 @@ fillDeductedColumns <- function(tbl, foreignTbls){
 }
 
 #' Check if all rows in tbl fufill foreignTbl constraints
-#' @param tbl tibble
-#' @param foreignTbls list
-#' @return boolean if tbl fufills constraint of all foreign tbls.
+#' @param tbl `tbl`
+#' @param foreignTbls  list of foreign tbls as created by \code{\link{foreignTbl}}
+#' @return `logical` stating if tbl fufills all constraints imposed by all foreign tbls.
 #' @importFrom dplyr count pull anti_join filter if_any all_of
 #' 
 #' @author Jasper Schelfhout
@@ -220,8 +248,8 @@ checkForeignTbls <- function(tbl, foreignTbls){
 #' 
 #' @details Can be used to fixate possible options when editing.
 #' 
-#' @param data data.frame
-#' @param foreignTbls list of foreign tbls 
+#' @param data `data.frame`
+#' @param foreignTbls  list of foreign tbls as created by \code{\link{foreignTbl}}
 #' @importFrom dplyr distinct select pull tbl_vars
 #' @return data.frame
 #' 
@@ -247,8 +275,8 @@ castToFactor <- function(data, foreignTbls){
 }
 
 #' Get all columns that are not natural keys
-#' @param foreignTbls list
-#' @return character
+#' @param foreignTbls  list of foreign tbls as created by \code{\link{foreignTbl}}
+#' @return `character`
 #' 
 #' @author Jasper Schelfhout
 getNonNaturalKeyCols <- function(foreignTbls){

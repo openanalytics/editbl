@@ -40,7 +40,7 @@ eDT(
 )
 }
 \arguments{
-\item{data}{`tbl`. The function will automatically cast to tbl if needed.}
+\item{data}{\code{tbl}. The function will automatically cast to tbl if needed.}
 
 \item{options}{a list of initialization options (see
 \url{https://datatables.net/reference/option/}); the character options
@@ -168,32 +168,34 @@ columns must have the \code{Date} type. If you don't set \code{date} in
 the \code{editable} list, the editing with the calendar is automatically
 set for all \code{Date} columns.}
 
-\item{id}{character module id}
+\item{id}{\code{character(1)} module id}
 
-\item{keys}{character. Defaults to all columns under the assumption that at least every row is unique.}
+\item{keys}{\code{character}. Defaults to all columns under the assumption that at least every row is unique.}
 
-\item{in_place}{boolean.}
+\item{in_place}{\code{logical}}
 
 \item{format}{function accepting and returning a \code{\link[DT]{datatable}}}
 
-\item{foreignTbls}{`list`. List of objects created by \code{\link{foreignTbl}}}
+\item{foreignTbls}{\code{list}. List of objects created by \code{\link{foreignTbl}}}
 
-\item{statusColor}{named character. Colors to indicate status of the row.}
+\item{statusColor}{named \code{character}. Colors to indicate status of the row.}
 
-\item{inputUI}{function. UI function of a shiny module with at least arguments `id` `data` and `...`.}
+\item{inputUI}{\code{function}. UI function of a shiny module with at least arguments \code{id} \code{data} and \code{...}.}
 
-\item{defaults}{expression that evaluates to a tibble with (a subset of) columns of the data.
-  It will be evaluated for each new row in the environment defined by 'env'.
-  This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
+\item{defaults}{expression that evaluates to a \code{tibble} with (a subset of) columns of the data.
+It will be evaluated for each new row in the environment defined by 'env'.
+This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
 elements with inputIds identical to one of the column names are used to update the data.}
 
-\item{env}{environment in which the server function is running. Should normally not be modified.}
+\item{env}{\code{environment} in which the server function is running. Should normally not be modified.}
 }
 \value{
 list
-- result \code{reactive} modified version of \code{data} (saved)
-- state \code{reactive} current state of the \code{data} (unsaved)
-- selected \code{reactive} selected rows of the \code{data} (unsaved)
+\itemize{
+\item result \code{reactive} modified version of \code{data} (saved)
+\item state \code{reactive} current state of the \code{data} (unsaved)
+\item selected \code{reactive} selected rows of the \code{data} (unsaved)
+}
 }
 \description{
 Server of eDT module

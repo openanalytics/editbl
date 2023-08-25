@@ -15,7 +15,7 @@ connectDB(
 
 \item{drv}{database driver}
 
-\item{...}{arguments passed to `DBI::dbConnect`}
+\item{...}{arguments passed to \code{DBI::dbConnect}}
 }
 \value{
 database connection

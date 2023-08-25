@@ -1,7 +1,7 @@
 Package: editbl
 Type: Package
-Version: 0.8.6
-Date: 2023-08-25
+Version: 0.9.0
+Date: 2023-08-28
 Title: editbl
 Author: jschelfhout
 Maintainer: jschelfhout <jasper.schelfhout@openanalytics.eu> 
@@ -28,4 +28,5 @@ Suggests:
 URL: https://github.com/openanalytics/editbl
 BugReports: https://github.com/openanalytics/editbl/issues
 Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3

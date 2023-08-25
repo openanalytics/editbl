@@ -10,13 +10,13 @@ isMissing(x)
 \item{x}{object}
 }
 \value{
-boolean
+\code{logical}
 }
 \description{
 Check if an argument is missing
 }
 \details{
-in contrast to `missing`, this can also be used in a nested environment
+in contrast to \code{base::missing()}, this can also be used in a nested environment
 }
 \author{
 Jasper Schelfhout
