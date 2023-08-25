@@ -28,13 +28,23 @@ selectInputDT_Server <- function(id,
         # Need to be explicit about environement. Otherwhise they overwrite themselves.
         # This way users can pass on both reactive an non reactive arguments
         argEnv <- parent.frame(3)
-        args <- c(as.list(argEnv))
-        args$id <- NULL
-        for(arg in names(args)){
-          if(!shiny::is.reactive(args[[arg]])){
-            eval(parse(text = sprintf("assign(arg, shiny::reactive(%s, env = argEnv))", arg)))
-          }
+        
+        if(!shiny::is.reactive(label)){
+          label <- shiny::reactive(label, env = argEnv)
         }
+        
+        if(!shiny::is.reactive(choices)){
+          choices <- shiny::reactive(choices, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(selected)){
+          selected <- shiny::reactive(selected, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(multiple)){
+          multiple <- shiny::reactive(multiple, env = argEnv)
+        }
+        
         
         ns <- session$ns
         
@@ -82,12 +92,23 @@ selectInputDT_Server <- function(id,
               rowNrs
             })
         
-        
         output$DT <- DT::renderDataTable({
+              # put row names to empty character
+              # otherwhise buggy selection: https://github.com/rstudio/DT/issues/945
+             data <- data_selection_first()
+             attr(data, "row.names") <- rep("", nrow(data))
+             
               DT::datatable(
-                  data_selection_first(),
-                  rownames = TRUE, # otherwhise buggy selection: https://github.com/rstudio/DT/issues/945
-                  options = list(scrollX = TRUE),
+                  data,
+                  rownames = TRUE,
+                  options = list(
+                      scrollX = TRUE,
+                      columnDefs = list(
+                          list(
+                              width = '0px',
+                              targets = c(0)) # hide row names
+                      )
+                  ),
                   filter = "top",
                   selection = list(
                       mode = mode(),

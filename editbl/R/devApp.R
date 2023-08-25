@@ -53,7 +53,7 @@ devServer <- function(id, conn) {
                         targets = "_all"))),
             in_place = TRUE,
             filter = "top"
-        )
+        )$result
         
         
         observeEvent(input$browse,{
