@@ -25,5 +25,7 @@ Suggests:
 	glue,
 	DBI,
 	bit64
+URL: https://github.com/openanalytics/editbl
+BugReports: https://github.com/openanalytics/editbl/issues
 Encoding: UTF-8
 RoxygenNote: 7.2.3
