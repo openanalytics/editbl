@@ -2,7 +2,7 @@ Package: editbl
 Type: Package
 Version: 0.9.0
 Date: 2023-08-28
-Title: editbl
+Title: DT Extension for CRUD in Shiny
 Author: jschelfhout
 Maintainer: jschelfhout <jasper.schelfhout@openanalytics.eu> 
 Description: Edit, add and delete data from a tbl interactively.
