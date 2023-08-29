@@ -13,11 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      GITHUB_REPOSITORY: ${{ secrets.GITHUB_REPOSITORY }}
-      GITHUB_REF: ${{ secrets.GITHUB_REF }}
-      GITHUB_HEAD_REF: ${{ secrets.GITHUB_HEAD_REF }}
-      GITHUB_RUN_ID: ${{ secrets.ITHUB_RUN_ID }}
-      GITHUB_SHA: ${{ secrets.GITHUB_SHA }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
       - uses: actions/checkout@v3
