@@ -42,6 +42,21 @@ test_that("Editing a single table column works", {
       expect_true(TRUE)
     })
 
+test_that("Deletion of a row works", {
+      data <- dplyr::tibble(id = 1:2, name = letters[1:2])
+      
+      shiny::testServer(
+          app = eDTServer,
+          args = list(data = data),
+          expr = {
+            session$setInputs(current_id = 'delete_row_1')
+            session$setInputs(delete = 1)
+            session$flushReact()
+            session$setInputs(confirmCommit = 1)
+            expect_equal(nrow(result()),1)
+          }
+      )
+    })
 
 test_that("working with selectInputDT works.", {
       songs <- tibble::tibble(
