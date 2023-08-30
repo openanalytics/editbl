@@ -1,5 +1,5 @@
 [![R-CMD-check](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml)
-[![codecov](https://codecov.io/gh/openanalytics/editbl/branch/master/graph/badge.svg)](https://app.codecov.io/gh/openanalytics/editbl)
+[![codecov](https://codecov.io/gh/openanalytics/editbl/branch/main/graph/badge.svg)](https://app.codecov.io/gh/openanalytics/editbl)
 
 <img src="editbl_logo.png" alt="editbl_logo" width="200"/>
 
