@@ -2,14 +2,14 @@
 % Please edit documentation in R/shinyInput.R
 \name{inputServer}
 \alias{inputServer}
-\title{An input server for a data.frame}
+\title{An input server for a \code{data.frame}}
 \usage{
 inputServer(id, data, ...)
 }
 \arguments{
-\item{id}{character module id}
+\item{id}{\code{character(1)} module id}
 
-\item{data}{single row data.frame}
+\item{data}{single row \code{data.frame}}
 
 \item{...}{further arguments for methods}
 }
@@ -17,7 +17,19 @@ inputServer(id, data, ...)
 modified version of data
 }
 \description{
-An input server for a data.frame
+An input server for a \code{data.frame}
+}
+\examples{
+\dontrun{
+library(shiny)
+ui <- inputUI('id')
+server <- function(input,output,session){
+  input <- inputServer("id", mtcars[1,])
+  observe({print(input())})
+}
+shinyApp(ui, server)
+}
+
 }
 \author{
 Jasper Schelfhout

@@ -2,20 +2,20 @@
 % Please edit documentation in R/shinyInput.R
 \name{inputServer.default}
 \alias{inputServer.default}
-\title{An input server for a data.frame}
+\title{An input server for a \code{data.frame}}
 \usage{
 \method{inputServer}{default}(id, data, colnames, notEditable, foreignTbls, ...)
 }
 \arguments{
-\item{id}{character module id}
+\item{id}{\code{character(1)} module id}
 
-\item{data}{single row data.frame}
+\item{data}{single row \code{data.frame}}
 
-\item{colnames}{named character}
+\item{colnames}{named \code{character}}
 
-\item{notEditable}{character columns that should not be edited}
+\item{notEditable}{\code{character} columns that should not be edited}
 
-\item{foreignTbls}{list of foreignTbls}
+\item{foreignTbls}{list of foreignTbls. See \code{\link{foreignTbl}}}
 
 \item{...}{for compatibility with other methods}
 }
@@ -23,7 +23,7 @@
 reactive modified version of data
 }
 \description{
-An input server for a data.frame
+An input server for a \code{data.frame}
 }
 \details{
 Reads all inputs ids that are identical to column names of the data

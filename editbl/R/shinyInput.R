@@ -1,7 +1,9 @@
-#' An input UI for a data.frame
+#' An input UI for a `data.frame`
 #'  
-#' @param id character module id
+#' @param id `character(1)` module id
 #' @param  ... arguments passed onto methods
+#' @inherit inputServer examples
+#' 
 #' @return HTML. A set of input fields corresponding to the given row.
 #' 
 #' @author Jasper Schelfhout
@@ -10,13 +12,25 @@ inputUI <- function(id, ...){
   UseMethod("inputUI")
 }
 
-#' An input server for a data.frame
-#' @param id character module id
-#' @param data single row data.frame
+#' An input server for a `data.frame`
+#' @param id `character(1)` module id
+#' @param data single row `data.frame`
 #' @param ... further arguments for methods
 #' @return modified version of data
 #' 
+#' @examples
+#' \dontrun{
+#' library(shiny)
+#' ui <- inputUI('id')
+#' server <- function(input,output,session){
+#'   input <- inputServer("id", mtcars[1,])
+#'   observe({print(input())})
+#' }
+#' shinyApp(ui, server)
+#' }
+#' 
 #' @author Jasper Schelfhout
+#' @export
 inputServer <- function(id, data, ...){
   UseMethod("inputServer")
 }
@@ -30,25 +44,27 @@ inputServer <- function(id, data, ...){
 #' @return HTML. A set of input fields corresponding to the given row.
 #' 
 #' @author Jasper Schelfhout
+#' @export
 inputUI.default <- function(id, ...){
   ns <- NS(id)
   uiOutput(ns("inputUI"))
 }
 
-#' An input server for a data.frame
+#' An input server for a `data.frame`
 #' 
 #' @details Reads all inputs ids that are identical to column names of the data
 #' and updates the data.
 #' 
-#' @param id character module id
-#' @param data single row data.frame
-#' @param notEditable character columns that should not be edited
-#' @param colnames named character
-#' @param foreignTbls list of foreignTbls
+#' @param id `character(1)` module id
+#' @param data single row `data.frame`
+#' @param notEditable `character` columns that should not be edited
+#' @param colnames named `character`
+#' @param foreignTbls list of foreignTbls. See \code{\link{foreignTbl}}
 #' @param ... for compatibility with other methods
 #' @return reactive modified version of data
 #' 
 #' @author Jasper Schelfhout
+#' @export
 inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ...){  
   moduleServer(
       id,

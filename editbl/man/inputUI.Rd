@@ -2,12 +2,12 @@
 % Please edit documentation in R/shinyInput.R
 \name{inputUI}
 \alias{inputUI}
-\title{An input UI for a data.frame}
+\title{An input UI for a \code{data.frame}}
 \usage{
 inputUI(id, ...)
 }
 \arguments{
-\item{id}{character module id}
+\item{id}{\code{character(1)} module id}
 
 \item{...}{arguments passed onto methods}
 }
@@ -15,7 +15,19 @@ inputUI(id, ...)
 HTML. A set of input fields corresponding to the given row.
 }
 \description{
-An input UI for a data.frame
+An input UI for a \code{data.frame}
+}
+\examples{
+\dontrun{
+library(shiny)
+ui <- inputUI('id')
+server <- function(input,output,session){
+  input <- inputServer("id", mtcars[1,])
+  observe({print(input())})
+}
+shinyApp(ui, server)
+}
+
 }
 \author{
 Jasper Schelfhout
