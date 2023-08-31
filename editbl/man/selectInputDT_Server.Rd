@@ -13,21 +13,36 @@ selectInputDT_Server(
 )
 }
 \arguments{
-\item{id}{character}
+\item{id}{\code{character(1)} same one as used in \code{\link{selectInputDT_UI}}}
 
-\item{label}{character}
+\item{label}{\code{character(1)}}
 
-\item{choices}{data.frame}
+\item{choices}{\code{data.frame}}
 
-\item{selected}{data.frame single row}
+\item{selected}{\code{data.frame} with rows available in \code{choices}.}
 
-\item{multiple}{logical}
+\item{multiple}{\code{logical}. Whether or not multiple row selection is allowed}
 }
 \value{
-data.frame single row, new selection
+A selection of rows from the \code{data.frame} provided under choices.
 }
 \description{
 Server to use a datatable as select input
+}
+\examples{
+\dontrun{
+ui <- selectInputDT_UI('id')
+data <- data.frame(id = 1:3, name = letters[1:3])
+server <- function(input,output, session){
+  selected = selectInputDT_Server('id', choices = data, selected = data[1,] )
+  observe({print(selected())})
+}
+shiny::shinyApp(ui, server)
+
+}
+}
+\seealso{
+\code{shiny::selectInput}
 }
 \author{
 Jasper Schelfhout

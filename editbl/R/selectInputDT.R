@@ -1,6 +1,7 @@
 #' Create a DT select input
-#' @param id character
-#' 
+#' @param id `character(1)` same one as used in \code{\link{selectInputDT_Server}}
+#' @importFrom shiny NS uiOutput
+#' @export
 #' @author Jasper Schelfhout
 selectInputDT_UI <- function(id){
   ns <- NS(id)
@@ -8,13 +9,30 @@ selectInputDT_UI <- function(id){
 }
 
 #' Server to use a datatable as select input
-#' @param id character
-#' @param choices data.frame
-#' @param label character
-#' @param selected data.frame single row
-#' @param multiple logical
-#' @return data.frame single row, new selection
 #' 
+#' @seealso `shiny::selectInput`
+#' 
+#' @param id `character(1)` same one as used in \code{\link{selectInputDT_UI}}
+#' @param choices `data.frame`
+#' @param label `character(1)`
+#' @param selected `data.frame` with rows available in `choices`.
+#' @param multiple `logical`. Whether or not multiple row selection is allowed
+#' 
+#' @examples
+#' \dontrun{
+#' ui <- selectInputDT_UI('id')
+#' data <- data.frame(id = 1:3, name = letters[1:3])
+#' server <- function(input,output, session){
+#'   selected = selectInputDT_Server('id', choices = data, selected = data[1,] )
+#'   observe({print(selected())})
+#' }
+#' shiny::shinyApp(ui, server)
+#' 
+#' }
+#' @importFrom shiny is.reactive reactive renderUI moduleServer
+#' @importFrom DT renderDataTable datatable
+#' @return A selection of rows from the `data.frame` provided under choices.
+#' @export 
 #' @author Jasper Schelfhout
 selectInputDT_Server <- function(id,
     label = "",
@@ -45,6 +63,11 @@ selectInputDT_Server <- function(id,
           multiple <- shiny::reactive(multiple, env = argEnv)
         }
         
+        observe({
+              if(!multiple() && nrow(selected()) > 1){
+                stop("Can not have more than 1 row selected.")
+              }
+            })
         
         ns <- session$ns
         

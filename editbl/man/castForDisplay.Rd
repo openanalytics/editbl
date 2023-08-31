@@ -9,7 +9,7 @@ castForDisplay(data, cols = colnames(data))
 \arguments{
 \item{data}{\code{data.frame}}
 
-\item{cols}{\code{character} columns perform casting on.}
+\item{cols}{\code{character} columns to perform casting on.}
 }
 \value{
 \code{data.frame} with some columns cast to another type

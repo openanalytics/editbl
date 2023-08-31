@@ -2,10 +2,10 @@
 % Please edit documentation in R/utils.R
 \name{connectDB}
 \alias{connectDB}
-\title{Connect to your database.}
+\title{Connect to a database.}
 \usage{
 connectDB(
-  dbname = system.file("extdata", "chinook.db", package = utils::packageName()),
+  dbname = system.file("extdata", "chinook.sqlite", package = utils::packageName()),
   drv = RSQLite::SQLite(),
   ...
 )
@@ -21,5 +21,9 @@ connectDB(
 database connection
 }
 \description{
-Connect to your database.
+Connect to a database.
+}
+\details{
+Connects by default to a test SQLite database originally obtained here:
+\href{https://github.com/lerocha/chinook-database/blob/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite}{chinook_git}
 }

@@ -24,7 +24,7 @@ initData(
 
 \item{deleteCol}{\code{character(1)} name of the column with deletion status.}
 
-\item{iCol}{\code{character(1)} name of column with i}
+\item{iCol}{\code{character(1)} name of column containing a unique identifier.}
 }
 \value{
 data with extra columns buttons, status, i.

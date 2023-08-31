@@ -53,10 +53,10 @@ rows_delete implementation for DBI backends.
 \examples{
 \dontrun{
 # delete rows
-conn <- connectDB()
+conn <- editbl:::connectDB()
 artists <- dplyr::tbl(conn, "Artists")
 y <- data.frame(ArtistId = 999)
- rows_delete.tbl_dbi(
+editbl:::rows_delete.tbl_dbi(
      x = artists,
      y = y,
      by = "ArtistId",

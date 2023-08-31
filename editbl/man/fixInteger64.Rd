@@ -16,7 +16,7 @@ x with \code{integer64} columns set to \code{bit64::as.integer64(NA)}
 Replace instances of integer64 with actual NA values instead of weird default 9218868437227407266
 }
 \details{
-https://github.com/Rdatatable/data.table/issues/4561
+\href{https://github.com/Rdatatable/data.table/issues/4561}{github issue}
 }
 \author{
 Jasper Schelfhout

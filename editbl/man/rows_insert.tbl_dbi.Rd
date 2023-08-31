@@ -53,9 +53,11 @@ rows_insert implementation for DBI backends.
 \examples{
 \dontrun{
 # insert a new row
-conn <- connectDB()
+conn <- editbl:::connectDB()
 artists <- dplyr::tbl(conn, "Artists")
-rows_insert.tbl_dbi(artists, data.frame(ArtistId = 999, Name = "testArtist"), in_place = TRUE)
+editbl:::rows_insert.tbl_dbi(artists,
+ data.frame(ArtistId = 999, Name = "testArtist"),
+ in_place = TRUE)
 }
 
 }

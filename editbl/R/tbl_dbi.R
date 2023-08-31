@@ -3,9 +3,11 @@
 #' @examples
 #' \dontrun{
 #' # insert a new row
-#' conn <- connectDB()
+#' conn <- editbl:::connectDB()
 #' artists <- dplyr::tbl(conn, "Artists")
-#' rows_insert.tbl_dbi(artists, data.frame(ArtistId = 999, Name = "testArtist"), in_place = TRUE)
+#' editbl:::rows_insert.tbl_dbi(artists,
+#'  data.frame(ArtistId = 999, Name = "testArtist"),
+#'  in_place = TRUE)
 #' }
 #' 
 #' @inheritParams dplyr::rows_insert
@@ -48,24 +50,24 @@ rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
 #' @examples
 #' \dontrun{
 #' # update rows.
-#' conn <- connectDB()
+#' conn <- editbl:::connectDB()
 #' artists <- dplyr::tbl(conn, "Artists")
 #' y <- data.frame(ArtistId = 1, Name = "DC/AC")
-#'  rows_update.tbl_dbi(
+#' editbl:::rows_update.tbl_dbi(
 #'      x = artists,
 #'      y = y,
 #'      by = "ArtistId",
 #'      in_place = TRUE)
 #' 
 #' # update key values of rows.
-#' conn <- connectDB()
+#' conn <- editbl:::connectDB()
 #' artists <- dplyr::tbl(conn, "Artists")
 #' y <- data.frame(ArtistId = 999, Name = "DC/AC")
 #' match <- list(
 #'    x = data.frame("ArtistId" = 1),
 #'    y = data.frame("ArtistId" = 999)
 #' )
-#' rows_update.tbl_dbi(
+#' editbl:::rows_update.tbl_dbi(
 #'     x = artists,
 #'     y = y,
 #'     match = match,
@@ -113,10 +115,10 @@ rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALSE,
 #' @examples
 #' \dontrun{
 #' # delete rows
-#' conn <- connectDB()
+#' conn <- editbl:::connectDB()
 #' artists <- dplyr::tbl(conn, "Artists")
 #' y <- data.frame(ArtistId = 999)
-#'  rows_delete.tbl_dbi(
+#' editbl:::rows_delete.tbl_dbi(
 #'      x = artists,
 #'      y = y,
 #'      by = "ArtistId",

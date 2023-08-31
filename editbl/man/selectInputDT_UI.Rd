@@ -7,7 +7,7 @@
 selectInputDT_UI(id)
 }
 \arguments{
-\item{id}{character}
+\item{id}{\code{character(1)} same one as used in \code{\link{selectInputDT_Server}}}
 }
 \description{
 Create a DT select input

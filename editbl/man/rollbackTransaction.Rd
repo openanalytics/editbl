@@ -7,7 +7,7 @@
 rollbackTransaction(tbl)
 }
 \arguments{
-\item{tbl}{tibbl}
+\item{tbl}{\code{tbl}}
 }
 \description{
 Start a transaction for a tibble

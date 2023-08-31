@@ -9,7 +9,7 @@
 NULL
 
 #' Start a transaction for a tibble
-#' @param tbl tibbl
+#' @param tbl `tbl`
 #' 
 #' @author Jasper Schelfhout
 beginTransaction <- function(tbl){
@@ -19,7 +19,7 @@ beginTransaction <- function(tbl){
 }
 
 #' Start a transaction for a tibble
-#' @param tbl tibbl
+#' @param tbl `tbl`
 #' 
 #' @author Jasper Schelfhout
 commitTransaction <- function(tbl){
@@ -29,7 +29,7 @@ commitTransaction <- function(tbl){
 }
 
 #' Start a transaction for a tibble
-#' @param tbl tibbl
+#' @param tbl `tbl`
 #' 
 #' @author Jasper Schelfhout
 rollbackTransaction <- function(tbl){

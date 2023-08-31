@@ -4,12 +4,12 @@
 #' 
 #' It is the equivalent of a database table to which the `data` tbl of eDT has a foreign key.
 #' 
-#' It will be merged with the ``data` tibble allowing to provide restrictions
+#' It will be merged with the tbl passed onto the `data` argument allowing to provide restrictions
 #' for certain columns.
 #' 
 #' Note that row uniqueness for the columns used in `by` and `naturalKey` is assumed.
 #' This assumption will however not be checked since it is an expensive operation on big datasets.
-#' However, if violated, it might give errors during usage of the eDT module.
+#' However, if violated, it might give errors or unexpected results during usage of the eDT module.
 #' 
 #' @param x  `tbl`. The referencing table.
 #' @param y `tbl`. The referenced table.
@@ -210,7 +210,7 @@ fillDeductedColumns <- function(tbl, foreignTbls){
   tbl[,columnOrder]
 }
 
-#' Check if all rows in tbl fufill foreignTbl constraints
+#' Check if all rows in tbl fufill `foreignTbl` constraints
 #' @param tbl `tbl`
 #' @param foreignTbls  list of foreign tbls as created by \code{\link{foreignTbl}}
 #' @return `logical` stating if tbl fufills all constraints imposed by all foreign tbls.

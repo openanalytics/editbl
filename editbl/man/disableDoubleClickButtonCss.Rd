@@ -16,7 +16,7 @@ disableDoubleClickButtonCss(id)
 Function to generate CSS to disable clicking events on a column
 }
 \details{
-https://stackoverflow.com/questions/60406027/how-to-disable-double-click-reactivity-for-specific-columns-in-r-datatable
+\url{https://stackoverflow.com/questions/60406027/how-to-disable-double-click-reactivity-for-specific-columns-in-r-datatable}
 
-https://stackoverflow.com/questions/75406546/apply-css-styling-to-a-single-dt-datatable
+\url{https://stackoverflow.com/questions/75406546/apply-css-styling-to-a-single-dt-datatable}
 }

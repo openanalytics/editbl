@@ -13,7 +13,7 @@ customButton(id, label, icon = "", disabled = FALSE)
 
 \item{icon}{\code{shiny::icon}}
 
-\item{disabled}{\code{logical}. Wether or not the button should start in a disabled state.}
+\item{disabled}{\code{logical}. Whether or not the button should start in a disabled state.}
 }
 \value{
 list to be used in \code{eDT(options = list(buttons = xxx))}
@@ -22,8 +22,7 @@ list to be used in \code{eDT(options = list(buttons = xxx))}
 Generate a custom button for DT
 }
 \details{
-Combines elements of shiny and options defined here:
-https://datatables.net/reference/option/
+Combines elements of \code{shiny::actionButton} and \href{https://datatables.net/reference/option/}{datatable options}
 }
 \author{
 Jasper Schelfhout

@@ -2,7 +2,7 @@
 % Please edit documentation in R/foreignTbl.R
 \name{checkForeignTbls}
 \alias{checkForeignTbls}
-\title{Check if all rows in tbl fufill foreignTbl constraints}
+\title{Check if all rows in tbl fufill \code{foreignTbl} constraints}
 \usage{
 checkForeignTbls(tbl, foreignTbls)
 }
@@ -15,7 +15,7 @@ checkForeignTbls(tbl, foreignTbls)
 \code{logical} stating if tbl fufills all constraints imposed by all foreign tbls.
 }
 \description{
-Check if all rows in tbl fufill foreignTbl constraints
+Check if all rows in tbl fufill \code{foreignTbl} constraints
 }
 \author{
 Jasper Schelfhout

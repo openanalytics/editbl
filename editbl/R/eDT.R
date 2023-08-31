@@ -1033,7 +1033,7 @@ eDTServer <- function(
 #' @param buttonCol `character(1)` name of column with buttons
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @param deleteCol `character(1)` name of the column with deletion status.
-#' @param iCol `character(1)` name of column with i
+#' @param iCol `character(1)` name of column containing a unique identifier.
 #' @return data with extra columns buttons, status, i.
 #' @importFrom dplyr relocate all_of
 #' @importFrom uuid UUIDgenerate
@@ -1131,8 +1131,8 @@ createButtons <- function(suffix, ns){
 
 #' Function to generate CSS to disable clicking events on a column
 #' @param id `character(1)` namespaced id of the datatable
-#' @details https://stackoverflow.com/questions/60406027/how-to-disable-double-click-reactivity-for-specific-columns-in-r-datatable
-#' @details https://stackoverflow.com/questions/75406546/apply-css-styling-to-a-single-dt-datatable
+#' @details <https://stackoverflow.com/questions/60406027/how-to-disable-double-click-reactivity-for-specific-columns-in-r-datatable>
+#' @details <https://stackoverflow.com/questions/75406546/apply-css-styling-to-a-single-dt-datatable>
 #' @return `character` CSS
 disableDoubleClickButtonCss <- function(id){
   sprintf("

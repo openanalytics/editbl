@@ -48,15 +48,18 @@ coerceValue <- function(val,old){
   }
 }
 
-#' Connect to your database.
+#' Connect to a database.
 #'  
+#' @details Connects by default to a test SQLite database originally obtained here:
+#' [chinook_git](https://github.com/lerocha/chinook-database/blob/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite)
+#' 
 #' @param dbname `character(0)`
 #' @param drv database driver
 #' @param ... arguments passed to `DBI::dbConnect`
 #' @importFrom utils packageName
 #' @return database connection
 connectDB <- function(
-    dbname = system.file("extdata", "chinook.db", package = utils::packageName()),
+    dbname = system.file("extdata", "chinook.sqlite", package = utils::packageName()),
     drv = RSQLite::SQLite(),
     ...
     ){
@@ -84,7 +87,7 @@ coalesce <- function(...){
 
 #' Cast columns in `data.frame` to editable types in datatable
 #' @param data `data.frame`
-#' @param cols `character` columns perform casting on.
+#' @param cols `character` columns to perform casting on.
 #' @return `data.frame` with some columns cast to another type
 #' 
 #' @author Jasper Schelfhout
@@ -148,7 +151,7 @@ castToTemplate <- function(x, template){
 
 #' Cast tbl to class of template
 #' @param tbl `tbl`
-#' @param template tabular object 
+#' @param template tabular object like `data.frame` or `data.table` or `tbl`.
 #' @return tbl cast to the type of template
 #' @importFrom dplyr is.tbl
 #' 
@@ -216,7 +219,7 @@ standardizeArgument_editable <- function(
 
 #' Replace instances of integer64 with actual NA values instead of weird default 9218868437227407266
 #' 
-#' @details https://github.com/Rdatatable/data.table/issues/4561
+#' @details [github issue](https://github.com/Rdatatable/data.table/issues/4561)
 #' 
 #' @param x `data.frame`
 #' @return x with `integer64` columns set to `bit64::as.integer64(NA)`
@@ -249,14 +252,12 @@ getColumnTypeSums <- function(tbl){
 #' Generate a custom button for DT
 #' 
 #' @details
-#' Combines elements of shiny and options defined here:
-#' https://datatables.net/reference/option/
-#' 
+#' Combines elements of `shiny::actionButton` and [datatable options](https://datatables.net/reference/option/)
 #' 
 #' @param id `character(1)`, namespaced id
 #' @param label `character(1)`
 #' @param icon `shiny::icon`
-#' @param disabled `logical`. Wether or not the button should start in a disabled state.
+#' @param disabled `logical`. Whether or not the button should start in a disabled state.
 #' @return list to be used in `eDT(options = list(buttons = xxx))`
 #' 
 #' @author Jasper Schelfhout

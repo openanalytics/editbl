@@ -9,7 +9,7 @@ castFromTbl(tbl, template)
 \arguments{
 \item{tbl}{\code{tbl}}
 
-\item{template}{tabular object}
+\item{template}{tabular object like \code{data.frame} or \code{data.table} or \code{tbl}.}
 }
 \value{
 tbl cast to the type of template

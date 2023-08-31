@@ -56,24 +56,24 @@ rows_update implementation for DBI backends.
 \examples{
 \dontrun{
 # update rows.
-conn <- connectDB()
+conn <- editbl:::connectDB()
 artists <- dplyr::tbl(conn, "Artists")
 y <- data.frame(ArtistId = 1, Name = "DC/AC")
- rows_update.tbl_dbi(
+editbl:::rows_update.tbl_dbi(
      x = artists,
      y = y,
      by = "ArtistId",
      in_place = TRUE)
 
 # update key values of rows.
-conn <- connectDB()
+conn <- editbl:::connectDB()
 artists <- dplyr::tbl(conn, "Artists")
 y <- data.frame(ArtistId = 999, Name = "DC/AC")
 match <- list(
    x = data.frame("ArtistId" = 1),
    y = data.frame("ArtistId" = 999)
 )
-rows_update.tbl_dbi(
+editbl:::rows_update.tbl_dbi(
     x = artists,
     y = y,
     match = match,
