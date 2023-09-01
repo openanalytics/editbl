@@ -9,6 +9,10 @@ runDemoApp_custom(x)
 \arguments{
 \item{x}{\code{tbl}}
 }
+\value{
+An object that represents the app. Printing the object or passing it
+to \code{\link[shiny:runApp]{runApp()}} will run the app.
+}
 \description{
 Run a custom demo app
 }

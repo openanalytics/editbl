@@ -57,7 +57,13 @@ coerceValue <- function(val,old){
 #' @param drv database driver
 #' @param ... arguments passed to `DBI::dbConnect`
 #' @importFrom utils packageName
+#' @examples 
+#' 
+#' conn <- connectDB()
+#' DBI::dbDisconnect(conn)
+#' 
 #' @return database connection
+#' @export
 connectDB <- function(
     dbname = system.file("extdata", "chinook.sqlite", package = utils::packageName()),
     drv = RSQLite::SQLite(),
@@ -249,7 +255,7 @@ getColumnTypeSums <- function(tbl){
       lapply(dplyr::type_sum)
 }
 
-#' Generate a custom button for DT
+#' Generate a custom button for \code{\link{eDT}}
 #' 
 #' @details
 #' Combines elements of `shiny::actionButton` and [datatable options](https://datatables.net/reference/option/)
@@ -259,6 +265,20 @@ getColumnTypeSums <- function(tbl){
 #' @param icon `shiny::icon`
 #' @param disabled `logical`. Whether or not the button should start in a disabled state.
 #' @return list to be used in `eDT(options = list(buttons = xxx))`
+#' 
+#' @examples
+#' if(interactive()){
+#' 
+#'   ui <- eDTOutput("data")
+#'   server <- function(input,output,session){
+#'     b <- customButton('print', label = 'print')
+#'     eDT_result <- eDT(id = "data", mtcars, options = list(buttons = list("save", b)))
+#'     observeEvent(input$print,{
+#'           print(eDT_result$state())
+#'     })
+#'   }
+#'   shinyApp(ui,server)
+#' }
 #' 
 #' @author Jasper Schelfhout
 #' @export

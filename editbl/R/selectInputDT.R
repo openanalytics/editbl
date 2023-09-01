@@ -1,6 +1,8 @@
-#' Create a DT select input
+#' UI part of a DT select input
 #' @param id `character(1)` same one as used in \code{\link{selectInputDT_Server}}
 #' @importFrom shiny NS uiOutput
+#' @return HTML
+#' @inherit selectInputDT_Server examples
 #' @export
 #' @author Jasper Schelfhout
 selectInputDT_UI <- function(id){
@@ -8,9 +10,10 @@ selectInputDT_UI <- function(id){
   uiOutput(ns("DT_UI"))
 }
 
-#' Server to use a datatable as select input
+#' Server part to use a \code{\link[DT]{datatable}} as select input
 #' 
-#' @seealso `shiny::selectInput`
+#' @seealso `shiny::selectInput`. This function can be more convenient for selecting rows
+#' with multiple columns.
 #' 
 #' @param id `character(1)` same one as used in \code{\link{selectInputDT_UI}}
 #' @param choices `data.frame`
@@ -19,14 +22,15 @@ selectInputDT_UI <- function(id){
 #' @param multiple `logical`. Whether or not multiple row selection is allowed
 #' 
 #' @examples
-#' \dontrun{
-#' ui <- selectInputDT_UI('id')
-#' data <- data.frame(id = 1:3, name = letters[1:3])
-#' server <- function(input,output, session){
-#'   selected = selectInputDT_Server('id', choices = data, selected = data[1,] )
-#'   observe({print(selected())})
-#' }
-#' shiny::shinyApp(ui, server)
+#' ## Only run this example in interactive R sessions
+#' if(interactive()){
+#'   ui <- selectInputDT_UI('id')
+#'   data <- data.frame(id = 1:3, name = letters[1:3])
+#'   server <- function(input,output, session){
+#'     selected = selectInputDT_Server('id', choices = data, selected = data[1,] )
+#'     observe({print(selected())})
+#'   }
+#'   shiny::shinyApp(ui, server)
 #' 
 #' }
 #' @importFrom shiny is.reactive reactive renderUI moduleServer

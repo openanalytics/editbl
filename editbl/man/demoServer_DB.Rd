@@ -11,6 +11,9 @@ demoServer_DB(id, conn)
 
 \item{conn}{database connection object as given by \code{\link[DBI]{dbConnect}}.}
 }
+\value{
+NULL, just executes the module server.
+}
 \description{
 Server of the DB demo app
 }

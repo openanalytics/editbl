@@ -20,40 +20,20 @@ joinForeignTbl(
 
 \item{keepNA}{\code{logical} keep rows from tbl with NA keys.}
 
-\item{by}{named \code{character}}
+\item{by}{named \code{character}, columns to join on.}
 
-\item{copy}{\code{logical}}
+\item{copy}{\code{logical}, whether or not to copy the \code{foreignTbl} to the source of argument \code{tbl} for joining.}
 
-\item{type}{\code{character}}
+\item{type}{\code{character(1)}, type of joint to perform. Can be 'inner' or 'left'.}
 }
 \value{
-tibble \code{tbl}
+\code{tbl}, containing both columns from argument \code{tbl} and argument \code{foreignTbl}.
 }
 \description{
 Merge a tbl with it a foreignTbl
 }
 \details{
-see also \code{dplyr} join functions like for example \code{dplyr::left_join}
-}
-\examples{
-\dontrun{
-a <- tibble::as_tibble(data.frame(
-    a = c(1,2,3),
-    key1 = c(NA,2,4),
-    key2 = c(NA,2,4)))
-
-b <-  tibble::as_tibble(data.frame(
-    b = c("a", "b", "c"),
-    key1 = c(1,2,3),
-    key2 = c(1,2,3)
-))
-
-foreignTbl <- foreignTbl(a,b)
-
-joinForeignTbl(a, foreignTbl)
-
-}
-
+see also \code{dplyr} join functions, for example \code{dplyr::left_join}.
 }
 \author{
 Jasper Schelfhout

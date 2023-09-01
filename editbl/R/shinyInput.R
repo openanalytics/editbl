@@ -1,5 +1,7 @@
 #' An input UI for a `data.frame`
-#'  
+#' 
+#' @details A new method for this can be added if you wish to alter the default behavior of the pop-up modals in \code{\link{eDT}}.
+#' 
 #' @param id `character(1)` module id
 #' @param  ... arguments passed onto methods
 #' @inherit inputServer examples
@@ -13,19 +15,22 @@ inputUI <- function(id, ...){
 }
 
 #' An input server for a `data.frame`
+#' 
+#' @details A new method for this can be added if you wish to alter the default behavior of the pop-up modals in \code{\link{eDT}}.
+#' 
 #' @param id `character(1)` module id
 #' @param data single row `data.frame`
 #' @param ... further arguments for methods
 #' @return modified version of data
 #' 
 #' @examples
-#' \dontrun{
-#' library(shiny)
-#' ui <- inputUI('id')
-#' server <- function(input,output,session){
-#'   input <- inputServer("id", mtcars[1,])
-#'   observe({print(input())})
-#' }
+#' if(interactive()){
+#'   library(shiny)
+#'   ui <- inputUI('id')
+#'   server <- function(input,output,session){
+#'     input <- inputServer("id", mtcars[1,])
+#'     observe({print(input())})
+#'   }
 #' shinyApp(ui, server)
 #' }
 #' 
@@ -198,10 +203,10 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
   )
 }
 
-#' Get a shiny input for a column of a tbl
+#' Get a shiny input for a column of a `tbl`
 #' @param x column
 #' @param inputId shiny input Id
-#' @param label character
+#' @param label `character(1)`
 #' @param selected object of class of x
 #' @importFrom shiny numericInput dateInput selectInput textInput
 #' @return shiny input

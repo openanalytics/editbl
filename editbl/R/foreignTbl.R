@@ -21,29 +21,35 @@
 #' the rows in the foreignTbl will only be used as suggestions, not restrictions.
 #' 
 #' @examples 
-#' \dontrun{
 #' a <- tibble::tibble(
 #'    first_name = c("Albert","Donald","Mickey"),
 #'    last_name_id = c(1,2,2)
-#'  ))
+#'  )
 #'
 #' b <-  foreignTbl(
 #'  a,
 #'  tibble::tibble(
 #'      last_name = c("Einstein", "Duck", "Mouse"),
 #'      last_name_id = c(1,2,3)
-#'    )),
+#'    ),
 #'  by = "last_name_id",
 #'  naturalKey = "last_name"
 #')
 #' 
-#'eDT(a,
-#'  foreignTbls = list(b),
-#'  options = list(columnDefs = list(list(visible=FALSE, targets="last_name_id")))
-#' )
-#'}
+#' ## Only run this in interactive R sessions
+#' if(interactive()){
+#'   eDT(a,
+#'    foreignTbls = list(b),
+#'    options = list(columnDefs = list(list(visible=FALSE, targets="last_name_id")))
+#'   )
+#'  }
+#'
 #' 
-#' @return list
+#' @return List with unmodified arguments. However, they have now been checked for validity.
+#' - y, see argument `y`.
+#' - by, see argument `by`.
+#' - naturalKey, see argument `naturalKey`.
+#' - allowNew, see argument `allowNew`
 #' 
 #' @importFrom dplyr tbl_vars all_of select
 #' 
@@ -92,34 +98,15 @@ foreignTbl <- function(
 
 #' Merge a tbl with it a foreignTbl
 #' 
-#' @details see also `dplyr` join functions like for example `dplyr::left_join`
+#' @details see also `dplyr` join functions, for example `dplyr::left_join`.
 #'  
 #' @param tbl `tbl`
 #' @param foreignTbl `list` as created by \code{\link{foreignTbl}}
 #' @param keepNA `logical` keep rows from tbl with NA keys.
-#' @param by named `character`
-#' @param copy `logical` 
-#' @param type `character`
-#' @return tibble `tbl`
-#' 
-#' @examples 
-#' \dontrun{
-#' a <- tibble::as_tibble(data.frame(
-#'     a = c(1,2,3),
-#'     key1 = c(NA,2,4),
-#'     key2 = c(NA,2,4)))
-#' 
-#' b <-  tibble::as_tibble(data.frame(
-#'     b = c("a", "b", "c"),
-#'     key1 = c(1,2,3),
-#'     key2 = c(1,2,3)
-#' ))
-#' 
-#' foreignTbl <- foreignTbl(a,b)
-#' 
-#' joinForeignTbl(a, foreignTbl)
-#' 
-#' }
+#' @param by named `character`, columns to join on.
+#' @param copy `logical`, whether or not to copy the `foreignTbl` to the source of argument `tbl` for joining.
+#' @param type `character(1)`, type of joint to perform. Can be 'inner' or 'left'.
+#' @return `tbl`, containing both columns from argument `tbl` and argument `foreignTbl`.
 #' 
 #' @importFrom dplyr left_join inner_join filter union
 #' 

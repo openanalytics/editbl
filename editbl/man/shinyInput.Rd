@@ -2,7 +2,7 @@
 % Please edit documentation in R/shinyInput.R
 \name{shinyInput}
 \alias{shinyInput}
-\title{Get a shiny input for a column of a tbl}
+\title{Get a shiny input for a column of a \code{tbl}}
 \usage{
 shinyInput(x, inputId, label, selected)
 }
@@ -11,7 +11,7 @@ shinyInput(x, inputId, label, selected)
 
 \item{inputId}{shiny input Id}
 
-\item{label}{character}
+\item{label}{\code{character(1)}}
 
 \item{selected}{object of class of x}
 }
@@ -19,7 +19,7 @@ shinyInput(x, inputId, label, selected)
 shiny input
 }
 \description{
-Get a shiny input for a column of a tbl
+Get a shiny input for a column of a \code{tbl}
 }
 \author{
 Jasper Schelfhout

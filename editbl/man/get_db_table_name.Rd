@@ -2,16 +2,16 @@
 % Please edit documentation in R/tbl_dbi.R
 \name{get_db_table_name}
 \alias{get_db_table_name}
-\title{get name of the tbl in the database}
+\title{Get name of the tbl in the database}
 \usage{
 get_db_table_name(x)
 }
 \arguments{
-\item{x}{tbl with DBI connection}
+\item{x}{\code{tbl_dbi}}
 }
 \value{
-SQL
+SQL, the table name as used in the database
 }
 \description{
-get name of the tbl in the database
+Get name of the tbl in the database
 }

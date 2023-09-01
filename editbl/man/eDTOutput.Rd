@@ -2,20 +2,53 @@
 % Please edit documentation in R/eDT.R
 \name{eDTOutput}
 \alias{eDTOutput}
-\title{UI of the eDT module}
+\title{UI part of \code{\link{eDT}}}
 \usage{
 eDTOutput(id, ...)
 }
 \arguments{
 \item{id}{\code{character(1)}}
 
-\item{...}{arguments passed to  DT::DTOutput}
+\item{...}{arguments passed to \code{\link[DT]{DTOutput}}}
 }
 \value{
 HTML
 }
 \description{
-UI of the eDT module
+UI part of \code{\link{eDT}}
+}
+\details{
+Works exactly like \code{\link[DT]{DTOutput}} apart from the fact that instead of the \code{outputId}
+argument, \code{id} is requested. Reason being that this function is a UI to a shiny module.
+This means that the datatable can be found under the id \code{'{namespace}-{id}-DT'} instead of \code{'{namespace}-{outputId}'}.
+
+Also some minor CSS and javascript is executed for functional puposes.
+}
+\examples{
+## Only run this example in interactive R sessions
+if(interactive()){
+  # tibble support
+  modifiedData <- editbl::eDT(tibble::as_tibble(mtcars))
+
+  # data.table support
+  modifiedData <- editbl::eDT(dtplyr::lazy_dt(data.table::data.table(mtcars)))
+
+  # database support
+  conn <- editbl::connectDB()
+  modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artist"), in_place = TRUE)
+  DBI::dbDisconnect(conn)
+
+  # Within shiny
+  library(shiny)
+  library(editbl)
+  shinyApp(
+    ui = fluidPage(fluidRow(column(12, eDTOutput('tbl')))),
+    server = function(input, output) {
+      eDT('tbl',iris,)
+    }
+  )
+}
+
 }
 \author{
 Jasper Schelfhout

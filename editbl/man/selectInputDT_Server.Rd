@@ -2,7 +2,7 @@
 % Please edit documentation in R/selectInputDT.R
 \name{selectInputDT_Server}
 \alias{selectInputDT_Server}
-\title{Server to use a datatable as select input}
+\title{Server part to use a \code{\link[DT]{datatable}} as select input}
 \usage{
 selectInputDT_Server(
   id,
@@ -27,22 +27,24 @@ selectInputDT_Server(
 A selection of rows from the \code{data.frame} provided under choices.
 }
 \description{
-Server to use a datatable as select input
+Server part to use a \code{\link[DT]{datatable}} as select input
 }
 \examples{
-\dontrun{
-ui <- selectInputDT_UI('id')
-data <- data.frame(id = 1:3, name = letters[1:3])
-server <- function(input,output, session){
-  selected = selectInputDT_Server('id', choices = data, selected = data[1,] )
-  observe({print(selected())})
-}
-shiny::shinyApp(ui, server)
+## Only run this example in interactive R sessions
+if(interactive()){
+  ui <- selectInputDT_UI('id')
+  data <- data.frame(id = 1:3, name = letters[1:3])
+  server <- function(input,output, session){
+    selected = selectInputDT_Server('id', choices = data, selected = data[1,] )
+    observe({print(selected())})
+  }
+  shiny::shinyApp(ui, server)
 
 }
 }
 \seealso{
-\code{shiny::selectInput}
+\code{shiny::selectInput}. This function can be more convenient for selecting rows
+with multiple columns.
 }
 \author{
 Jasper Schelfhout

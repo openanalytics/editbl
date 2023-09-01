@@ -9,6 +9,9 @@ demoServer_mtcars(id)
 \arguments{
 \item{id}{\code{character(1)}}
 }
+\value{
+NULL, just executes the module server.
+}
 \description{
 Server of the mtcars demo app
 }

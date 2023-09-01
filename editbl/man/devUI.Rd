@@ -2,7 +2,7 @@
 % Please edit documentation in R/devApp.R
 \name{devUI}
 \alias{devUI}
-\title{UI of the demo app}
+\title{UI of the development app}
 \usage{
 devUI(id, conn)
 }
@@ -15,7 +15,7 @@ devUI(id, conn)
 HTML
 }
 \description{
-UI of the demo app
+UI of the development app
 }
 \author{
 Jasper Schelfhout

@@ -1,13 +1,24 @@
 #' Run a demo app
 #' @param app demoApp to run. Options: database / mtcars / custom
-#' @param ... arguments passed onto demoApp
-#' @examples 
-#' \dontrun{
-#'  runDemoApp(app = "database")
-#'  runDemoApp(app = "mtcars")
-#'  runDemoApp(app = "custom", dplyr::tibble(iris))
 #' 
+#' @details These apps are for illustrative purposes.
+#' 
+#' @param ... arguments passed onto the demoApp
+#' @examples 
+#' ## Only run this example in interactive R sessions
+#' if(interactive()){
+#'  # Database
+#'  conn = connectDB()
+#'  runDemoApp(app = "database", conn = conn)
+#'  DBI::dbDisconnect(conn)
+#' 
+#'  # mtcars
+#'  runDemoApp(app = "mtcars")
+#'  
+#'  # Any tibble of your liking
+#'  runDemoApp(app = "custom", dplyr::tibble(iris))
 #' }
+#' @inherit shiny::shinyApp return
 #' @export 
 runDemoApp <- function(app = "database", ...){
   fn <- switch(app,
@@ -20,9 +31,10 @@ runDemoApp <- function(app = "database", ...){
 }
 
 #' Run a demo app
+#' @param conn database connection as provided by  \code{\link[DBI]{dbConnect}}
 #' @importFrom shiny shinyApp
-runDemoApp_DB <- function(){
-  conn <- connectDB()
+#' @inherit shiny::shinyApp return
+runDemoApp_DB <- function(conn = connectDB()){
   ui <- demoUI_DB(id = "app", conn = conn)
   server <- function(input, output, session) {
     demoServer_DB(id = "app", conn = conn)
@@ -32,6 +44,7 @@ runDemoApp_DB <- function(){
 
 #' Run a demo app
 #' @importFrom shiny shinyApp
+#' @inherit shiny::shinyApp return
 runDemoApp_mtcars <- function(){
   ui <- demoUI_mtcars(id = "app")
   server <- function(input, output, session) {
@@ -43,6 +56,7 @@ runDemoApp_mtcars <- function(){
 #' Run a custom demo app
 #' @param x `tbl`
 #' @importFrom shiny shinyApp
+#' @inherit shiny::shinyApp return
 runDemoApp_custom <- function(x){
   ui <- demoUI_custom(id = "app")
   server <- function(input, output, session) {
@@ -74,7 +88,7 @@ demoUI_DB <- function(id, conn) {
 #' @param conn database connection object as given by \code{\link[DBI]{dbConnect}}.
 #' @importFrom shiny reactive moduleServer renderPrint
 #' @importFrom dplyr tbl
-#' 
+#' @return NULL, just executes the module server.
 #' @author Jasper Schelfhout
 demoServer_DB <- function(id, conn) {
   moduleServer(
@@ -108,7 +122,7 @@ demoUI_mtcars <- function(id) {
 #' Server of the mtcars demo app
 #' @param id `character(1)`
 #' @importFrom dplyr tibble
-#' 
+#' @inherit demoServer_custom return
 #' @author Jasper Schelfhout
 demoServer_mtcars <- function(id) {
   demoServer_custom(id, dplyr::tibble(datasets::mtcars))
@@ -130,7 +144,7 @@ demoUI_custom <- function(id) {
 #' Server of the mtcars demo app
 #' @param id `character(1)`
 #' @param x `tbl`
-#' 
+#' @return NULL, just executes the module server.
 #' @author Jasper Schelfhout
 demoServer_custom <- function(id, x) {
   moduleServer(

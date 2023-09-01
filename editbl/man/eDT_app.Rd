@@ -7,11 +7,16 @@
 eDT_app(...)
 }
 \arguments{
-\item{...}{arguments past to eDT}
+\item{...}{arguments past to \code{\link{eDT}}}
 }
 \value{
-data (or a modified version thereof)
+data (or a modified version thereof) once you click 'close'
 }
 \description{
 Open interactive app to explore and modify data
+}
+\details{
+When \code{\link{eDT}} is not used within the server of a shiny app, it will
+call this function to start up a shiny app itself. Just as \code{DT::datatable()} displays a table
+in the browser when called upon interactively.
 }

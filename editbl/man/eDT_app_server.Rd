@@ -7,7 +7,7 @@
 eDT_app_server(moduleId = "nevergonnagiveyouup", ...)
 }
 \arguments{
-\item{moduleId}{character}
+\item{moduleId}{\code{character(1)} id to connect with eDT_app_server}
 
 \item{...}{arguments passed to \link{eDT}}
 }

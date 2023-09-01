@@ -51,14 +51,16 @@ If \code{in_place = TRUE}, the result will be returned invisibly.
 rows_insert implementation for DBI backends.
 }
 \examples{
-\dontrun{
-# insert a new row
-conn <- editbl:::connectDB()
-artists <- dplyr::tbl(conn, "Artists")
-editbl:::rows_insert.tbl_dbi(artists,
+library(dplyr)
+conn <- connectDB()
+artists <- tbl(conn, "Artist")
+DBI::dbBegin(conn)
+rows_insert(artists,
  data.frame(ArtistId = 999, Name = "testArtist"),
  in_place = TRUE)
-}
+
+DBI::dbRollback(conn)
+DBI::dbDisconnect(conn)
 
 }
 \author{

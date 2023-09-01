@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{customButton}
 \alias{customButton}
-\title{Generate a custom button for DT}
+\title{Generate a custom button for \code{\link{eDT}}}
 \usage{
 customButton(id, label, icon = "", disabled = FALSE)
 }
@@ -19,10 +19,25 @@ customButton(id, label, icon = "", disabled = FALSE)
 list to be used in \code{eDT(options = list(buttons = xxx))}
 }
 \description{
-Generate a custom button for DT
+Generate a custom button for \code{\link{eDT}}
 }
 \details{
 Combines elements of \code{shiny::actionButton} and \href{https://datatables.net/reference/option/}{datatable options}
+}
+\examples{
+if(interactive()){
+
+  ui <- eDTOutput("data")
+  server <- function(input,output,session){
+    b <- customButton('print', label = 'print')
+    eDT_result <- eDT(id = "data", mtcars, options = list(buttons = list("save", b)))
+    observeEvent(input$print,{
+          print(eDT_result$state())
+    })
+  }
+  shinyApp(ui,server)
+}
+
 }
 \author{
 Jasper Schelfhout

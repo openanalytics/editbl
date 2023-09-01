@@ -9,16 +9,30 @@ runDemoApp(app = "database", ...)
 \arguments{
 \item{app}{demoApp to run. Options: database / mtcars / custom}
 
-\item{...}{arguments passed onto demoApp}
+\item{...}{arguments passed onto the demoApp}
+}
+\value{
+An object that represents the app. Printing the object or passing it
+to \code{\link[shiny:runApp]{runApp()}} will run the app.
 }
 \description{
 Run a demo app
 }
+\details{
+These apps are for illustrative purposes.
+}
 \examples{
-\dontrun{
- runDemoApp(app = "database")
- runDemoApp(app = "mtcars")
- runDemoApp(app = "custom", dplyr::tibble(iris))
+## Only run this example in interactive R sessions
+if(interactive()){
+ # Database
+ conn = connectDB()
+ runDemoApp(app = "database", conn = conn)
+ DBI::dbDisconnect(conn)
 
+ # mtcars
+ runDemoApp(app = "mtcars")
+ 
+ # Any tibble of your liking
+ runDemoApp(app = "custom", dplyr::tibble(iris))
 }
 }

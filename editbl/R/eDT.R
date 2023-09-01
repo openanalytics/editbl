@@ -1,9 +1,17 @@
-#' UI of the eDT module
+#' UI part of \code{\link{eDT}}
+#' 
+#' @details Works exactly like \code{\link[DT]{DTOutput}} apart from the fact that instead of the `outputId`
+#' argument, `id` is requested. Reason being that this function is a UI to a shiny module.
+#' This means that the datatable can be found under the id \code{'{namespace}-{id}-DT'} instead of \code{'{namespace}-{outputId}'}.
+#' 
+#' Also some minor CSS and javascript is executed for functional puposes.
+#' 
 #' @param id `character(1)`
-#' @param ... arguments passed to  DT::DTOutput
+#' @param ... arguments passed to \code{\link[DT]{DTOutput}} 
 #' @importFrom DT DTOutput
 #' @importFrom shiny actionButton tagList HTML tags fluidPage tags
 #' @importFrom shinyjs disabled useShinyjs hidden
+#' @inherit eDT examples
 #' @return HTML
 #' 
 #' @author Jasper Schelfhout
@@ -39,7 +47,12 @@ eDTOutput <- function(id,...) {
   )
 }
 
-#' Server of eDT module
+#' Create a modifieable datatable.
+#' 
+#' @details Works the same as \code{\link[DT]{datatable}}.
+#' This function is however a shiny module and comes with additional arguments and different defaults.
+#' Instead of having `output$id = renderDT(DT::datatable(iris))`, `eDT(id = 'id', data = iris)` should be used on the server side.
+#' On the UI side \code{\link{eDTOutput}} should be used instead of \code{\link[DT]{DTOutput}}.
 #' 
 #' @details Can also be used as standalone app when not ran in reactive context.
 #' @details All arguments except 'id' and 'env' can be normal objects or reactive objects.
@@ -65,19 +78,28 @@ eDTOutput <- function(id,...) {
 #' - selected `reactive` selected rows of the `data` (unsaved)
 #' 
 #' @examples 
-#' \dontrun{
+#' ## Only run this example in interactive R sessions
+#' if(interactive()){
+#'   # tibble support
+#'   modifiedData <- editbl::eDT(tibble::as_tibble(mtcars))
 #' 
-#' # tibble support
-#' modifiedData <- editbl::eDT(tibble::as_tibble(mtcars))
+#'   # data.table support
+#'   modifiedData <- editbl::eDT(dtplyr::lazy_dt(data.table::data.table(mtcars)))
 #' 
-#' # data.table support
-#' modifiedData <- editbl::eDT(dtplyr::lazy_dt(data.table::data.table(mtcars)))
+#'   # database support
+#'   conn <- editbl::connectDB()
+#'   modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artist"), in_place = TRUE)
+#'   DBI::dbDisconnect(conn)
 #' 
-#' # database support
-#' conn <- editbl:::connectDB()
-#' modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artists"), in_place = TRUE)
-#' DBI::dbDisconnect(conn)
-#' 
+#'   # Within shiny
+#'   library(shiny)
+#'   library(editbl)
+#'   shinyApp(
+#'     ui = fluidPage(fluidRow(column(12, eDTOutput('tbl')))),
+#'     server = function(input, output) {
+#'       eDT('tbl',iris,)
+#'     }
+#'   )
 #' }
 #' 
 #' @author Jasper Schelfhout
@@ -1087,7 +1109,7 @@ addButtons <- function(df, columnName, ns){
 #' @param suffix `character(1)` sprintf placeholer for suffix
 #' @param ns `character(1)` sprintf placeholder for ns
 #' @importFrom shiny div actionButton icon
-#' @return character HTML to be filled in with \code{sprintf}
+#' @return `character(1)` HTML to be filled in with \code{sprintf}
 createButtonsHTML <- function(suffix = "%1$s", ns = "%2$s"){
   as.character(
       div(class = "btn-group",

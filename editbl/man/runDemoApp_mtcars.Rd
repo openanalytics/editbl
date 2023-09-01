@@ -6,6 +6,10 @@
 \usage{
 runDemoApp_mtcars()
 }
+\value{
+An object that represents the app. Printing the object or passing it
+to \code{\link[shiny:runApp]{runApp()}} will run the app.
+}
 \description{
 Run a demo app
 }

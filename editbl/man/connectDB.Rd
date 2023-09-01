@@ -27,3 +27,9 @@ Connect to a database.
 Connects by default to a test SQLite database originally obtained here:
 \href{https://github.com/lerocha/chinook-database/blob/master/ChinookDatabase/DataSources/Chinook_Sqlite.sqlite}{chinook_git}
 }
+\examples{
+
+conn <- connectDB()
+DBI::dbDisconnect(conn)
+
+}

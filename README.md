@@ -105,8 +105,8 @@ modifiedData <- editbl::eDT(mtcars)
 modifiedData <- editbl::eDT(data.table::data.table(mtcars))
 
 # database support
-conn <- editbl:::connectDB()
-modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artists"), in_place = TRUE)
+conn <- editbl::connectDB()
+modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artist"), in_place = TRUE)
 DBI::dbDisconnect(conn)
 
 # excel integration

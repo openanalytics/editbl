@@ -2,7 +2,7 @@
 % Please edit documentation in R/devApp.R
 \name{devServer}
 \alias{devServer}
-\title{Server of the demo app}
+\title{Server of the development app}
 \usage{
 devServer(id, conn)
 }
@@ -11,8 +11,11 @@ devServer(id, conn)
 
 \item{conn}{database connection object as given by \code{\link[DBI]{dbConnect}}.}
 }
+\value{
+NULL, just executes the module server.
+}
 \description{
-Server of the demo app
+Server of the development app
 }
 \author{
 Jasper Schelfhout

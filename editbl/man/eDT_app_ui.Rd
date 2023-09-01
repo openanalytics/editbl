@@ -7,9 +7,9 @@
 eDT_app_ui(moduleId = "nevergonnagiveyouup", eDTId = "nevergonnaletyoudown")
 }
 \arguments{
-\item{moduleId}{character}
+\item{moduleId}{\code{character(1)} id to connect with eDT_app_server}
 
-\item{eDTId}{character}
+\item{eDTId}{\code{character(1)} id to connect \code{\link{eDTOutput}} to \code{\link{eDT}} within the module.}
 }
 \value{
 HTML

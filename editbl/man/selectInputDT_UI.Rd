@@ -2,15 +2,31 @@
 % Please edit documentation in R/selectInputDT.R
 \name{selectInputDT_UI}
 \alias{selectInputDT_UI}
-\title{Create a DT select input}
+\title{UI part of a DT select input}
 \usage{
 selectInputDT_UI(id)
 }
 \arguments{
 \item{id}{\code{character(1)} same one as used in \code{\link{selectInputDT_Server}}}
 }
+\value{
+HTML
+}
 \description{
-Create a DT select input
+UI part of a DT select input
+}
+\examples{
+## Only run this example in interactive R sessions
+if(interactive()){
+  ui <- selectInputDT_UI('id')
+  data <- data.frame(id = 1:3, name = letters[1:3])
+  server <- function(input,output, session){
+    selected = selectInputDT_Server('id', choices = data, selected = data[1,] )
+    observe({print(selected())})
+  }
+  shiny::shinyApp(ui, server)
+
+}
 }
 \author{
 Jasper Schelfhout

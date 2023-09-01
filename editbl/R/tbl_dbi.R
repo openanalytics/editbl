@@ -1,14 +1,17 @@
 #' rows_insert implementation for DBI backends.
 #' 
 #' @examples
-#' \dontrun{
-#' # insert a new row
-#' conn <- editbl:::connectDB()
-#' artists <- dplyr::tbl(conn, "Artists")
-#' editbl:::rows_insert.tbl_dbi(artists,
+#' library(dplyr)
+#
+#' conn <- connectDB()
+#' artists <- tbl(conn, "Artist")
+#' DBI::dbBegin(conn)
+#' rows_insert(artists,
 #'  data.frame(ArtistId = 999, Name = "testArtist"),
 #'  in_place = TRUE)
-#' }
+#' 
+#' DBI::dbRollback(conn)
+#' DBI::dbDisconnect(conn)
 #' 
 #' @inheritParams dplyr::rows_insert
 #' @inherit dplyr::rows_insert return details
@@ -48,32 +51,35 @@ rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
 #' This allows for updates of columns defined in by.
 #' @inherit dplyr::rows_update return details
 #' @examples
-#' \dontrun{
-#' # update rows.
-#' conn <- editbl:::connectDB()
-#' artists <- dplyr::tbl(conn, "Artists")
+#' library(dplyr)
+#' conn <- connectDB()
+#' artists <- tbl(conn, "Artist")
+#' 
+#' # Update rows without changing the key.
+#' DBI::dbBegin(conn)
 #' y <- data.frame(ArtistId = 1, Name = "DC/AC")
-#' editbl:::rows_update.tbl_dbi(
+#' rows_update(
 #'      x = artists,
 #'      y = y,
 #'      by = "ArtistId",
 #'      in_place = TRUE)
+#' DBI::dbRollback(conn)
 #' 
-#' # update key values of rows.
-#' conn <- editbl:::connectDB()
-#' artists <- dplyr::tbl(conn, "Artists")
+#' # Update key values of rows.
+#' DBI::dbBegin(conn)
 #' y <- data.frame(ArtistId = 999, Name = "DC/AC")
 #' match <- list(
 #'    x = data.frame("ArtistId" = 1),
 #'    y = data.frame("ArtistId" = 999)
 #' )
-#' editbl:::rows_update.tbl_dbi(
+#' rows_update(
 #'     x = artists,
 #'     y = y,
 #'     match = match,
 #'     by = "ArtistId",
 #'     in_place = TRUE)
-#' }
+#' DBI::dbRollback(conn)
+#' DBI::dbDisconnect(conn)
 #' @author Jasper Schelfhout
 #' @export
 rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALSE, in_place = FALSE){
@@ -113,18 +119,20 @@ rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALSE,
 #' @inheritParams dplyr::rows_delete
 #' @inherit dplyr::rows_delete return details
 #' @examples
-#' \dontrun{
-#' # delete rows
-#' conn <- editbl:::connectDB()
-#' artists <- dplyr::tbl(conn, "Artists")
+#' library(dplyr)
+#' 
+#' conn <- connectDB()
+#' artists <- tbl(conn, "Artist")
+#' DBI::dbBegin(conn)
 #' y <- data.frame(ArtistId = 999)
-#' editbl:::rows_delete.tbl_dbi(
+#' rows_delete(
 #'      x = artists,
 #'      y = y,
 #'      by = "ArtistId",
 #'      in_place = TRUE)
-#' }
 #' 
+#' DBI::dbRollback(conn)
+#' DBI::dbDisconnect(conn)
 #' @author Jasper Schelfhout
 #' @export
 rows_delete.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = FALSE){
@@ -154,9 +162,9 @@ rows_delete.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
   return(x)
 }
 
-#' get name of the tbl in the database
-#' @param x tbl with DBI connection
-#' @return SQL
+#' Get name of the tbl in the database
+#' @param x `tbl_dbi`
+#' @return SQL, the table name as used in the database
 get_db_table_name <- function(x){
   # FIXME: figure out what the perfect way is of retrieving the table identity
   # form a tibble

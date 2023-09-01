@@ -142,3 +142,45 @@ test_that("checkForeignTbls throws error",{
       
       expect_error(checkForeignTbls(tbl = merged_tbl,foreignTbls = list(b)))
     })
+
+test_that("joinForeignTbl() type 'inner' works.",{
+      a <- tibble::tibble(
+           a = c(1,2,3),
+           key1 = c(NA,2,4),
+           key2 = c(NA,2,4))
+       
+       b <-  tibble::tibble(
+           b = c("a", "b", "c"),
+           key1 = c(1,2,3),
+           key2 = c(1,2,3)
+       )
+       
+       foreignTbl <- foreignTbl(a,b)
+       
+       result <- joinForeignTbl(a, foreignTbl, type = 'inner')
+       
+       # NA keys in 'a' are expected to stay.
+       expect_equal(colnames(result), c("a", "key1", "key2", "b"))
+       expect_true(nrow(result) == 2)
+    })
+
+test_that("joinForeignTbl() type 'left' works.",{
+      a <- tibble::tibble(
+          a = c(1,2,3),
+          key1 = c(NA,2,4),
+          key2 = c(NA,2,4))
+      
+      b <-  tibble::tibble(
+          b = c("a", "b", "c"),
+          key1 = c(1,2,3),
+          key2 = c(1,2,3)
+      )
+      
+      foreignTbl <- foreignTbl(a,b)
+      
+      result <- joinForeignTbl(a, foreignTbl, type = 'left')
+      
+      expect_equal(colnames(result), c("a", "key1", "key2", "b"))
+      expect_true(nrow(result) == 3)
+    })
+

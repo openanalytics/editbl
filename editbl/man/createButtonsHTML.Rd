@@ -12,7 +12,7 @@ createButtonsHTML(suffix = "\%1$s", ns = "\%2$s")
 \item{ns}{\code{character(1)} sprintf placeholder for ns}
 }
 \value{
-character HTML to be filled in with \code{sprintf}
+\code{character(1)} HTML to be filled in with \code{sprintf}
 }
 \description{
 Helper function to write HTML

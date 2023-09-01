@@ -1,5 +1,9 @@
-#' Run a demo app
+#' Run a development app
+#' @details This app prints some of the server objects and has a button to interactively browse the code.
+#' This is useful for debugging and experimenting with new features.
+#' 
 #' @importFrom shiny shinyApp
+#' @inherit shiny::shinyApp return
 runDevApp <- function(){
   conn <- connectDB()
   ui <- devUI(id = "app", conn = conn)
@@ -9,7 +13,7 @@ runDevApp <- function(){
   shinyApp(ui, server)  
 }
 
-#' UI of the demo app
+#' UI of the development app
 #' @param id `character(1)`
 #' @param conn database connection object as given by \code{\link[DBI]{dbConnect}}.
 #' @importFrom shiny NS tagList selectInput verbatimTextOutput actionButton
@@ -29,12 +33,12 @@ devUI <- function(id, conn) {
   )
 }
 
-#' Server of the demo app
+#' Server of the development app
 #' @param id `character(1)`
 #' @param conn database connection object as given by \code{\link[DBI]{dbConnect}}.
 #' @importFrom shiny reactive moduleServer renderPrint
 #' @importFrom dplyr tbl
-#' 
+#' @return NULL, just executes the module server.
 #' @author Jasper Schelfhout
 devServer <- function(id, conn) {
   moduleServer(

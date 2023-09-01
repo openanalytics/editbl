@@ -17,14 +17,17 @@ HTML. A set of input fields corresponding to the given row.
 \description{
 An input UI for a \code{data.frame}
 }
-\examples{
-\dontrun{
-library(shiny)
-ui <- inputUI('id')
-server <- function(input,output,session){
-  input <- inputServer("id", mtcars[1,])
-  observe({print(input())})
+\details{
+A new method for this can be added if you wish to alter the default behavior of the pop-up modals in \code{\link{eDT}}.
 }
+\examples{
+if(interactive()){
+  library(shiny)
+  ui <- inputUI('id')
+  server <- function(input,output,session){
+    input <- inputServer("id", mtcars[1,])
+    observe({print(input())})
+  }
 shinyApp(ui, server)
 }
 

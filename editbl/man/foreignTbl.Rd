@@ -27,7 +27,13 @@ These are the only ones that can actually get modified in \code{eDT}, other colu
 the rows in the foreignTbl will only be used as suggestions, not restrictions.}
 }
 \value{
-list
+List with unmodified arguments. However, they have now been checked for validity.
+\itemize{
+\item y, see argument \code{y}.
+\item by, see argument \code{by}.
+\item naturalKey, see argument \code{naturalKey}.
+\item allowNew, see argument \code{allowNew}
+}
 }
 \description{
 Create a foreign tibble
@@ -45,27 +51,29 @@ This assumption will however not be checked since it is an expensive operation o
 However, if violated, it might give errors or unexpected results during usage of the eDT module.
 }
 \examples{
-\dontrun{
 a <- tibble::tibble(
    first_name = c("Albert","Donald","Mickey"),
    last_name_id = c(1,2,2)
- ))
+ )
 
 b <-  foreignTbl(
  a,
  tibble::tibble(
      last_name = c("Einstein", "Duck", "Mouse"),
      last_name_id = c(1,2,3)
-   )),
+   ),
  by = "last_name_id",
  naturalKey = "last_name"
 )
 
-eDT(a,
- foreignTbls = list(b),
- options = list(columnDefs = list(list(visible=FALSE, targets="last_name_id")))
-)
-}
+## Only run this in interactive R sessions
+if(interactive()){
+  eDT(a,
+   foreignTbls = list(b),
+   options = list(columnDefs = list(list(visible=FALSE, targets="last_name_id")))
+  )
+ }
+
 
 }
 \author{

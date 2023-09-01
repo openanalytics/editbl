@@ -54,32 +54,35 @@ If \code{in_place = TRUE}, the result will be returned invisibly.
 rows_update implementation for DBI backends.
 }
 \examples{
-\dontrun{
-# update rows.
-conn <- editbl:::connectDB()
-artists <- dplyr::tbl(conn, "Artists")
+library(dplyr)
+conn <- connectDB()
+artists <- tbl(conn, "Artist")
+
+# Update rows without changing the key.
+DBI::dbBegin(conn)
 y <- data.frame(ArtistId = 1, Name = "DC/AC")
-editbl:::rows_update.tbl_dbi(
+rows_update(
      x = artists,
      y = y,
      by = "ArtistId",
      in_place = TRUE)
+DBI::dbRollback(conn)
 
-# update key values of rows.
-conn <- editbl:::connectDB()
-artists <- dplyr::tbl(conn, "Artists")
+# Update key values of rows.
+DBI::dbBegin(conn)
 y <- data.frame(ArtistId = 999, Name = "DC/AC")
 match <- list(
    x = data.frame("ArtistId" = 1),
    y = data.frame("ArtistId" = 999)
 )
-editbl:::rows_update.tbl_dbi(
+rows_update(
     x = artists,
     y = y,
     match = match,
     by = "ArtistId",
     in_place = TRUE)
-}
+DBI::dbRollback(conn)
+DBI::dbDisconnect(conn)
 }
 \author{
 Jasper Schelfhout

@@ -51,18 +51,20 @@ If \code{in_place = TRUE}, the result will be returned invisibly.
 rows_delete implementation for DBI backends.
 }
 \examples{
-\dontrun{
-# delete rows
-conn <- editbl:::connectDB()
-artists <- dplyr::tbl(conn, "Artists")
+library(dplyr)
+
+conn <- connectDB()
+artists <- tbl(conn, "Artist")
+DBI::dbBegin(conn)
 y <- data.frame(ArtistId = 999)
-editbl:::rows_delete.tbl_dbi(
+rows_delete(
      x = artists,
      y = y,
      by = "ArtistId",
      in_place = TRUE)
-}
 
+DBI::dbRollback(conn)
+DBI::dbDisconnect(conn)
 }
 \author{
 Jasper Schelfhout

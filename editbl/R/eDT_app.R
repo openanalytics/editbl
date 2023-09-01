@@ -1,7 +1,12 @@
 #' Open interactive app to explore and modify data
-#' @param ... arguments past to eDT
+#' 
+#' @details When \code{\link{eDT}} is not used within the server of a shiny app, it will
+#' call this function to start up a shiny app itself. Just as `DT::datatable()` displays a table
+#' in the browser when called upon interactively.
+#' 
+#' @param ... arguments past to \code{\link{eDT}}
 #' @importFrom shiny shinyApp
-#' @return data (or a modified version thereof)
+#' @return data (or a modified version thereof) once you click 'close'
 eDT_app <- function(...){
   args <- list(...)
   ui <- eDT_app_ui(eDTId = args$id)
@@ -12,8 +17,8 @@ eDT_app <- function(...){
 }
 
 #' UI of eDT_app
-#' @param moduleId character
-#' @param eDTId character
+#' @param moduleId `character(1)` id to connect with eDT_app_server
+#' @param eDTId `character(1)` id to connect \code{\link{eDTOutput}} to \code{\link{eDT}} within the module.
 #' @importFrom shiny NS tagList actionButton
 #' @return HTML
 #' 
@@ -27,7 +32,7 @@ eDT_app_ui <- function(moduleId = "nevergonnagiveyouup", eDTId = "nevergonnalety
 }
 
 #' Server of eDT_app
-#' @param moduleId character
+#' @param moduleId `character(1)` id to connect with eDT_app_server
 #' @param ... arguments passed to \link{eDT}
 #' @importFrom shiny reactive moduleServer observeEvent stopApp reactiveValues
 #' @importFrom dplyr tbl

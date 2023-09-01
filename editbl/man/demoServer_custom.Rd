@@ -11,6 +11,9 @@ demoServer_custom(id, x)
 
 \item{x}{\code{tbl}}
 }
+\value{
+NULL, just executes the module server.
+}
 \description{
 Server of the mtcars demo app
 }

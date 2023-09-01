@@ -2,10 +2,18 @@
 % Please edit documentation in R/devApp.R
 \name{runDevApp}
 \alias{runDevApp}
-\title{Run a demo app}
+\title{Run a development app}
 \usage{
 runDevApp()
 }
+\value{
+An object that represents the app. Printing the object or passing it
+to \code{\link[shiny:runApp]{runApp()}} will run the app.
+}
 \description{
-Run a demo app
+Run a development app
+}
+\details{
+This app prints some of the server objects and has a button to interactively browse the code.
+This is useful for debugging and experimenting with new features.
 }

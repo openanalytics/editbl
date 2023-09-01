@@ -2,7 +2,7 @@
 % Please edit documentation in R/eDT.R
 \name{eDT}
 \alias{eDT}
-\title{Server of eDT module}
+\title{Create a modifieable datatable.}
 \usage{
 eDT(
   data,
@@ -198,27 +198,41 @@ list
 }
 }
 \description{
-Server of eDT module
+Create a modifieable datatable.
 }
 \details{
+Works the same as \code{\link[DT]{datatable}}.
+This function is however a shiny module and comes with additional arguments and different defaults.
+Instead of having \code{output$id = renderDT(DT::datatable(iris))}, \code{eDT(id = 'id', data = iris)} should be used on the server side.
+On the UI side \code{\link{eDTOutput}} should be used instead of \code{\link[DT]{DTOutput}}.
+
 Can also be used as standalone app when not ran in reactive context.
 
 All arguments except 'id' and 'env' can be normal objects or reactive objects.
 }
 \examples{
-\dontrun{
+## Only run this example in interactive R sessions
+if(interactive()){
+  # tibble support
+  modifiedData <- editbl::eDT(tibble::as_tibble(mtcars))
 
-# tibble support
-modifiedData <- editbl::eDT(tibble::as_tibble(mtcars))
+  # data.table support
+  modifiedData <- editbl::eDT(dtplyr::lazy_dt(data.table::data.table(mtcars)))
 
-# data.table support
-modifiedData <- editbl::eDT(dtplyr::lazy_dt(data.table::data.table(mtcars)))
+  # database support
+  conn <- editbl::connectDB()
+  modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artist"), in_place = TRUE)
+  DBI::dbDisconnect(conn)
 
-# database support
-conn <- editbl:::connectDB()
-modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artists"), in_place = TRUE)
-DBI::dbDisconnect(conn)
-
+  # Within shiny
+  library(shiny)
+  library(editbl)
+  shinyApp(
+    ui = fluidPage(fluidRow(column(12, eDTOutput('tbl')))),
+    server = function(input, output) {
+      eDT('tbl',iris,)
+    }
+  )
 }
 
 }
