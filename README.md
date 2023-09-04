@@ -1,3 +1,4 @@
+[![CRAN status](https://www.r-pkg.org/badges/version/editbl)](https://cran.r-project.org/package=editbl)
 [![R-CMD-check](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml)
 [![codecov](https://codecov.io/gh/openanalytics/editbl/branch/main/graph/badge.svg)](https://app.codecov.io/gh/openanalytics/editbl)
 
@@ -17,13 +18,21 @@ Main features by which it distinguishes itself from other CRUD (create, read, up
 * Transactional commits (currently for `tbl_dbi` class and non in-place editing).
 * Default values for new rows (UUID's, 'current date', 'inserted by', ...)
 
-## Get started
+## Installation
 
-Installation:
+* From CRAN:
+
+```
+install.packages('editbl')
+```
+
+* Latest development version:
 
 ```
 remotes::install_github("https://github.com/openanalytics/editbl", ref = "main", subdir = "editbl")
 ```
+
+## Get started
 
 Choose a dataset of your liking and use `eDT` to interactively explore and modify it!
 
@@ -33,7 +42,7 @@ print(modifiedData)
 ```
 
 
-## Run some demo apps
+Run some demo apps
 
 ```
 editbl::runDemoApp()
