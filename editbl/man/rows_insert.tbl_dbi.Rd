@@ -52,7 +52,16 @@ rows_insert implementation for DBI backends.
 }
 \examples{
 library(dplyr)
-conn <- connectDB()
+
+# Set up a test table
+conn <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+artists_df <- data.frame(
+         ArtistId = c(1,2),
+         Name = c("AC/DC", "The Offspring")
+)
+DBI::dbWriteTable(conn, "Artist", artists_df)     
+ 
+# Insert new row
 artists <- tbl(conn, "Artist")
 DBI::dbBegin(conn)
 rows_insert(artists,

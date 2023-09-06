@@ -53,10 +53,18 @@ rows_delete implementation for DBI backends.
 \examples{
 library(dplyr)
 
-conn <- connectDB()
+# Set up a test table
+conn <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+artists_df <- data.frame(
+         ArtistId = c(1,2),
+         Name = c("AC/DC", "The Offspring")
+)
+DBI::dbWriteTable(conn, "Artist", artists_df)
+
+# Delete a row
 artists <- tbl(conn, "Artist")
 DBI::dbBegin(conn)
-y <- data.frame(ArtistId = 999)
+y <- data.frame(ArtistId = 1)
 rows_delete(
      x = artists,
      y = y,

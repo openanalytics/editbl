@@ -55,10 +55,17 @@ rows_update implementation for DBI backends.
 }
 \examples{
 library(dplyr)
-conn <- connectDB()
-artists <- tbl(conn, "Artist")
+
+# Set up a test table
+conn <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+artists_df <- data.frame(
+         ArtistId = c(1,2),
+         Name = c("AC/DC", "The Offspring")
+)
+DBI::dbWriteTable(conn, "Artist", artists_df)     
 
 # Update rows without changing the key.
+artists <- tbl(conn, "Artist")
 DBI::dbBegin(conn)
 y <- data.frame(ArtistId = 1, Name = "DC/AC")
 rows_update(
@@ -83,6 +90,7 @@ rows_update(
     in_place = TRUE)
 DBI::dbRollback(conn)
 DBI::dbDisconnect(conn)
+
 }
 \author{
 Jasper Schelfhout

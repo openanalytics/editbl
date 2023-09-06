@@ -24,15 +24,22 @@ These apps are for illustrative purposes.
 \examples{
 ## Only run this example in interactive R sessions
 if(interactive()){
- # Database
- conn = connectDB()
- runDemoApp(app = "database", conn = conn)
- DBI::dbDisconnect(conn)
-
- # mtcars
- runDemoApp(app = "mtcars")
  
- # Any tibble of your liking
- runDemoApp(app = "custom", dplyr::tibble(iris))
+  # Database
+  tmpFile <- tempfile(fileext = ".sqlite")
+  file.copy(system.file("extdata", "chinook.sqlite", package = 'editbl'), tmpFile)
+
+  conn <- connectDB(dbname = tmpFile)
+
+  runDemoApp(app = "database", conn = conn)
+  DBI::dbDisconnect(conn)
+
+  unlink(tmpFile)
+
+  # mtcars
+  runDemoApp(app = "mtcars")
+
+  # Any tibble of your liking
+  runDemoApp(app = "custom", dplyr::tibble(iris))
 }
 }

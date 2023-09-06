@@ -2,8 +2,16 @@
 #' 
 #' @examples
 #' library(dplyr)
-#
-#' conn <- connectDB()
+#' 
+#' # Set up a test table
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+#' artists_df <- data.frame(
+#'          ArtistId = c(1,2),
+#'          Name = c("AC/DC", "The Offspring")
+#' )
+#' DBI::dbWriteTable(conn, "Artist", artists_df)     
+#'  
+#' # Insert new row
 #' artists <- tbl(conn, "Artist")
 #' DBI::dbBegin(conn)
 #' rows_insert(artists,
@@ -52,10 +60,17 @@ rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
 #' @inherit dplyr::rows_update return details
 #' @examples
 #' library(dplyr)
-#' conn <- connectDB()
-#' artists <- tbl(conn, "Artist")
+#' 
+#' # Set up a test table
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+#' artists_df <- data.frame(
+#'          ArtistId = c(1,2),
+#'          Name = c("AC/DC", "The Offspring")
+#' )
+#' DBI::dbWriteTable(conn, "Artist", artists_df)     
 #' 
 #' # Update rows without changing the key.
+#' artists <- tbl(conn, "Artist")
 #' DBI::dbBegin(conn)
 #' y <- data.frame(ArtistId = 1, Name = "DC/AC")
 #' rows_update(
@@ -80,6 +95,7 @@ rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
 #'     in_place = TRUE)
 #' DBI::dbRollback(conn)
 #' DBI::dbDisconnect(conn)
+#' 
 #' @author Jasper Schelfhout
 #' @export
 rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALSE, in_place = FALSE){
@@ -121,10 +137,18 @@ rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALSE,
 #' @examples
 #' library(dplyr)
 #' 
-#' conn <- connectDB()
+#' # Set up a test table
+#' conn <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+#' artists_df <- data.frame(
+#'          ArtistId = c(1,2),
+#'          Name = c("AC/DC", "The Offspring")
+#' )
+#' DBI::dbWriteTable(conn, "Artist", artists_df)
+#' 
+#' # Delete a row
 #' artists <- tbl(conn, "Artist")
 #' DBI::dbBegin(conn)
-#' y <- data.frame(ArtistId = 999)
+#' y <- data.frame(ArtistId = 1)
 #' rows_delete(
 #'      x = artists,
 #'      y = y,

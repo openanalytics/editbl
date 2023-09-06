@@ -220,9 +220,14 @@ if(interactive()){
   modifiedData <- editbl::eDT(dtplyr::lazy_dt(data.table::data.table(mtcars)))
 
   # database support
-  conn <- editbl::connectDB()
+  tmpFile <- tempfile(fileext = ".sqlite")
+  file.copy(system.file("extdata", "chinook.sqlite", package = 'editbl'), tmpFile)
+
+  conn <- editbl::connectDB(dbname = tmpFile)
   modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artist"), in_place = TRUE)
   DBI::dbDisconnect(conn)
+
+  unlink(tmpFile)
 
   # Within shiny
   library(shiny)
