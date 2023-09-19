@@ -2,7 +2,7 @@
 [![R-CMD-check](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml)
 [![codecov](https://codecov.io/gh/openanalytics/editbl/branch/main/graph/badge.svg)](https://app.codecov.io/gh/openanalytics/editbl)
 
-<img src="editbl_logo.png" alt="editbl_logo" width="200"/>
+![](https://github.com/openanalytics/editbl/blob/main/editbl_logo.png)
 
 `editbl` allows you to do exactly what is says: 'edit tibbles'.
 
