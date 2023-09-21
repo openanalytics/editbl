@@ -174,7 +174,7 @@ eDT <- function(
 #'  isolate is.reactive modalDialog modalButton renderUI uiOutput showModal
 #'  freezeReactiveValue isTruthy
 #' @importFrom DT dataTableProxy renderDT formatStyle styleEqual hideCols
-#' @importFrom dplyr collect %>% relocate rows_update rows_insert rows_delete is.tbl all_of tibble
+#' @importFrom dplyr collect %>% relocate is.tbl all_of tibble
 #' @importFrom utils str tail
 #' @importFrom uuid UUIDgenerate
 #' @importFrom shinyjs disable enable
@@ -948,25 +948,65 @@ eDTServer <- function(
                     inserted <- inserted[,cols]
                     
                     if(nrow(deleted)){
+                      if(inherits(result, 'tbl_dbi')){
+                        # dbplyr:::rows_delete.tbl_dbi requires y to be in the same source and will start a transaction for this if not the case.
+                        # Most backends do not support nested transactions. Therefore manually copy the data first.
+                        temp_name = paste0("editbl_", gsub("-", "", UUIDgenerate()))
+                        deleted <- dplyr::copy_to(
+                            dest = result$src,
+                            df = deleted,
+                            name = temp_name,
+                            temporary = TRUE,
+                            in_transaction = FALSE)
+                      }
+                      
                       result <- rows_delete(
                           x = result,
                           y = deleted,
                           by = keys(),
+                          in_place = in_place(),
+                          unmatched = 'ignore')
+                      
+                      if(inherits(result, 'tbl_dbi')){
+                        DBI::dbRemoveTable(result$src$con, temp_name)
+                      }
+                    }
+                    if(nrow(edited)){
+                      result <- e_rows_update(
+                          x = result,
+                          y = edited,
+                          match = match,
+                          by = keys(),
                           in_place = in_place())
                     }
                     
-                    result <- rows_update(
-                        x = result,
-                        y = edited,
-                        match = match,
-                        by = keys(),
-                        in_place = in_place())
-                    
-                    result <- rows_insert(
-                        x = result,
-                        y = inserted,
-                        by = keys(),
-                        in_place = in_place())
+                    if(nrow(inserted)){
+# Needed code should there be a switch to dbplyr::rows_insert
+#                      if(inherits(result, 'tbl_dbi')){
+#                        # https://github.com/openanalytics/editbl/issues/1
+#                        # dbplyr:::rows_insert.tbl_dbi requires y to be in the same source and will start a transaction for this if not the case.
+#                        # Most backends do not support nested transactions. Therefore manually copy the data first.
+#                        temp_name = paste0("editbl_", gsub("-", "", UUIDgenerate()))
+#                        inserted <- dplyr::copy_to(
+#                            dest = result$src,
+#                            df = inserted,
+#                            name = temp_name,
+#                            temporary = TRUE,
+#                            in_transaction = FALSE)
+#                      }
+                      
+                      result <- e_rows_insert(
+                          x = result,
+                          y = inserted,
+                          by = keys(),
+                          in_place = in_place(),
+                          conflict = "ignore")
+                      
+# Needed code should there be a switch to dbplyr::rows_insert                     
+#                      if(inherits(result, 'tbl_dbi')){
+#                        DBI::dbRemoveTable(result$src$con, temp_name)
+#                      }       
+                    }
                     
                     rv$committedData <- result
                     
@@ -990,11 +1030,11 @@ eDTServer <- function(
                     
                     commitTransaction(result)
                     rv$resultMessage <- "success."
-                  }, error = function(cond){
+                  }, error = function(cond){                    
                     rollbackTransaction(result)
                     rv$resultMessage <- sprintf(
                         "Failure: %s",
-                        cond$message
+                        conditionMessage(cond)
                     )
                   })
               rv$showResultMessage <- Sys.time()

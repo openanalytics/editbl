@@ -1,11 +1,9 @@
 #' rows_update implementation for data.frame backends.
-#' @inheritParams dplyr::rows_update
-#' @param match named list consisting out of two equal length \code{data.frame}'s with columns defined in \code{by}.
-#' This allows for updates of columns defined in by.
-#' @inherit dplyr::rows_update return details
+#' @inheritParams e_rows_update
+#' @inherit e_rows_update return details
 #' @author Jasper Schelfhout
 #' @export
-rows_update.data.frame <- function(x, y, by = NULL, match = NULL,..., copy = FALSE, in_place = FALSE){
+e_rows_update.data.frame <- function(x, y, by = NULL, match = NULL,..., copy = FALSE, in_place = FALSE){
   if(in_place){
     stop("Can not edit in place")
   }

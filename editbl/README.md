@@ -150,7 +150,7 @@ the changes you made might not be executed correctly or errors might be thrown.
 
 ## General future goals for this package
 
-* Full `dplyr` compatibility so support for different backends is easily facilitated. Now there are 3 methods (`rows_update` / `rows_delete` / `rows_insert`) that need to be implemented to support a new backend.
+* Full `dplyr` compatibility so support for different backends is easily facilitated. Now there are 2 methods (`e_rows_update`, `e_rows_insert`) that need to be implemented to support a new backend.
 * Full `DT` compatibility, including all extensions.
 * Better editing / display options for time values. E.g. control over timezone and format of display / storage + nicer input forms.
 * Any addition that supports the concept of editing data as flexible/easy as possible while respecting backend schema's and constraints.

@@ -1,11 +1,10 @@
-#' rows_insert implementation for data.table backends.
+#' rows_insert implementation for `data.table` backends.
 #' 
-#' @inheritParams dplyr::rows_insert
-#' @inherit dplyr::rows_insert return details
+#' @inherit e_rows_insert
 #' 
 #' @author Jasper Schelfhout
 #' @export
-rows_insert.dtplyr_step <- function(x, y, by = NULL, ..., copy = FALSE, in_place = FALSE){  
+e_rows_insert.dtplyr_step <- function(x, y, by = NULL, ..., copy = FALSE, in_place = FALSE){  
   x_dt <- data.table::copy(data.table::as.data.table(x))
   y_dt <- data.table::as.data.table(y)
   
@@ -57,13 +56,10 @@ rows_delete.dtplyr_step <- function(x, y, by = NULL, ..., unmatched, copy = FALS
 
 
 #' rows_update implementation for data.table backends.
-#' @inheritParams dplyr::rows_update
-#' @param match named list consisting out of two equal length \code{data.frame}'s with columns defined in \code{by}.
-#' This allows for updates of columns defined in by.
-#' @inherit dplyr::rows_update return details
+#' @inherit e_rows_update
 #' @author Jasper Schelfhout
 #' @export
-rows_update.dtplyr_step <- function(x, y, by = NULL, match = NULL,..., copy = FALSE, in_place = FALSE){
+e_rows_update.dtplyr_step <- function(x, y, by = NULL, match = NULL,..., copy = FALSE, in_place = FALSE){
   args <- c(as.list(environment()), list(...))
   
   x_dt <- data.table::as.data.table(x)

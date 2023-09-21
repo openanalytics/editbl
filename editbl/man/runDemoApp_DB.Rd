@@ -4,10 +4,7 @@
 \alias{runDemoApp_DB}
 \title{Run a demo app}
 \usage{
-runDemoApp_DB(conn = connectDB())
-}
-\arguments{
-\item{conn}{database connection as provided by  \code{\link[DBI]{dbConnect}}}
+runDemoApp_DB()
 }
 \value{
 An object that represents the app. Printing the object or passing it

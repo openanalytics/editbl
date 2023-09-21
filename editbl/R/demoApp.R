@@ -38,10 +38,13 @@ runDemoApp <- function(app = "database", ...){
 }
 
 #' Run a demo app
-#' @param conn database connection as provided by  \code{\link[DBI]{dbConnect}}
 #' @importFrom shiny shinyApp
 #' @inherit shiny::shinyApp return
-runDemoApp_DB <- function(conn = connectDB()){
+runDemoApp_DB <- function(){
+  tmpFile <- tempfile(fileext = ".sqlite")
+  file.copy(system.file("extdata", "chinook.sqlite", package = 'editbl'), tmpFile)
+  conn <- editbl::connectDB(dbname = tmpFile)
+
   ui <- demoUI_DB(id = "app", conn = conn)
   server <- function(input, output, session) {
     demoServer_DB(id = "app", conn = conn)

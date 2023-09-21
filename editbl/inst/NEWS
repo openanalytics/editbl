@@ -1,3 +1,13 @@
+1.0.0
+    o Use `dbplyr::rows_delete.tbl_dbi` instead of custom implementation. (https://github.com/openanalytics/editbl/issues/1)
+    o BREAKING: rename custom `rows_insert` and `rows_update` functions to `e_rows_insert` and `e_rows_update`. This to avoid
+      conflicts with other packages. The default for both functions will still be `dplyr::rows_insert` and `dplyr::rows_update`.
+      (https://github.com/openanalytics/editbl/issues/1). Reason for not using the dplyr functions directly is because currently `rows_update`
+      does not allow updating of the keys (see `match` argument). Secondly, `rows_insert.tbl_dbi` does not complain about inserting duplicated rows.
+    o BREAKING: do not provide direct connection to in-package database in runDemoApp(). It's cleaner to work on a copy of the file.
+    o Support for `is.atomic(NULL) = FALSE` (https://stat.ethz.ch/pipermail/r-devel/2023-September/082892.html).
+0.9.6
+    o Adjustments in examples and documenation to meet CRAN standards
 0.9.3
     o Fixes in documentation to get CRAN standard
 0.9.2

@@ -14,19 +14,19 @@
 #' # Insert new row
 #' artists <- tbl(conn, "Artist")
 #' DBI::dbBegin(conn)
-#' rows_insert(artists,
+#' e_rows_insert(artists,
 #'  data.frame(ArtistId = 999, Name = "testArtist"),
 #'  in_place = TRUE)
 #' 
 #' DBI::dbRollback(conn)
 #' DBI::dbDisconnect(conn)
 #' 
-#' @inheritParams dplyr::rows_insert
-#' @inherit dplyr::rows_insert return details
+#' @inheritParams e_rows_insert
+#' @inherit e_rows_insert return details
 #' 
 #' @author Jasper Schelfhout
 #' @export
-rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = FALSE){
+e_rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = FALSE){
   if(!in_place){
     stop("Can only edit in place")
   }
@@ -52,12 +52,9 @@ rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
   return(x)
 }
 
-
 #' rows_update implementation for DBI backends.
-#' @inheritParams dplyr::rows_update
-#' @param match named list consisting out of two equal length \code{data.frame}'s with columns defined in \code{by}.
-#' This allows for updates of columns defined in by.
-#' @inherit dplyr::rows_update return details
+#' @inheritParams e_rows_update
+#' @inherit e_rows_update return details
 #' @examples
 #' library(dplyr)
 #' 
@@ -73,7 +70,7 @@ rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
 #' artists <- tbl(conn, "Artist")
 #' DBI::dbBegin(conn)
 #' y <- data.frame(ArtistId = 1, Name = "DC/AC")
-#' rows_update(
+#' e_rows_update(
 #'      x = artists,
 #'      y = y,
 #'      by = "ArtistId",
@@ -87,7 +84,7 @@ rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
 #'    x = data.frame("ArtistId" = 1),
 #'    y = data.frame("ArtistId" = 999)
 #' )
-#' rows_update(
+#' e_rows_update(
 #'     x = artists,
 #'     y = y,
 #'     match = match,
@@ -98,7 +95,7 @@ rows_insert.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = F
 #' 
 #' @author Jasper Schelfhout
 #' @export
-rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALSE, in_place = FALSE){
+e_rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALSE, in_place = FALSE){
   if(!in_place){
     stop("Can only edit in place")
   }
@@ -128,62 +125,6 @@ rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALSE,
         )
       })
   return(invisible(x))  
-}
-
-
-#' rows_delete implementation for DBI backends.
-#' @inheritParams dplyr::rows_delete
-#' @inherit dplyr::rows_delete return details
-#' @examples
-#' library(dplyr)
-#' 
-#' # Set up a test table
-#' conn <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
-#' artists_df <- data.frame(
-#'          ArtistId = c(1,2),
-#'          Name = c("AC/DC", "The Offspring")
-#' )
-#' DBI::dbWriteTable(conn, "Artist", artists_df)
-#' 
-#' # Delete a row
-#' artists <- tbl(conn, "Artist")
-#' DBI::dbBegin(conn)
-#' y <- data.frame(ArtistId = 1)
-#' rows_delete(
-#'      x = artists,
-#'      y = y,
-#'      by = "ArtistId",
-#'      in_place = TRUE)
-#' 
-#' DBI::dbRollback(conn)
-#' DBI::dbDisconnect(conn)
-#' @author Jasper Schelfhout
-#' @export
-rows_delete.tbl_dbi <- function(x, y, by = NULL, ..., copy = FALSE, in_place = FALSE){
-  if(!in_place){
-    stop("Can only edit in place")
-  }
-  
-  if(copy){
-    stop("copy TRUE not supported yet.")
-  }
-  
-  if(is.null(by)){
-    by <- colnames(x)[1]
-  }
-  
-  if(in_place){
-    lapply(seq_len(nrow(y)), function(i){
-          row <- y[i,,drop = FALSE]
-          rowDelete(
-              conn = x$src$con,
-              table = get_db_table_name(x),
-              where = as.list(row[by])
-          )
-        })
-    return(invisible(x))
-  }
-  return(x)
 }
 
 #' Get name of the tbl in the database
@@ -261,41 +202,6 @@ rowUpdate <- function (
       table = table,
       columns = names(values),
       values = values
-  )
-  
-  if(length(where)){
-    whereSQL  <- lapply(seq_along(where), function(i){
-          whereSQL(
-              conn = conn,
-              table =  table,
-              column = names(where)[i],
-              operator = "in",
-              values = where[[i]]
-          )   
-        })
-    whereSQL <- paste(whereSQL, collapse = " AND ")
-    query <- paste(query, "WHERE", whereSQL)
-  }
-  
-  DBI::dbExecute(
-      conn,
-      query)
-}
-
-#' Delete rows from a table in the db
-#' 
-#' @param conn database connection object as given by \code{\link[DBI]{dbConnect}}.
-#' @param table character
-#' @param where named list, values to filter on. Names are database column names. If NULL no filter is applied and all rows are deleted.
-#' @return integer number of affected rows.
-rowDelete <- function (
-    conn,
-    table,
-    where){
-  query <- glue::glue_sql(
-      .con =conn,
-      "DELETE FROM {`table`}",
-      table = table
   )
   
   if(length(where)){
