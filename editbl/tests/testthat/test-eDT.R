@@ -1,6 +1,6 @@
 test_that("passing on an empty tibble works", {
       data <- dplyr::as_tibble(sleep)
-      data <- data[NULL,]
+      data <- data[0,]
       
       # Try running the app manually
       ui <- eDTOutput("app")
