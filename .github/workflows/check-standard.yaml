@@ -4,7 +4,7 @@ on:
   push:
     branches: [main, master]
   pull_request:
-    branches: [main, master]
+    branches: [main, master, fix_r_devel_CRAN_errors]
 
 name: R-CMD-check
 
