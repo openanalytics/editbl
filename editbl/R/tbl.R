@@ -20,6 +20,8 @@ e_rows_insert <- function(
   UseMethod("e_rows_insert")
 }
 
+#' @inherit e_rows_insert
+#' @export
 #' @importFrom dplyr rows_insert
 e_rows_insert.default <- function(
     x,    
@@ -60,7 +62,9 @@ e_rows_update <- function(
   UseMethod("e_rows_update")
 }
 
+#' @inherit e_rows_update
 #' @importFrom dplyr rows_update
+#' @export
 e_rows_update.default <- function(
     x,
     y,

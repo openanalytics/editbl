@@ -1,3 +1,5 @@
+1.0.1
+    o Export `rows_insert.default()` and `rows_update.default()`
 1.0.0
     o Use `dbplyr::rows_delete.tbl_dbi` instead of custom implementation. (https://github.com/openanalytics/editbl/issues/1)
     o BREAKING: rename custom `rows_insert` and `rows_update` functions to `e_rows_insert` and `e_rows_update`. This to avoid
