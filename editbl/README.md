@@ -2,7 +2,7 @@
 [![R-CMD-check](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml)
 [![codecov](https://codecov.io/gh/openanalytics/editbl/branch/main/graph/badge.svg)](https://app.codecov.io/gh/openanalytics/editbl)
 
-![](https://github.com/openanalytics/editbl/blob/main/editbl_logo.png)
+![](https://github.com/openanalytics/editbl/blob/main/editbl_logo.png?raw=true)
 
 `editbl` allows you to do exactly what is says: 'edit tibbles'.
 
@@ -10,6 +10,7 @@ It builds around the [DT](https://CRAN.R-project.org/package=DT) package as ligh
 while still keeping as much flexibility as possible to customize the table yourself.
 
 Main features by which it distinguishes itself from other CRUD (create, read, update, delete) packages:
+
 * Supporting multiple backends and in-place editing.
 * Easy customizable shiny integration.
 * undo/redo button
@@ -47,7 +48,7 @@ Run some demo apps
 ```
 editbl::runDemoApp()
 ```
-![](https://github.com/openanalytics/editbl/blob/main/editbl.gif)
+![](https://github.com/openanalytics/editbl/blob/main/editbl.gif?raw=true)
 
 More examples can be found [here](https://github.com/openanalytics/editbl/blob/main/editbl/R/demoApp.R)
 
@@ -162,36 +163,27 @@ the changes you made might not be executed correctly or errors might be thrown.
 These are other popular CRUD packages in R.
 Depending on your needs, they might be better alternatives.
 
-**DataEditR**
+[**DataEditR**](https://cran.r-project.org/web/packages/DataEditR/index.html)
 
-https://cran.r-project.org/web/packages/DataEditR/index.html
 * Rstudio plugin
 * Really flexible excel-like feeling
 * Can only edit in-memory tables. Harder to support databases etc.
 
-**editData**
-
-https://cran.r-project.org/web/packages/editData/index.html
+[**editData**](https://cran.r-project.org/web/packages/editData/index.html)
 
 * Rstudio plugin
 * Nice features in terms of editing (pop-ups, more buttons,...)
 * Can only edit in-memory tables. Harder to support databases etc.
 
-**Editor** 
-
-https://editor.datatables.net/
+[**Editor**](https://editor.datatables.net/)
 
 *  Premium datatable extension allowing for editing data.
 
-**DT-Editor**
-
-https://github.com/jienagu/DT-Editor
+[**DT-Editor**](https://github.com/jienagu/DT-Editor)
 
 * data.table focused
 
-**DTedit**
-
-https://github.com/jbryer/DTedit
+[**DTedit**](https://github.com/jbryer/DTedit)
 
 * `DT` extension
 * Very customizable (own callbacks)
@@ -199,14 +191,14 @@ https://github.com/jbryer/DTedit
 
 ### Additional links:
 
-https://cran.r-project.org/web/packages/DT/index.html
+[CRAN `DT`](https://cran.r-project.org/web/packages/DT/index.html)
 
-https://cran.r-project.org/web/packages/tibble/index.html
+[CRAN `tibble`](https://cran.r-project.org/web/packages/tibble/index.html)
 
-https://thatdatatho.com/adding-action-buttons-in-rows-of-dt-data-table-in-r-shiny/
+[Blogpost buttons in DT](https://thatdatatho.com/adding-action-buttons-in-rows-of-dt-data-table-in-r-shiny/)
 
-https://appsilon.com/forget-about-excel-use-r-shiny-packages-instead/
+[Blogpost shiny vs excel](https://appsilon.com/forget-about-excel-use-r-shiny-packages-instead/)
 
-https://github.com/garrylachman/ElectroCRUD
+[Generic CRUD application](https://github.com/garrylachman/ElectroCRUD)
 
-https://www.sqlitetutorial.net/sqlite-sample-database/
+[Example SQLite databse](https://www.sqlitetutorial.net/sqlite-sample-database/)
