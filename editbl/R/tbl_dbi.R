@@ -131,9 +131,8 @@ e_rows_update.tbl_dbi <- function(x, y, by = NULL, match = NULL,..., copy = FALS
 #' @param x `tbl_dbi`
 #' @return SQL, the table name as used in the database
 get_db_table_name <- function(x){
-  # FIXME: figure out what the perfect way is of retrieving the table identity
-  # form a tibble
   name <- coalesce(
+      tryCatch({dbplyr::remote_table(x)}, error = function(e){NULL}), # Since dbplyr 2.4.0
       tryCatch({x$lazy_query$x$x}, error = function(e){NULL}), # tbl can apparently get more nested
       tryCatch({x$lazy_query$x}, error = function(e){NULL}), # normal place
       tryCatch({x$ops$x}, error = function(e){NULL}) # old tbl compatibility
@@ -142,7 +141,27 @@ get_db_table_name <- function(x){
   if(is.null(name)){
     stop("Can not find in-database table name based on the tibble object.")
   }
-  name <- DBI::SQL(name)
+  
+  if(inherits(name,'dbplyr_table_ident')){
+    attributes <- unclass(name)
+    id <- list()
+    if(!is.na(attributes$table)){
+      id$table <- attributes$table
+    }
+    if(!is.na(attributes$schema)){
+      id$schema <- attributes$schema
+    }
+    if(!is.na(attributes$catalog)){
+      id$catalog <- attributes$catalog
+    }
+    name <- DBI::dbQuoteIdentifier(
+        conn = x$src$con,
+        x = do.call(DBI::Id, id)
+    )
+  } else {
+    name <- DBI::SQL(name)
+  }
+    
   return(name)
 }
 
