@@ -163,13 +163,13 @@ the changes you made might not be executed correctly or errors might be thrown.
 These are other popular CRUD packages in R.
 Depending on your needs, they might be better alternatives.
 
-[**DataEditR**](https://cran.r-project.org/web/packages/DataEditR/index.html)
+[**DataEditR**](https://cran.r-project.org/package=DataEditR)
 
 * Rstudio plugin
 * Really flexible excel-like feeling
 * Can only edit in-memory tables. Harder to support databases etc.
 
-[**editData**](https://cran.r-project.org/web/packages/editData/index.html)
+[**editData**](https://cran.r-project.org/package=editData)
 
 * Rstudio plugin
 * Nice features in terms of editing (pop-ups, more buttons,...)
@@ -190,10 +190,9 @@ Depending on your needs, they might be better alternatives.
 * Few dependencies
 
 ### Additional links:
+[CRAN `DT`](https://cran.r-project.org/package=DT)
 
-[CRAN `DT`](https://cran.r-project.org/web/packages/DT/index.html)
-
-[CRAN `tibble`](https://cran.r-project.org/web/packages/tibble/index.html)
+[CRAN `tibble`](https://cran.r-project.org/package=tibble)
 
 [Blogpost buttons in DT](https://thatdatatho.com/adding-action-buttons-in-rows-of-dt-data-table-in-r-shiny/)
 
