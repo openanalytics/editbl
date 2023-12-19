@@ -36,7 +36,7 @@ eDT(
   statusColor = c(insert = "#e6e6e6", update = "#32a6d3", delete = "#e52323"),
   inputUI = editbl::inputUI,
   defaults = tibble(),
-  env = parent.frame()
+  env = environment()
 )
 }
 \arguments{
@@ -180,12 +180,12 @@ set for all \code{Date} columns.}
 
 \item{statusColor}{named \code{character}. Colors to indicate status of the row.}
 
-\item{inputUI}{\code{function}. UI function of a shiny module with at least arguments \code{id} \code{data} and \code{...}.}
+\item{inputUI}{\code{function}. UI function of a shiny module with at least arguments \code{id} \code{data} and \code{...}.
+#'   elements with inputIds identical to one of the column names are used to update the data.}
 
 \item{defaults}{expression that evaluates to a \code{tibble} with (a subset of) columns of the data.
 It will be evaluated for each new row in the environment defined by 'env'.
-This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
-elements with inputIds identical to one of the column names are used to update the data.}
+This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.}
 
 \item{env}{\code{environment} in which the server function is running. Should normally not be modified.}
 }
