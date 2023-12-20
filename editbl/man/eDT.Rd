@@ -238,6 +238,14 @@ if(interactive()){
       eDT('tbl',iris,)
     }
   )
+
+  # Custom inputUI
+  editbl::eDT(mtcars, inputUI = function(id, data){
+    ns <- NS(id)
+    textInput(
+    ns("mpg"),
+    label = "mpg",
+    value = data$mpg)})
 }
 
 }

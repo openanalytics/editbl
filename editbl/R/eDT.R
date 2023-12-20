@@ -105,6 +105,14 @@ eDTOutput <- function(id,...) {
 #'       eDT('tbl',iris,)
 #'     }
 #'   )
+#' 
+#'   # Custom inputUI
+#'   editbl::eDT(mtcars, inputUI = function(id, data){
+#'     ns <- NS(id)
+#'     textInput(
+#'     ns("mpg"),
+#'     label = "mpg",
+#'     value = data$mpg)})
 #' }
 #' 
 #' @author Jasper Schelfhout
@@ -599,7 +607,7 @@ eDTServer <- function(
         observeEvent(input$edit, {
               showModal(
                   modalDialog(
-                      inputUI()(id = ns(editModalId())),
+                      inputUI()(id = ns(editModalId()), data = rv$modifiedData[clickedRow(),]),
                       footer = tagList(
                           actionButton(ns("confirmEdit"), "Ok"),
                           modalButton("cancel")
