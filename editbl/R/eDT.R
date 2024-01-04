@@ -721,7 +721,7 @@ eDTServer <- function(
         observeEvent(input$DT_cells_filled, {      
               req(!is.null(input$DT_cells_filled) && isTruthy(input$DT_cells_filled))
               edits <- input$DT_cells_filled
-              edits$row <- edits$row + min(input$DT_rows_current -1)
+              edits$row <- input$DT_rows_current[edits$row]           
               rv$edits <- edits
               rv$edits_react <-  rv$edits_react + 1
             })

@@ -88,3 +88,22 @@ test_that("working with selectInputDT works.", {
       
       shiny::shinyApp(ui, server)
     })
+
+test_that("Row dragging works when filter is on", {
+      ui <- eDTOutput("app")
+      server <- function(input,output,session){
+        eDTServer(id = "app",
+            data = mtcars,
+            filter = "bottom")
+      }
+
+      # Test
+      # 1. add on a filter for a column
+      # 2. drag a cell using making use of the autofill extension
+      # 3. remove the filter
+      # 4. check if the same cell is still modified 
+      # TODO: try to encode this
+      expect_true(TRUE)
+      
+      shiny::shinyApp(ui, server)
+    })

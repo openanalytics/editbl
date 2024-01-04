@@ -1,7 +1,8 @@
 1.0.2-9000
-    o FIX: inputUI argument was not working, pass on selected row
+    o FIX: inputUI argument was not working, now passing on the selected row.
     o FIX: Evaluate defaults argument for each new row
     o FIX: Use correct column types for in_place `rows_delete` on databases.
+    o FIX: Row dragging during an active filter / search now modifies the correct cells.
 1.0.2
     o Fix compatibility with dbplyr 2.4.0. Adjust method to retrieve table identifier.
 1.0.1
