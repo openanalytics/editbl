@@ -1,12 +1,14 @@
 [![CRAN status](https://www.r-pkg.org/badges/version/editbl)](https://cran.r-project.org/package=editbl)
 [![R-CMD-check](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml)
 [![codecov](https://codecov.io/gh/openanalytics/editbl/branch/main/graph/badge.svg)](https://app.codecov.io/gh/openanalytics/editbl)
+![CRAN downloads](https://cranlogs.r-pkg.org/badges/editbl)
 
 ![](https://github.com/openanalytics/editbl/blob/main/editbl_logo.png?raw=true)
 
 `editbl` allows you to do exactly what is says: 'edit tibbles'.
+Meaning you can explore and modify any kind of tabular data, independently of where it is stored, in a spreadsheet-like fashion.
 
-It builds around the [DT](https://CRAN.R-project.org/package=DT) package as light weight as possible to provide you with a nice UI to edit your data,
+The package builds around [DT](https://CRAN.R-project.org/package=DT) as light weight as possible to provide you with a nice interface to edit your data,
 while still keeping as much flexibility as possible to customize the table yourself.
 
 Main features by which it distinguishes itself from other CRUD (create, read, update, delete) packages:
@@ -62,7 +64,7 @@ What should you look out for?
 * Your `datatable` now exists within a module (e.g. child namespace). This means your own chosen `outputId` is now `moduleId-DT`. This influences for example the values accessible under `input`. Example: switch from `input$outputId_cell_clicked` to `input[["moduleId-DT_cell_clicked"]]`.
 * `eDT` accepts all arguments of `DT::datatable`, but has some different defaults for convenience.
 * Any additional formatting should be done by passing a function to  the `format` argument of `eDT`.
-* As always be careful when using extensions (https://datatables.net/extensions/index) or custom javascript, not everything works well together. The `KeyTable` and `AutoFill` extensions of datatable are used by default and should be well integrated. 
+* As always be careful when using [extensions](https://datatables.net/extensions/index) or custom javascript, not everything works well together. The [KeyTable](https://datatables.net/extensions/keytable/) and [AutoFill](https://datatables.net/extensions/autofill/) extensions of datatable are used by default and should be well integrated. 
 
 
 ## Foreign tables
