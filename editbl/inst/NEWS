@@ -1,4 +1,4 @@
-1.0.2-9000
+1.0.3
     o FIX: inputUI argument was not working, now passing on the selected row.
     o FIX: Evaluate defaults argument for each new row
     o FIX: Use correct column types for in_place `rows_delete` on databases.
