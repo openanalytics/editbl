@@ -1,3 +1,5 @@
+1.0.3-9000
+    o Prevent greyout when dragging value with increment. Recently the javascript code of the autofill extension seems to have started returning `NaN` instead of `null`.
 1.0.3
     o FIX: inputUI argument was not working, now passing on the selected row.
     o FIX: Evaluate defaults argument for each new row

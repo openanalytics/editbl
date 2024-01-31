@@ -718,7 +718,7 @@ eDTServer <- function(
               shiny::removeModal()
             })
         
-        observeEvent(input$DT_cells_filled, {      
+        observeEvent(input$DT_cells_filled, {
               req(!is.null(input$DT_cells_filled) && isTruthy(input$DT_cells_filled))
               edits <- input$DT_cells_filled
               edits$row <- input$DT_rows_current[edits$row]           
@@ -1256,13 +1256,13 @@ keyTableJS <- c(
 autoFillJs <- c(
     "var tbl = $(table.table().node());",
     "var id = tbl.closest('.datatables').attr('id');",
-    "table.on('autoFill', function(e, datatable, cells){",
+    "table.on('preAutoFill', function(e, datatable, cells){",
     "  var out = [];",
     "  for(var i = 0; i < cells.length; ++i){",
     "    var cells_i = cells[i];",
     "    for(var j = 0; j < cells_i.length; ++j){",
     "      var c = cells_i[j];",
-    "      var value = c.set === null ? '' : c.set;", # null => problem in R
+    "      var value = (c.set === null || isNaN(c.set))? '' : c.set;", # null => problem in R
     "      out.push({",
     "        row: c.index.row + 1,",
     "        col: c.index.column,",
