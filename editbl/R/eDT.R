@@ -62,7 +62,7 @@ eDTOutput <- function(id,...) {
 #' @inheritParams DT::datatable
 #' @param keys `character`. Defaults to all columns under the assumption that at least every row is unique.
 #' @param format function accepting and returning a \code{\link[DT]{datatable}}
-#' @param in_place `logical`
+#' @param in_place `logical`. Whether to modify the data object in place or to return a modified copy.
 #' @param foreignTbls `list`. List of objects created by \code{\link{foreignTbl}}
 #' @param statusColor named `character`. Colors to indicate status of the row.
 #' @param inputUI `function`. UI function of a shiny module with at least arguments `id` `data` and `...`.

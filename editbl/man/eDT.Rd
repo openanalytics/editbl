@@ -79,11 +79,8 @@ generated from \code{htmltools::tags$caption()}}
 \code{bottom/top}: put column filters at the bottom/top of the table; range
 sliders are used to filter numeric/date/time columns, select lists are used
 for factor columns, and text input boxes are used for character columns; if
-you want more control over the styles of filters, you can provide a list to
-this argument of the form \code{list(position = 'top', clear = TRUE, plain
-= FALSE)}, where \code{clear} indicates whether you want the clear buttons
-in the input boxes, and \code{plain} means if you want to use Bootstrap
-form styles or plain text input styles for the text input boxes}
+you want more control over the styles of filters, you can provide a named
+list to this argument; see Details for more}
 
 \item{escape}{whether to escape HTML entities in the table: \code{TRUE} means
 to escape the whole table, and \code{FALSE} means not to escape it;
@@ -172,7 +169,7 @@ set for all \code{Date} columns.}
 
 \item{keys}{\code{character}. Defaults to all columns under the assumption that at least every row is unique.}
 
-\item{in_place}{\code{logical}}
+\item{in_place}{\code{logical}. Whether to modify the data object in place or to return a modified copy.}
 
 \item{format}{function accepting and returning a \code{\link[DT]{datatable}}}
 
