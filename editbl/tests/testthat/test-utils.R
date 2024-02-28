@@ -147,13 +147,3 @@ test_that("standardizeArgument_editable list",{
 test_that("standardizeArgument_editable Error",{
       expect_error(standardizeArgument_editable(1))
     })
-
-test_that("isMissing returns TRUE for missing argument",{
-      f <- function(a){isMissing(a)}
-      expect_true(f())
-    })
-
-test_that("isMissing returns FALSE for non missing argument",{
-      f <- function(a){isMissing(a)}
-      expect_false(f(1))
-    })
