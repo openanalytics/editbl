@@ -296,26 +296,3 @@ customButton <- function(id, label, icon = "", disabled = FALSE){
                       }", id))
       )
 }
-
-
-#' Check if an argument is missing
-#' 
-#' @details in contrast to `base::missing()`, this can also be used in a nested environment
-#' 
-#' @param x object
-#' @return `logical`
-#' 
-#' @author Jasper Schelfhout
-isMissing <- function(x){
-  tryCatch({
-        x; 
-        FALSE
-      },
-      error = function(e){
-        if(grepl("is missing, with no default", e$message)){
-          TRUE              
-        } else {
-          FALSE
-        }
-      })
-}

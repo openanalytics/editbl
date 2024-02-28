@@ -71,6 +71,10 @@ inputUI.default <- function(id, ...){
 #' @author Jasper Schelfhout
 #' @export
 inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ...){  
+  missingColnames <- missing(colnames)
+  missingForeignTbls <- missing(foreignTbls)
+  missingNotEditable <- missing(notEditable)
+  
   moduleServer(
       id,
       function(input, output, session) {
@@ -86,7 +90,7 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
           data <- reactive(data, env = argEnv)
         }
         
-        if(isMissing(colnames)){
+        if(missingColnames){
           colnames <- reactive({
                 colnames <- base::colnames(data())
                 names(colnames) <- colnames
@@ -97,7 +101,7 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
           colnames <- reactive(colnames, env = argEnv)
         }
         
-        if(isMissing(notEditable)){
+        if(missingNotEditable){
           notEditable <- reactive({
                 character(0)
               })
@@ -106,7 +110,7 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
           notEditable <- reactive(notEditable, env = argEnv)
         }
         
-        if(isMissing(foreignTbls)){
+        if(missingForeignTbls){
           foreignTbls <- reactive({
                 list()
               })

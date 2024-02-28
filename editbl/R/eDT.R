@@ -224,6 +224,7 @@ eDTServer <- function(
     defaults = tibble(),
     env = environment()
 ) {
+  missingContainer <- missing(container)
   moduleServer(
       id,
       function(input, output, session) {
@@ -266,7 +267,6 @@ eDTServer <- function(
           colnames <- shiny::reactive(colnames, env = argEnv)
         }
         
-        missingContainer <- isMissing(container)
         if(!missingContainer && !shiny::is.reactive(container)){
           container <- shiny::reactive(container, env = argEnv)
         }
