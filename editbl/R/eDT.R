@@ -1262,7 +1262,7 @@ autoFillJs <- c(
     "    var cells_i = cells[i];",
     "    for(var j = 0; j < cells_i.length; ++j){",
     "      var c = cells_i[j];",
-    "      var value = (c.set === null || isNaN(c.set))? '' : c.set;", # null => problem in R
+    "      var value = (c.set === null || (typeof c.set === 'number' && isNaN(c.set)))? '' : c.set;", # null => problem in R
     "      out.push({",
     "        row: c.index.row + 1,",
     "        col: c.index.column,",
