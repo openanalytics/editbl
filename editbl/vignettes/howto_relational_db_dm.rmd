@@ -166,7 +166,7 @@ Next, let's use this to build a shiny app.
 ```{r}
 dbUI <- function(id) {
   ns <- NS(id)
-  tagList(
+  fluidPage(
       uiOutput(outputId = ns('selectUI')),
       eDTOutput(id = ns('DT'))
   )
@@ -181,7 +181,7 @@ dbServer <- function(id, dm) {
         tables <- dm::dm_get_tables(dm)
         
         output$selectUI <- renderUI({
-          selectInput(ns('table'), label = 'tabel', choices = names(tables))  
+          selectInput(ns('table'), label = 'table', choices = names(tables))  
         })
         
         data <- reactive({
@@ -208,7 +208,8 @@ dbServer <- function(id, dm) {
 
 ```
 
-```{r}
+
+```{r, screenshot.opts = list(vwidth = 700)}
 shiny::shinyApp( 
     ui = dbUI('id'),
     server =  function(input, output,session){
@@ -216,7 +217,7 @@ shiny::shinyApp(
     })
 ```
 
-As you click the 'edit' button, you'll notice you can now select rows from the
+As you click the 'edit' button, you will notice you can now select rows from the
 referenced tables. This makes it easier to navigate compared to just having
 id's to work with.
 

@@ -39,8 +39,8 @@ library(DT)
 library(editbl)
 ```
 
-```{r}
-ui <- DTOutput("DT")
+```{r, screenshot.opts = list(vwidth = 700)}
+ui <- fluidPage(DTOutput("DT"))
 server <- function(input, output, session){
   output$DT <- renderDataTable({
     datatable(mtcars)  %>%
@@ -54,8 +54,8 @@ shinyApp(ui, server)
 ```
 
 Reworked into `eDT()`:
-```{r}
-ui <- eDTOutput("DT")
+```{r, screenshot.opts = list(vwidth = 700)}
+ui <- fluidPage(eDTOutput("DT"))
 server <- function(input, output, session){
   editbl::eDT(
     id = "DT",
