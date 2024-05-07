@@ -59,7 +59,7 @@ Advanced examples can be found in the [vignettes](https://github.com/openanalyti
 
 Let's say you already use `DT::datatable()` to display your data, but want to switch to `editbl::eDT()` to be able to edit it. Would this be a lot of effort? No!
 In fact, `eDT()` accepts the exact same arguments. So it is almost as easy as replacing the functions and you are done.
-Should you run into problems take a look [here](https://github.com/openanalytics/editbl/tree/main/editbl/vignettes/howto_switch_from_DT.rmd) for some pointers to look out for.
+Should you run into problems take a look [here](https://github.com/openanalytics/editbl/blob/main/editbl/vignettes/howto_switch_from_DT.rmd) for some pointers to look out for.
 
 ## Constraints and normalized tables
 
