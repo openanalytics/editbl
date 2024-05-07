@@ -1,0 +1,287 @@
+---
+title: "Edit tables in a relational database"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{How to: modify tables in a relational database.}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+This document will learn you how to connect to a database and leverage `editbl`
+to explore and edit your data.
+
+The package `editbl` is actually developed with the main goal of making it as
+easy as possible to work with a relational database. It
+therefore also uses terminology of the [relational
+model](https://en.wikipedia.org/wiki/Relational_model). It is
+recommended to understand the concepts [foreign
+key](https://en.wikipedia.org/wiki/Foreign_key), [natural
+key](https://en.wikipedia.org/wiki/Natural_key) and [surrogate
+key](https://en.wikipedia.org/wiki/Surrogate_key) before proceeding.
+
+That being said, let's load some packages first.
+```{r echo = TRUE, results = 'hide'}
+library(dplyr)
+library(shiny)
+library(editbl)
+```
+
+## Basics of handling a database in R
+
+The first thing you need is a database connection. Here we connect to an
+[sqlite](https://en.wikipedia.org/wiki/SQLite) file, which is a portable
+database format.
+
+```{r echo = TRUE, results = 'hide'}
+tmpFile <- tempfile(fileext = ".sqlite")
+file.copy(system.file("extdata", "chinook.sqlite", package = 'editbl'), tmpFile) 
+conn <-   DBI::dbConnect(
+    dbname = tmpFile,
+    drv = RSQLite::SQLite()
+)
+```
+
+With the [{DBI} package](https://CRAN.R-project.org/package=DBI) you can list
+all tables and schemas that are available in the database for exploratory
+purposes.
+
+```{r}
+DBI::dbListTables(conn)
+```
+
+The [{dbplyr} package](https://CRAN.R-project.org/package=dbplyr) allows us to
+create `tbl` objects that reference the database tables without actually pulling
+all the data in memory. These objects can be manipulated using
+[{dplyr}](https://CRAN.R-project.org/package=dplyr) syntax in a lazy-evaluated
+way. Meaning you can work with big data that doesn't even fit on your computer!
+You can read more about it [here](https://dbplyr.tidyverse.org).
+
+
+```{r}
+dplyr::tbl(conn, 'Album')
+```
+
+
+## A simple table editor
+
+Let's give a shot at building our first shiny app. This one will modify the
+`Albums` table in the database.
+
+First we specify a [shiny
+module](https://mastering-shiny.org/scaling-modules.html). If you are
+unfamiliar with shiny modules, all you have to know is that they act as normal
+shiny apps, with `ns()` wrapped around in/output id's. Though I do recommend
+reading more about them, since it will enhance what you can do with
+[shiny](https://shiny.posit.co/).
+
+
+```{r}
+dbUI <- function(id) {
+  ns <- NS(id)
+  tagList(
+      eDTOutput(id = ns('Album'))
+  )
+}
+
+dbServer <- function(id, conn) {
+  moduleServer(
+      id,
+      function(input, output, session) {        
+        Album <- eDT(
+            id = "Album",
+            key = "AlbumId",
+            data = dplyr::tbl(conn, "Album"),
+            in_place = TRUE 
+        )
+          
+        invisible()
+      }
+  )
+}
+```
+
+We need to put `in_place = TRUE`. Reason being that we want to actually
+modify tables within the database. If this argument is set to `FALSE`, `editbl`
+will return a edited copy of the original data. This is useful for
+`data.frame`'s, but not for databases.
+
+We also specify which column(s) are the
+[key](https://en.wikipedia.org/wiki/Primary_key) of the table. This is the
+minimal set of columns to uniquely identify a row. You don't have to specify
+this argument, but it makes `eDT()` more efficient. E.g. this way it only has to
+match on the key columns instead of all columns when doing updates or deletes.
+
+
+**IMPORTANT**: Make sure the key you specify actually is unique across the
+table!
+
+`editbl` will not itself check for uniqueness of rows because it's
+computationally expensive. Ensuring uniqueness is usually the responsibility of
+the database.
+
+Let's run the app:
+```{r}
+shiny::shinyApp( 
+    ui = dbUI('id'),
+    server =  function(input, output,session){
+      dbServer('id', conn)
+    })
+```
+
+Great, you can now modify the `Album` table in the database!
+
+Tip: if you do not fill in the `AlbumId` for a new row, the
+database will automatically do it for you. If you prefer however to handle
+setting defaults within your application, take a look at the `defaults` argument
+of `eDT()`.
+
+## Advanced table editor (flat, joined table).
+
+Let's take in one step further. You don't really care about `AlbumId` and
+`ArtistId` do you? These are just meaningless [surrogate
+keys](https://en.wikipedia.org/wiki/Surrogate_key) to uniquely identify rows. So
+why not hide them?
+
+This we can do by joining the `Artists` on `ArtistId` ([foreign
+key](https://en.wikipedia.org/wiki/Foreign_key)). 
+
+```{r}
+dbServer_hidden_keys <- function(id, conn) {
+  moduleServer(
+      id,
+      function(input, output, session) {
+        db_album <- dplyr::tbl(conn, "Album")
+        db_artist <- dplyr::tbl(conn, "Artist")
+        
+        Album <- eDT(
+            id = "Album",
+            data = db_album,
+            in_place = TRUE,
+            foreignTbls = list(
+              foreignTbl(
+                x = db_album,
+                y = db_artist,
+                by = 'ArtistId',
+                naturalKey = 'Name'
+              )
+             ),
+             options = list(
+               columnDefs = list(
+                 list(visible=FALSE, targets=c("AlbumId","ArtistId"))
+               )
+             )
+        )
+        invisible()
+      }
+  )
+}
+```
+
+**IMPORTANT** Make sure the `naturalKey` you specify actually is unique across
+the table! (same reason as above)
+
+```{r}
+shiny::shinyApp( 
+    ui = dbUI('id'),
+    server =  function(input, output,session){
+      dbServer_hidden_keys('id', conn)
+    })
+```
+
+Way more convenient isn't it? Make sure to click the 'edit' button. Here you can
+see artists has now become a dropdown. You've actually also created your first
+constraint, ensuring that only artists that exists within the 'Artist' table
+can be filled in. So it is now easier to fill in this information and you ensure
+data correctness, double win.
+
+## Advanced table editor (partial table).
+
+You can use `dplyr::filter()` to only show a subset of relevant rows to the user.
+This can be used for improvement of performance/navigation or enforcing
+row-level security.
+
+```{r}
+
+dbUI_advanced <- function(id) {
+  ns <- NS(id)
+  tagList(
+      shiny::uiOutput(ns("artistSelector_UI")),
+      eDTOutput(id = ns('Album'))
+  )
+}
+
+dbServer_advanced <- function(id, conn) {
+  moduleServer(
+      id,
+      function(input, output, session) {
+        ns <- session$ns
+                
+                
+        db_album <- dplyr::tbl(conn, "Album")
+        db_artist <- dplyr::tbl(conn, "Artist")
+        
+        output$artistSelector_UI <- shiny::renderUI(
+          shiny::selectInput(ns('artist'),
+           label = 'artist',
+           choices = db_artist %>% select(Name) %>% collect())
+        )
+
+        Album <- eDT(
+            id = "Album",
+            data = db_album,
+            in_place = TRUE,
+            foreignTbls = reactive(
+            {
+             req(input$artist)
+             selected <- input$artist     
+             list(
+              foreignTbl(
+                x = db_album,
+                y = db_artist %>% filter(Name == selected),
+                by = 'ArtistId',
+                naturalKey = 'Name'
+              )
+             )}),
+             options = list(
+               columnDefs = list(
+                 list(visible=FALSE, targets=c("AlbumId","ArtistId"))
+               )
+             )
+
+        )
+        invisible()
+      }
+  )
+}
+```
+```{r}
+shiny::shinyApp( 
+    ui = dbUI_advanced('id'),
+    server =  function(input, output,session){
+      dbServer_advanced('id', conn)
+    })
+```
+
+## Above and beyond
+
+* You can use [{dplyr}](https://CRAN.R-project.org/package=dplyr) to
+  select, rename, reorder, filter... Cut and slice through your data as you seem
+  fit.
+
+* You can use all arguments and extensions of
+  [{DT}](https://CRAN.R-project.org/package=DT) to customize your display as
+  much as you like.
+
+* `eDT()` can take any argument as a reactive. This allows for advanced shiny
+  integration. The example above uses this feature to filter based
+  on a user-selected artist.
+
+* You can use [{dm}](https://CRAN.R-project.org/package=dm) to
+  automatically extract the database model based on a connection.
+  (`vignette("howto_relational_db_dm")`)
+
+Combining all the above opens up a whole lot of possibilities. Get creative and
+enjoy!
+

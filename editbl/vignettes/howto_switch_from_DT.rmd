@@ -1,0 +1,71 @@
+---
+title: "Switching from DT"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{How to: adjust your `DT` code to use `eDT` instead.}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+Let's say you already use `DT::datatable()` to display your data, but want to
+switch to `editbl::eDT()` to be able to edit it. What should you look out for?
+
+* `eDTOutput()` uses an `id` argument instead of `outputId` since it's actually a
+  [shiny module](https://mastering-shiny.org/scaling-modules.html).
+* `eDT()` adds extra (hidden) columns to your `datatable`. Try to format using
+  column names instead of indexes.
+* Your `datatable` now exists within a module (e.g. child namespace). This means
+  your own chosen `outputId` is now `moduleId-DT`. This influences for example
+  the values accessible under `input`. Example: switch from
+  `input$outputId_cell_clicked` to `input[["moduleId-DT_cell_clicked"]]`.
+* `eDT()` accepts all arguments of `DT::datatable()`, but has some different
+  defaults for convenience.
+* Any additional formatting should be done by passing a function to  the
+  `format` argument of `eDT()`.
+* As always be careful when using
+  [extensions](https://datatables.net/extensions/index) or custom javascript,
+  not everything works well together. The
+  [KeyTable](https://datatables.net/extensions/keytable/) and
+  [AutoFill](https://datatables.net/extensions/autofill/) extensions of
+  datatable are used by default and should be well integrated. 
+
+Here is an example covering the above:
+
+```{r echo = TRUE, results = 'hide'}
+library(shiny)
+library(DT)
+library(editbl)
+```
+
+```{r}
+ui <- DTOutput("DT")
+server <- function(input, output, session){
+  output$DT <- renderDataTable({
+    datatable(mtcars)  %>%
+     formatRound('disp', 1)
+  })  
+  observe({
+      print(input[["DT_cell_clicked"]])
+   })
+}
+shinyApp(ui, server)
+```
+
+Reworked into `eDT()`:
+```{r}
+ui <- eDTOutput("DT")
+server <- function(input, output, session){
+  editbl::eDT(
+    id = "DT",
+    data = mtcars,
+    format = function(x){formatRound(x,'disp', 1)})
+   
+   observe({
+      print(input[["DT-DT_cell_clicked"]])
+   })
+}
+shinyApp(ui, server)
+```
+

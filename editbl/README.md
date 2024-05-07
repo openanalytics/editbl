@@ -52,27 +52,21 @@ editbl::runDemoApp()
 ```
 ![](https://github.com/openanalytics/editbl/blob/main/editbl.gif?raw=true)
 
-More examples can be found [here](https://github.com/openanalytics/editbl/blob/main/editbl/R/demoApp.R)
+More introductory examples can be found [here](https://github.com/openanalytics/editbl/blob/main/editbl/R/demoApp.R)
+Advanced examples can be found in the [vignettes](https://github.com/openanalytics/editbl/tree/main/editbl/vignettes)
 
 ## Switching from DT
 
-Let's say you already use `DT::datatable` to display your data, but want to switch to `editbl::eDT` to be able to edit it.
-What should you look out for?
+Let's say you already use `DT::datatable()` to display your data, but want to switch to `editbl::eDT()` to be able to edit it. Would this be a lot of effort? No!
+In fact, `eDT()` accepts the exact same arguments. So it is almost as easy as replacing the functions and you are done.
+Should you run into problems take a look [here](https://github.com/openanalytics/editbl/tree/main/editbl/vignettes/howto_switch_from_DT.rmd) for some pointers to look out for.
 
-* `eDTOutput` uses an `id` argument instead of `outputId` since it's actually a module.
-* `eDT` adds extra (hidden) columns to your `datatable`. Try to format using column names instead of indexes.
-* Your `datatable` now exists within a module (e.g. child namespace). This means your own chosen `outputId` is now `moduleId-DT`. This influences for example the values accessible under `input`. Example: switch from `input$outputId_cell_clicked` to `input[["moduleId-DT_cell_clicked"]]`.
-* `eDT` accepts all arguments of `DT::datatable`, but has some different defaults for convenience.
-* Any additional formatting should be done by passing a function to  the `format` argument of `eDT`.
-* As always be careful when using [extensions](https://datatables.net/extensions/index) or custom javascript, not everything works well together. The [KeyTable](https://datatables.net/extensions/keytable/) and [AutoFill](https://datatables.net/extensions/autofill/) extensions of datatable are used by default and should be well integrated. 
-
-
-## Foreign tables
+## Constraints and normalized tables
 
 Sometimes you want to restrict certain columns of your table to only contain specific values.
 Many of these restrictions would be implemented at database level through the use of foreign keys to other tables.
 
-Editbl allows you to specify similar rules through the use of `foreignTbls` as an argument to `eDT`.
+`editbl` allows you to specify similar rules through the use of `foreignTbls` as an argument to `eDT()`.
 Note that you can additionally hide surrogate keys by the use of `naturalKey` and `columnDefs` if you wish to.
 
 ```

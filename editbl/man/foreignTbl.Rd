@@ -21,7 +21,9 @@ foreignTbl(
 Note that you should rename and/or typecast the columns in y should they not exactly match the columns in x.}
 
 \item{naturalKey}{\code{character}. The columns that form the natural key in y.
-These are the only ones that can actually get modified in \code{eDT}, other columns will be deducted from these.}
+These are the only ones that can actually get modified in \code{eDT} when changing cells in the table.
+Reasoning being that these columns should be sufficient to uniquely identify a row in the referenced table.
+All other columns will be automatically fetched and filled in.}
 
 \item{allowNew}{\code{logical}. Whether or not new values are allowed. If \code{TRUE},
 the rows in the foreignTbl will only be used as suggestions, not restrictions.}

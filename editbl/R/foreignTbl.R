@@ -16,7 +16,10 @@
 #' @param by `character`. Column names to match on.
 #' Note that you should rename and/or typecast the columns in y should they not exactly match the columns in x.
 #' @param naturalKey `character`. The columns that form the natural key in y.
-#' These are the only ones that can actually get modified in `eDT`, other columns will be deducted from these.
+#' These are the only ones that can actually get modified in `eDT` when changing cells in the table. 
+#' Reasoning being that these columns should be sufficient to uniquely identify a row in the referenced table.
+#' All other columns will be automatically fetched and filled in.
+#' 
 #' @param allowNew `logical`. Whether or not new values are allowed. If `TRUE`,
 #' the rows in the foreignTbl will only be used as suggestions, not restrictions.
 #' 

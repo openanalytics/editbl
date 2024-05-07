@@ -8,6 +8,8 @@ Authors@R: c(person("Jasper", "Schelfhout", "", "jasper.schelfhout@openanalytics
            person("Maxim", "Nazarov", "", "maxim.nazarov@openanalytics.eu",
            role = c("rev")),
            person("Daan", "Seynaeve", "", "daan.seynaeve@openanalytics.eu",
+           role = c("rev")),
+           person("Lennart", "Tuijnder", "", "lennart.tuijnder@openanalytics.eu",
            role = c("rev")))
 Maintainer: Jasper Schelfhout <jasper.schelfhout@openanalytics.eu> 
 Description: The core of this package is a function eDT() which enhances DT::datatable() such that it can be used to interactively modify data in 'shiny'. By the use of generic 'dplyr' methods it supports many types of data storage, with relational databases ('dbplyr') being the main use case.
@@ -30,9 +32,13 @@ Suggests:
 	dbplyr,
 	glue,
 	DBI,
-	bit64
+	bit64,
+  knitr,
+  dm
 URL: https://github.com/openanalytics/editbl
 BugReports: https://github.com/openanalytics/editbl/issues
+VignetteBuilder: knitr
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+
