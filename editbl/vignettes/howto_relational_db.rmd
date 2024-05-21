@@ -122,7 +122,7 @@ computationally expensive. Ensuring uniqueness is usually the responsibility of
 the database.
 
 Let's run the app:
-```{r, screenshot.opts = list(vwidth = 700, vheight = 500)}
+```{r, screenshot.opts = list(vwidth = 700, vheight = 500), screenshot.alt = 'screenshots/howto_relational_db_1.png'}
 shiny::shinyApp( 
     ui = dbUI('id'),
     server =  function(input, output,session){
@@ -182,7 +182,7 @@ dbServer_hidden_keys <- function(id, conn) {
 **IMPORTANT** Make sure the `naturalKey` you specify actually is unique across
 the table! (same reason as above)
 
-```{r, screenshot.opts = list(vwidth = 700, vheight = 500)}
+```{r, screenshot.opts = list(vwidth = 700, vheight = 500), screenshot.alt = 'screenshots/howto_relational_db_2.png'}
 shiny::shinyApp( 
     ui = dbUI('id'),
     server =  function(input, output,session){
@@ -256,7 +256,7 @@ dbServer_advanced <- function(id, conn) {
   )
 }
 ```
-```{r, screenshot.opts = list(vwidth = 700, vheight = 500)}
+```{r, screenshot.opts = list(vwidth = 700, vheight = 500), , screenshot.alt = 'screenshots/howto_relational_db_3.png'}
 shiny::shinyApp( 
     ui = dbUI_advanced('id'),
     server =  function(input, output,session){

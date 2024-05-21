@@ -1,3 +1,5 @@
+1.0.5
+	o Use screenshots in vignettes for speed increase and to solve CRAN checks.
 1.0.4
 	o Fixed bug when using non-English locale ([issue](https://github.com/openanalytics/editbl/issues/3)) 
 	o Added vignettes + revised documentation

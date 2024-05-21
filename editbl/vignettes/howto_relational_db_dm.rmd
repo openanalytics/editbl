@@ -209,7 +209,7 @@ dbServer <- function(id, dm) {
 ```
 
 
-```{r, screenshot.opts = list(vwidth = 700)}
+```{r, screenshot.opts = list(vwidth = 700, vheight = 500, delay = 1), screenshot.alt = 'screenshots/howto_relational_db_dm_1.png'}
 shiny::shinyApp( 
     ui = dbUI('id'),
     server =  function(input, output,session){
