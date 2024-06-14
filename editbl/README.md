@@ -45,6 +45,8 @@ Advanced examples can be found in the [vignettes](https://github.com/openanalyti
 
 ## Features
 
+### Overview of main features
+
 * Supporting multiple backends and in-place editing.
 * Customizable (lightweight [DT](https://CRAN.R-project.org/package=DT) wrapper).
 * Easy integration in [shiny](https://cran.r-project.org/package=shiny) apps.
