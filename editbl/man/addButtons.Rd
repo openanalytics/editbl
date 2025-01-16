@@ -4,7 +4,15 @@
 \alias{addButtons}
 \title{Add modification buttons as a column}
 \usage{
-addButtons(df, columnName, ns)
+addButtons(
+  df,
+  columnName,
+  ns,
+  iCol = "i",
+  canEditRow = editbl::canEditRow,
+  canDeleteRow = editbl::canDeleteRow,
+  statusCol = "status"
+)
 }
 \arguments{
 \item{df}{\code{data.frame}}
@@ -12,6 +20,18 @@ addButtons(df, columnName, ns)
 \item{columnName}{\code{character(1)}}
 
 \item{ns}{namespace function}
+
+\item{iCol}{\code{character(1)} name of column containing a unique identifier.}
+
+\item{canEditRow}{\code{function}.
+Has function argument \code{row} which accepts a single row \code{data.frame}.
+Returns boolean.}
+
+\item{canDeleteRow}{\code{function}.
+Has function argument \code{row} which accepts a single row \code{data.frame}.
+Returns boolean.}
+
+\item{statusCol}{\code{character(1)} name of column with general status (e.g. modified or not).}
 }
 \value{
 df with extra column containing buttons

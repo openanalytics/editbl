@@ -10,7 +10,9 @@ initData(
   buttonCol = "buttons",
   statusCol = "status",
   deleteCol = "deleted",
-  iCol = "i"
+  iCol = "i",
+  canDeleteRow = editbl::canDeleteRow,
+  canEditRow = editbl::canEditRow
 )
 }
 \arguments{
@@ -25,6 +27,14 @@ initData(
 \item{deleteCol}{\code{character(1)} name of the column with deletion status.}
 
 \item{iCol}{\code{character(1)} name of column containing a unique identifier.}
+
+\item{canDeleteRow}{\code{function}.
+Has function argument \code{row} which accepts a single row \code{data.frame}.
+Returns boolean.}
+
+\item{canEditRow}{\code{function}.
+Has function argument \code{row} which accepts a single row \code{data.frame}.
+Returns boolean.}
 }
 \value{
 data with extra columns buttons, status, i.

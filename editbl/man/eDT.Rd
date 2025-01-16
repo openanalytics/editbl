@@ -36,7 +36,9 @@ eDT(
   statusColor = c(insert = "#e6e6e6", update = "#32a6d3", delete = "#e52323"),
   inputUI = editbl::inputUI,
   defaults = tibble(),
-  env = environment()
+  env = environment(),
+  canEditRow = editbl::canEditRow,
+  canDeleteRow = editbl::canDeleteRow
 )
 }
 \arguments{
@@ -79,11 +81,8 @@ generated from \code{htmltools::tags$caption()}}
 \code{bottom/top}: put column filters at the bottom/top of the table; range
 sliders are used to filter numeric/date/time columns, select lists are used
 for factor columns, and text input boxes are used for character columns; if
-you want more control over the styles of filters, you can provide a list to
-this argument of the form \code{list(position = 'top', clear = TRUE, plain
-= FALSE)}, where \code{clear} indicates whether you want the clear buttons
-in the input boxes, and \code{plain} means if you want to use Bootstrap
-form styles or plain text input styles for the text input boxes}
+you want more control over the styles of filters, you can provide a named
+list to this argument; see Details for more}
 
 \item{escape}{whether to escape HTML entities in the table: \code{TRUE} means
 to escape the whole table, and \code{FALSE} means not to escape it;
@@ -188,6 +187,14 @@ It will be evaluated for each new row in the environment defined by 'env'.
 This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.}
 
 \item{env}{\code{environment} in which the server function is running. Should normally not be modified.}
+
+\item{canEditRow}{\code{function}.
+Has function argument \code{row} which accepts a single row \code{data.frame}.
+Returns boolean.}
+
+\item{canDeleteRow}{\code{function}.
+Has function argument \code{row} which accepts a single row \code{data.frame}.
+Returns boolean.}
 }
 \value{
 list
@@ -246,6 +253,15 @@ if(interactive()){
     ns("mpg"),
     label = "mpg",
     value = data$mpg)})
+
+  # Do not allow delete
+  editbl::eDT(mtcars, canDeleteRow = function(row,statusCol){
+    if(row[,statusCol] == 'inserted'){
+      TRUE
+    } else {
+      FALSE 
+    }
+  })
 }
 
 }

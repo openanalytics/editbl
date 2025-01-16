@@ -49,11 +49,31 @@ test_that("Deletion of a row works", {
           app = eDTServer,
           args = list(data = data),
           expr = {
-            session$setInputs(current_id = 'delete_row_1')
+            session$flushReact()
+            test_id = rv$modifiedData[1,"i"] # generated uuid
+            session$setInputs(current_id = paste0('delete_row_', test_id))
             session$setInputs(delete = 1)
             session$flushReact()
             session$setInputs(confirmCommit = 1)
             expect_equal(nrow(result()),1)
+          }
+      )
+    })
+
+test_that("Can not delete row when canDeleteRow blocks it", {
+      data <- dplyr::tibble(id = 1:2, name = letters[1:2])
+      
+      shiny::testServer(
+          app = eDTServer,
+          args = list(data = data, canDeleteRow = function(...){FALSE}),
+          expr = {
+            session$flushReact()
+            test_id = rv$modifiedData[1,"i"] # generated uuid
+            session$setInputs(current_id = paste0('delete_row_', test_id))
+            session$setInputs(delete = 1)
+            session$flushReact()
+            session$setInputs(confirmCommit = 1)
+            expect_equal(nrow(result()),2)
           }
       )
     })

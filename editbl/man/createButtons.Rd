@@ -2,20 +2,39 @@
 % Please edit documentation in R/eDT.R
 \name{createButtons}
 \alias{createButtons}
-\title{Create buttons to modify the row. See \code{\link{createButtonsHTML}}}
+\title{Create buttons to modify the row.}
 \usage{
-createButtons(suffix, ns)
+createButtons(
+  row,
+  suffix,
+  ns,
+  canEditRow = editbl::canEditRow,
+  canDeleteRow = editbl::canDeleteRow,
+  statusCol = "status"
+)
 }
 \arguments{
+\item{row}{\code{data.frame()} with single row}
+
 \item{suffix}{\code{character(1)}}
 
 \item{ns}{\code{character(1)} namespace}
+
+\item{canEditRow}{\code{function}.
+Has function argument \code{row} which accepts a single row \code{data.frame}.
+Returns boolean.}
+
+\item{canDeleteRow}{\code{function}.
+Has function argument \code{row} which accepts a single row \code{data.frame}.
+Returns boolean.}
+
+\item{statusCol}{\code{character(1)} name of column with general status (e.g. modified or not).}
 }
 \value{
 \code{character} HTML
 }
 \description{
-Create buttons to modify the row. See \code{\link{createButtonsHTML}}
+Create buttons to modify the row.
 }
 \details{
 buttons used per row in the app.

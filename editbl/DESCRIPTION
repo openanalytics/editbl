@@ -1,7 +1,7 @@
 Package: editbl
 Type: Package
-Version: 1.0.5
-Date: 2024-05-21
+Version: 1.0.5-9000
+Date: 2024-01-28
 Title: 'DT' Extension for CRUD (Create, Read, Update, Delete) Applications in 'shiny'
 Authors@R: c(person("Jasper", "Schelfhout", "", "jasper.schelfhout@openanalytics.eu",
            role = c("aut", "cre")),

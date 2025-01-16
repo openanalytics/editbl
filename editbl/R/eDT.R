@@ -71,7 +71,7 @@ eDTOutput <- function(id,...) {
 #'   It will be evaluated for each new row in the environment defined by 'env'.
 #'   This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
 #' @param env `environment` in which the server function is running. Should normally not be modified.
-#' 
+#' @inheritParams canXXXRowTemplate
 #' @return list
 #' - result `reactive` modified version of `data` (saved)
 #' - state `reactive` current state of the `data` (unsaved)
@@ -113,6 +113,15 @@ eDTOutput <- function(id,...) {
 #'     ns("mpg"),
 #'     label = "mpg",
 #'     value = data$mpg)})
+#' 
+#'   # Do not allow delete
+#'   editbl::eDT(mtcars, canDeleteRow = function(row,statusCol){
+#'     if(row[,statusCol] == 'inserted'){
+#'       TRUE
+#'     } else {
+#'       FALSE 
+#'     }
+#'   })
 #' }
 #' 
 #' @author Jasper Schelfhout
@@ -152,8 +161,10 @@ eDT <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
-    env = environment()
-) {  
+    env = environment(),
+    canEditRow = editbl::canEditRow,
+    canDeleteRow = editbl::canDeleteRow
+) {
   args <- as.list(environment())
   
   # if not in reactive context start standalone app
@@ -222,14 +233,16 @@ eDTServer <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
-    env = environment()
+    env = environment(),
+    canEditRow = editbl::canEditRow,
+    canDeleteRow = editbl::canDeleteRow
 ) {
   missingContainer <- missing(container)
   moduleServer(
       id,
       function(input, output, session) {
         ns <- session$ns
-                
+        
         rv <- reactiveValues(
             changelog = list(),
             changeLogTracker = 0,
@@ -237,6 +250,8 @@ eDTServer <- function(
             edits_react = 0, # to force refreshing even when reactive value stays the same
             changelog_react = 0 # # to force refreshing even when reactive value stays the same
         )
+        
+        statusCol='status'
         
         # Make arguments reactive / set defaults
         # This way users can pass on both reactive an non reactive arguments
@@ -350,7 +365,7 @@ eDTServer <- function(
         if(!shiny::is.reactive(inputUI)){
           inputUI <- shiny::reactive(inputUI, env = argEnv)
         }
-
+        
         if(!shiny::is.reactive(defaults)){  
           defaults <- shiny::reactive({
                 eval(substitute(defaults, env))
@@ -409,7 +424,12 @@ eDTServer <- function(
               data <- dplyr::collect(data)
               data <- as.data.frame(data)
               
-              data <- initData(data, ns = ns)
+              data <- initData(
+                  data,
+                  ns = ns,
+                  canEditRow = canEditRow,
+                  canDeleteRow = canDeleteRow,
+                  statusCol = statusCol)
               rv$checkPointData <- data
               rv$modifiedData <- data
               rv$changelog <- list()
@@ -514,21 +534,21 @@ eDTServer <- function(
                           "redo" = icon("rotate-right"),
                           "save" = icon("floppy-disk"),
                           ""
-                          )   
+                      )   
                       disabled = switch(x,
-                              "add" = FALSE,
-                              "undo" = TRUE,
-                              "redo" =  TRUE,
-                              "save" = TRUE,
-                              TRUE
-                          )       
-                          
+                          "add" = FALSE,
+                          "undo" = TRUE,
+                          "redo" =  TRUE,
+                          "save" = TRUE,
+                          TRUE
+                      )       
+                      
                       customButton(ns(x), label = x, icon, disabled = disabled)
                     } else {
                       x
                     }
                   })
-                            
+              
               # Deal with the fact that 'container' can be a missing argument
               # Which is why put arguments in a list and use do.call instead of passing on directly.
               # FIXME: there should be a better approach              
@@ -618,7 +638,8 @@ eDTServer <- function(
             })
         
         clickedRow <- reactive({
-              as.numeric(sub("^.*_","",input$current_id))
+              identity = sub("^.*_","",input$current_id)
+              which(rv$modifiedData[,'i'] == identity)
             })
         
         effectiveChanges <- reactive({
@@ -641,7 +662,6 @@ eDTServer <- function(
               i <- rv$changeLogTracker
               req(i > 0)
               data <- rv$modifiedData
-              data$buttons <- NULL
               undoChanges <- rv$changelog[[rv$changeLogTracker]]
               
               for(row in seq_len(nrow(undoChanges))){
@@ -651,7 +671,6 @@ eDTServer <- function(
                 lastLogState <- tail(lastLogState[lastLogState$i == undoChange$i,],1)
                 
                 lastCheckPointState <- rv$checkPointData[rv$checkPointData$i == undoChange$i,]
-                lastCheckPointState$buttons <- NULL
                 
                 if(!is.null(lastLogState) && nrow(lastLogState)){
                   stateBeforeChange <- lastLogState
@@ -669,7 +688,6 @@ eDTServer <- function(
               }
               
               rv$changeLogTracker <- max(0, rv$changeLogTracker - 1)
-              data <- addButtons(data, "buttons", ns)
               rv$newState <- data
             })
         
@@ -679,7 +697,6 @@ eDTServer <- function(
               req(i < nChanges)
               
               data <- rv$modifiedData
-              data$buttons <- NULL
               
               redoChanges <- rv$changelog[[i + 1]]
               
@@ -693,7 +710,6 @@ eDTServer <- function(
               }
               
               rv$changeLogTracker <- i + 1
-              data <- addButtons(data, "buttons", ns)
               rv$newState <- data
               
             })
@@ -701,6 +717,7 @@ eDTServer <- function(
         observeEvent(input$confirmEdit, {
               i <- clickedRow()
               data <- rv$modifiedData
+              req(canEditRow(data[i,]),statusCol=statusCol)
               data[i,] <-  fillDeductedColumns(rv$modalData(), foreignTbls())
               
               currentStatus <- data[i,"status"]
@@ -709,7 +726,6 @@ eDTServer <- function(
               }
               
               newChange <- data[i,]
-              newChange$buttons <- NULL
               changelog <- rv$changelog[seq_len(rv$changeLogTracker)]
               changelog[[rv$changeLogTracker +1]] <- newChange
               rv$changelog <- changelog
@@ -730,7 +746,7 @@ eDTServer <- function(
               rv$edits <- input$DT_cell_edit
               rv$edits_react <-  rv$edits_react + 1
             })
-         
+        
         observeEvent(rv$edits_react, {
               req(!is.null(rv$edits) && isTruthy(rv$edits))
               edits <- unique(rv$edits)
@@ -743,6 +759,10 @@ eDTServer <- function(
                     for(i in sort(unique(edits$row))){
                       changes <- edits[edits$row == i,]
                       currentRow <- data[i,]
+                      if(!canEditRow(row = currentRow, statusCol=statusCol)){
+                        next
+                      }
+                      
                       newRow <- currentRow
                       
                       hasChanged <- FALSE
@@ -775,13 +795,14 @@ eDTServer <- function(
                     }    
                     newChanges <- do.call(rbind, newRows)
                     
-                    newChanges$buttons <- NULL
                     changelog <- rv$changelog[seq_len(rv$changeLogTracker)]
                     changelog[[rv$changeLogTracker +1]] <- newChanges
                     rv$changelog <- changelog
                     rv$changelog_react <- rv$changelog_react + 1
                     
                     rv$newState <- data
+                    rv$triggerNewState <- Sys.time() # Need to reupdate if edits were not allowed
+                    
                   },
                   error = function(e){
                     rv$resultMessage <- "The change you just made is not allowed. Reverting."
@@ -796,10 +817,10 @@ eDTServer <- function(
               rowNumber <- clickedRow()
               data <- rv$modifiedData
               row <- data[rowNumber,]
+              req(canDeleteRow(row = row, statusCol=statusCol))
               row$deleted <- !row$deleted
               
               newChange <- row
-              newChange$buttons <- NULL
               changelog <- rv$changelog[seq_len(rv$changeLogTracker)]
               changelog[[rv$changeLogTracker +1]] <- newChange
               rv$changelog <- changelog
@@ -810,8 +831,7 @@ eDTServer <- function(
         
         observeEvent(input$add,{
               data <- rv$modifiedData
-              data$buttons <- NULL
-                            
+              
               # create new row
               newRow <- data %>%
                   dplyr::filter(FALSE)
@@ -834,6 +854,12 @@ eDTServer <- function(
               newRow$status <- "inserted"
               newRow$deleted <- FALSE
               newRow$i <- uuid::UUIDgenerate()
+              newRow <- addButtons(
+                  df = newRow,
+                  columnName = "buttons",
+                  ns = ns,
+                  canDeleteRow = canDeleteRow,
+                  canEditRow = canEditRow)
               
               # save to changelog
               newChange <- newRow
@@ -845,8 +871,6 @@ eDTServer <- function(
                   newRow,
                   data
               )
-              
-              data <- addButtons(data, "buttons", ns = ns)
               
               rv$newState <- data
             })
@@ -1036,9 +1060,7 @@ eDTServer <- function(
                       checkPointState <- checkPointState[checkPointState$deleted != TRUE,]
                       checkPointState$status <- 'unmodified'
                       checkPointState$deleted <- FALSE
-                      checkPointState$buttons <- NULL
                       rv$changelog <- list()
-                      checkPointState <- addButtons(checkPointState, "buttons", ns)
                       
                       rv$checkPointData <- checkPointState
                       rv$newState <- checkPointState
@@ -1078,7 +1100,7 @@ eDTServer <- function(
         observe(priority = 1,{
               req(!is.null(rv$modifiedData) && isTruthy(rv$modifiedData))
               req(!is.null(isolate(rv$selected)) && isTruthy(isolate(rv$selected)))
-
+              
               currentSelection <- isolate(rv$selected)$i  
               newIndexes <- which(rv$modifiedData$i %in% currentSelection)
               if(length(newIndexes)){
@@ -1087,7 +1109,7 @@ eDTServer <- function(
             })
         
         observe({
-               rv$selected <- selected() # To force evaluation
+              rv$selected <- selected() # To force evaluation
             })
         
         selected <- reactive({
@@ -1099,14 +1121,36 @@ eDTServer <- function(
         dataVars <- reactive({
               dplyr::tbl_vars(data())
             })
-                
+        
         return(list(
                 result = result,
                 state = reactive({castToTemplate(rv$modifiedData[,dataVars()], data())}),
                 selected = reactive({castToTemplate(selected()[,dataVars()], data())})
-                ))
+            ))
       }
   )
+}
+
+#' Determine if a row can be edited
+#' @param row `data.frame`
+#' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
+#' @return `boolean`
+#' 
+#' @author Jasper Schelfhout
+#' @export
+canDeleteRow <- function(row, statusCol){
+  TRUE
+}
+
+#' Determine if a row can be deleted
+#' @param row `data.frame`
+#' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
+#' @return `boolean`
+#' 
+#' @author Jasper Schelfhout
+#' @export
+canEditRow <- function(row, statusCol){
+  TRUE
 }
 
 #' Add some extra columns to data to allow for / keep track of modifications
@@ -1116,6 +1160,7 @@ eDTServer <- function(
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @param deleteCol `character(1)` name of the column with deletion status.
 #' @param iCol `character(1)` name of column containing a unique identifier.
+#' @inheritParams canXXXRowTemplate
 #' @return data with extra columns buttons, status, i.
 #' @importFrom dplyr relocate all_of
 #' @importFrom uuid UUIDgenerate
@@ -1126,7 +1171,9 @@ initData <- function(
     buttonCol = "buttons",
     statusCol = "status",
     deleteCol = "deleted",
-    iCol = "i"
+    iCol = "i",
+    canDeleteRow = editbl::canDeleteRow,
+    canEditRow = editbl::canEditRow
 ){
   data[statusCol] <- rep("unmodified", nrow(data))
   data[deleteCol] <- rep(FALSE, nrow(data))
@@ -1139,7 +1186,10 @@ initData <- function(
   data <- addButtons(
       df = data,
       columnName = buttonCol,
-      ns = ns)
+      ns = ns,
+      canEditRow = canEditRow,
+      canDeleteRow = canDeleteRow,
+      statusCol=statusCol)
   data <- relocate(data, all_of(buttonCol))
   data
 }
@@ -1148,19 +1198,39 @@ initData <- function(
 #' @param df `data.frame`
 #' @param columnName `character(1)`
 #' @param ns namespace function
+#' @param iCol `character(1)` name of column containing a unique identifier.
+#' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
+#' @inheritParams canXXXRowTemplate
 #' @return df with extra column containing buttons
 #' 
 #' @author Jasper Schelfhout
-addButtons <- function(df, columnName, ns){
+addButtons <- function(
+    df,
+    columnName,
+    ns,
+    iCol = 'i',
+    canEditRow = editbl::canEditRow,
+    canDeleteRow = editbl::canDeleteRow,
+    statusCol = 'status'
+){
   if(!nrow(df)){
     df[columnName] <- character(0)
     return(df)
   }
   
+  ns_char = ns("")
+  
   df[columnName] <- lapply(seq_len(nrow(df)), function(i){
-        createButtons(i, ns)
+        row = df[i,]
+        createButtons(
+            row=row,
+            suffix = row[,iCol],
+            ns = ns_char,
+            canEditRow = canEditRow,
+            canDeleteRow = canDeleteRow,
+            statusCol = statusCol)
       }) %>% unlist()
-  df     
+  df
 }
 
 #' Helper function to write HTML
@@ -1170,44 +1240,84 @@ addButtons <- function(df, columnName, ns){
 #' @param ns `character(1)` sprintf placeholder for ns
 #' @importFrom shiny div actionButton icon
 #' @return `character(1)` HTML to be filled in with \code{sprintf}
-createButtonsHTML <- function(suffix = "%1$s", ns = "%2$s"){
+createDeleteButtonHTML <- function(ns = "%1$s", suffix = "%2$s"){
   as.character(
-      div(class = "btn-group",
-          actionButton(
-              inputId =  paste0(ns, "delete_row_", suffix),
-              label = "",
-              icon = icon("trash"),
-              style = "color: red;background-color: white",
-              onclick =  HTML(sprintf("get_id(this.id, '%1$s');
-                          Shiny.setInputValue(\"%1$sdelete\", Math.random(), {priority: \"event\"});",
-                      ns))
-          ),
-          actionButton(
-              inputId =  paste0(ns, "edit_row_", suffix),
-              label = "",
-              icon = icon("pen-to-square"),
-              style = "background-color: white",
-              onclick =  HTML(sprintf("get_id(this.id, '%1$s');
-                          Shiny.setInputValue(\"%1$sedit\", Math.random(), {priority: \"event\"});",
-                      ns))
+      actionButton(
+          inputId = sprintf("%1$sdelete_row_%2$s", ns,suffix),
+          label = "",
+          icon = icon("trash"),
+          style = "color: red;background-color: white",
+          onclick =  HTML(sprintf("get_id(this.id, '%1$s');
+                      Shiny.setInputValue(\"%1$sdelete\", Math.random(), {priority: \"event\"});",
+                  ns
+              )
           )
       )
   )
 }
 
-buttonsHTML <- createButtonsHTML()
+#' Helper function to write HTML
+#' @details generate HTML as character once and reuse.
+#' Since buttons have to be generated a lot, this otherwhise slows down the app.
+#' @param suffix `character(1)` sprintf placeholer for suffix
+#' @param ns `character(1)` sprintf placeholder for ns
+#' @importFrom shiny div actionButton icon
+#' @return `character(1)` HTML to be filled in with \code{sprintf}
+createEditButtonHTML <- function(ns = "%1$s", suffix = "%2$s"){
+  as.character(
+      actionButton(
+          inputId = sprintf("%1$sedit_row_%2$s", ns,suffix),
+          label = "",
+          icon = icon("pen-to-square"),
+          style = "background-color: white",
+          onclick = HTML(sprintf("get_id(this.id, '%1$s');
+                      Shiny.setInputValue(\"%1$sedit\", Math.random(), {priority: \"event\"});",
+                  ns
+              ))
+      )  
+  )
+}
 
-#' Create buttons to modify the row. See \code{\link{createButtonsHTML}}
+deleteButtonHTML <- createDeleteButtonHTML()
+
+editButtonHTML <- createEditButtonHTML()
+
+#' Re-usable documentation
+#' @param canEditRow `function`. 
+#'    Has function argument `row` which accepts a single row `data.frame`.
+#'    Returns boolean.
+#' @param canDeleteRow `function`.
+#'  Has function argument `row` which accepts a single row `data.frame`.
+#'  Returns boolean.
+canXXXRowTemplate <- function(canEditRow, canDeleteRow){
+  NULL
+}
+
+#' Create buttons to modify the row.
 #' @details buttons used per row in the app.
+#' @param row `data.frame()` with single row
 #' @param suffix `character(1)`
 #' @param ns `character(1)` namespace
+#' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
+#' @inheritParams canXXXRowTemplate
 #' @return `character` HTML
-createButtons <- function(suffix, ns){
-  sprintf(
-      # Can be generated with createButtonsHTML
-      buttonsHTML,
-      suffix,
-      ns("")
+createButtons <- function(
+    row,
+    suffix,
+    ns, 
+    canEditRow = editbl::canEditRow,
+    canDeleteRow = editbl::canDeleteRow,
+    statusCol = 'status'
+){
+  buttons <- "" 
+  if(canDeleteRow(row=row, statusCol=statusCol)){
+    buttons = paste0(buttons, sprintf(deleteButtonHTML, ns, suffix))
+  }
+  if(canEditRow(row=row, statusCol=statusCol)){
+    buttons = paste0(buttons, sprintf(editButtonHTML, ns, suffix))
+  }
+  sprintf('<div class="btn-group">%s</div>',
+      buttons
   )
 }
 
@@ -1218,9 +1328,9 @@ createButtons <- function(suffix, ns){
 #' @return `character` CSS
 disableDoubleClickButtonCss <- function(id){
   sprintf("
-      #%1$s > .dataTables_wrapper > table tbody td:nth-child(1) {pointer-events: none;}
-      #%1$s > .dataTables_wrapper > table tbody td:nth-child(1)>div {pointer-events: auto;}
-      ",id)
+          #%1$s > .dataTables_wrapper > table tbody td:nth-child(1) {pointer-events: none;}
+          #%1$s > .dataTables_wrapper > table tbody td:nth-child(1)>div {pointer-events: auto;}
+          ",id)
 } 
 
 keyTableJS <- c(

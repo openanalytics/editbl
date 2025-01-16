@@ -1,0 +1,54 @@
+---
+title: "Row level access"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{How to: implement row level access.}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+The arguments `canEditRow` and `canDeleteRow` can be used
+to specify logic describing if modfications are allowed.
+
+In this example we only allow user Mickey to modify his own row.
+
+```{r, screenshot.opts = list(vwidth = 700, vheight = 500), , screenshot.alt = 'screenshots/howto_row_level_access_1.png'}
+df <- tibble::tibble(
+    user = c("Albert","Donald","Mickey"),
+    email = c('albert@einstein.com', 'donald@duck.com', 'mickey@mouse.com')
+)
+
+CURRENT_USER = 'Mickey'
+
+rowModificationLogic <- function(row,statusCol){
+        if(row[,statusCol] == 'inserted'){
+          TRUE
+        } else if (row[,'user'] == CURRENT_USER){
+          TRUE
+        } else {
+          FALSE  
+        }
+    }
+
+shiny::shinyApp( 
+    ui = editbl::eDTOutput('id'),
+    server =  function(input, output,session){
+      eDT(id='id',
+        data = df,
+        canEditRow = rowModificationLogic,
+        canDeleteRow = rowModificationLogic
+        )
+    })
+
+```
+
+The function should have two arguments `row` and `statusCol`.
+The `row` will be a `data.frame` with a single row. You can use the column names
+to specify conditional logic.
+
+The `statusCol` is generated automatically by `editbl`. It currently has
+following states: `'inserted'`, `'modified'` and `'unmodified'`.
+
+
