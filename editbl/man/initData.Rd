@@ -29,12 +29,12 @@ initData(
 \item{iCol}{\code{character(1)} name of column containing a unique identifier.}
 
 \item{canDeleteRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{data.frame}.
-Returns boolean.}
+Has function argument \code{row} which accepts a single row \code{tibble}.
+Returns \code{logical(1)}.}
 
 \item{canEditRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{data.frame}.
-Returns boolean.}
+Has function argument \code{row} which accepts a single row \code{tibble}.
+Returns \code{logical(1)}.}
 }
 \value{
 data with extra columns buttons, status, i.

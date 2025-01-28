@@ -189,12 +189,12 @@ This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dyna
 \item{env}{\code{environment} in which the server function is running. Should normally not be modified.}
 
 \item{canEditRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{data.frame}.
-Returns boolean.}
+Has function argument \code{row} which accepts a single row \code{tibble}.
+Returns \code{logical(1)}.}
 
 \item{canDeleteRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{data.frame}.
-Returns boolean.}
+Has function argument \code{row} which accepts a single row \code{tibble}.
+Returns \code{logical(1)}.}
 }
 \value{
 list

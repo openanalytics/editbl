@@ -8,12 +8,12 @@ canXXXRowTemplate(canEditRow, canDeleteRow)
 }
 \arguments{
 \item{canEditRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{data.frame}.
-Returns boolean.}
+Has function argument \code{row} which accepts a single row \code{tibble}.
+Returns \code{logical(1)}.}
 
 \item{canDeleteRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{data.frame}.
-Returns boolean.}
+Has function argument \code{row} which accepts a single row \code{tibble}.
+Returns \code{logical(1)}.}
 }
 \description{
 Re-usable documentation

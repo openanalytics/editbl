@@ -7,7 +7,7 @@
 canDeleteRow(row, statusCol)
 }
 \arguments{
-\item{row}{\code{data.frame}}
+\item{row}{\code{tibble}}
 
 \item{statusCol}{\code{character(1)} name of column with general status (e.g. modified or not).}
 }

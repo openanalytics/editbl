@@ -14,24 +14,24 @@ createButtons(
 )
 }
 \arguments{
-\item{row}{\code{data.frame()} with single row}
+\item{row}{\code{tibble} with single row}
 
 \item{suffix}{\code{character(1)}}
 
 \item{ns}{\code{character(1)} namespace}
 
 \item{canEditRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{data.frame}.
-Returns boolean.}
+Has function argument \code{row} which accepts a single row \code{tibble}.
+Returns \code{logical(1)}.}
 
 \item{canDeleteRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{data.frame}.
-Returns boolean.}
+Has function argument \code{row} which accepts a single row \code{tibble}.
+Returns \code{logical(1)}.}
 
 \item{statusCol}{\code{character(1)} name of column with general status (e.g. modified or not).}
 }
 \value{
-\code{character} HTML
+\code{character(1)} HTML
 }
 \description{
 Create buttons to modify the row.

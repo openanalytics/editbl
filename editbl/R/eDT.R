@@ -1132,7 +1132,7 @@ eDTServer <- function(
 }
 
 #' Determine if a row can be edited
-#' @param row `data.frame`
+#' @param row `tibble`
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @return `boolean`
 #' 
@@ -1143,7 +1143,7 @@ canDeleteRow <- function(row, statusCol){
 }
 
 #' Determine if a row can be deleted
-#' @param row `data.frame`
+#' @param row `tibble`
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @return `boolean`
 #' 
@@ -1289,23 +1289,23 @@ editButtonHTML <- createEditButtonHTML()
 
 #' Re-usable documentation
 #' @param canEditRow `function`. 
-#'    Has function argument `row` which accepts a single row `data.frame`.
-#'    Returns boolean.
+#'    Has function argument `row` which accepts a single row `tibble`.
+#'    Returns `logical(1)`.
 #' @param canDeleteRow `function`.
-#'  Has function argument `row` which accepts a single row `data.frame`.
-#'  Returns boolean.
+#'  Has function argument `row` which accepts a single row `tibble`.
+#'  Returns `logical(1)`.
 canXXXRowTemplate <- function(canEditRow, canDeleteRow){
   NULL
 }
 
 #' Create buttons to modify the row.
 #' @details buttons used per row in the app.
-#' @param row `data.frame()` with single row
+#' @param row `tibble` with single row
 #' @param suffix `character(1)`
 #' @param ns `character(1)` namespace
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @inheritParams canXXXRowTemplate
-#' @return `character` HTML
+#' @return `character(1)` HTML
 createButtons <- function(
     row,
     suffix,
