@@ -1202,6 +1202,8 @@ initData <- function(
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @inheritParams canXXXRowTemplate
 #' @return df with extra column containing buttons
+#' @importFrom dplyr across everything rowwise
+#' @importFrom rlang :=
 #' 
 #' @author Jasper Schelfhout
 addButtons <- function(
@@ -1213,23 +1215,26 @@ addButtons <- function(
     canDeleteRow = editbl::canDeleteRow,
     statusCol = 'status'
 ){
+  ns_char = ns("")
+  
   if(!nrow(df)){
     df[columnName] <- character(0)
     return(df)
+  } else {
+    df <- df %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(!!columnName := createButtons(
+                row = dplyr::across(dplyr::everything(), ~ .),
+                suffix = get(iCol),
+                ns = !!ns_char,
+                canEditRow = !!canEditRow,
+                canDeleteRow = !!canDeleteRow,
+                statusCol = !!statusCol
+            )) %>%
+        dplyr::ungroup() %>%
+        as.data.frame()
   }
   
-  ns_char = ns("")
-  
-  df[columnName] <- lapply(seq_len(nrow(df)), function(i){
-        row = df[i,]
-        createButtons(
-            row=row,
-            suffix = row[,iCol],
-            ns = ns_char,
-            canEditRow = canEditRow,
-            canDeleteRow = canDeleteRow,
-            statusCol = statusCol)
-      }) %>% unlist()
   df
 }
 
@@ -1309,15 +1314,24 @@ createButtons <- function(
     canDeleteRow = editbl::canDeleteRow,
     statusCol = 'status'
 ){
-  buttons <- "" 
   if(canDeleteRow(row=row, statusCol=statusCol)){
-    buttons = paste0(buttons, sprintf(deleteButtonHTML, ns, suffix))
+    deleteButton <- deleteButtonHTML
+  } else {
+    deleteButton <- ""
   }
   if(canEditRow(row=row, statusCol=statusCol)){
-    buttons = paste0(buttons, sprintf(editButtonHTML, ns, suffix))
+    editButton <- editButtonHTML
+  } else {
+    editButton <- ""
   }
-  sprintf('<div class="btn-group">%s</div>',
-      buttons
+  
+  sprintf(
+      sprintf('<div class="btn-group">%1$s%2$s</div>',
+          deleteButton,
+          editButton
+      ),
+      ns,
+      suffix
   )
 }
 
