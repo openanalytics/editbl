@@ -188,6 +188,8 @@ Depending on your needs, they might be better alternatives.
 
 [CRAN `tibble`](https://cran.r-project.org/package=tibble)
 
+[Blogpost spreadsheets vs robust backends](https://www.openanalytics.eu/blog/2023/02/12/spreadsheets-backends-love/)
+
 [Blogpost buttons in DT](https://thatdatatho.com/adding-action-buttons-in-rows-of-dt-data-table-in-r-shiny/)
 
 [Blogpost shiny vs excel](https://appsilon.com/forget-about-excel-use-r-shiny-packages-instead/)
