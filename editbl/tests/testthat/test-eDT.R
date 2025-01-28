@@ -127,3 +127,22 @@ test_that("Row dragging works when filter is on", {
       
       shiny::shinyApp(ui, server)
     })
+
+testthat_("Can support all data types",{
+      df = tibble(
+          integer = 1L,
+          double = 0.5,
+          time = as.POSIXct('2020-01-01 01:02:03'),
+          date = as.Date('2020-01-01')
+          )
+          ui <- eDTOutput("app")
+          server <- function(input,output,session){
+            eDTServer(id = "app",data = df)
+          }
+          
+          # This just ensures the app doesn't crash on these different
+          # data types
+          expect_true(TRUE)
+          
+          shiny::shinyApp(ui, server)
+    })
