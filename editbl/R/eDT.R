@@ -367,6 +367,14 @@ eDTServer <- function(
               env = argEnv)
         }
         
+        if(!shiny::is.reactive(canEditRow)){
+          canEditRow <- shiny::reactive(canEditRow, env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(canDeleteRow)){
+          canDeleteRow <- shiny::reactive(canDeleteRow, env = argEnv)
+        }
+        
         # Force re-evaluting reactive for values like Sys.time(), uuid::UUIDgenerate()
         defaultsAddBound <- defaults %>% shiny::bindEvent(input$add)
         
@@ -421,8 +429,8 @@ eDTServer <- function(
               data <- initData(
                   data,
                   ns = ns,
-                  canEditRow = canEditRow,
-                  canDeleteRow = canDeleteRow,
+                  canEditRow = isolate(canEditRow()),
+                  canDeleteRow = isolate(canDeleteRow()),
                   statusCol = statusCol)
               rv$checkPointData <- data
               rv$modifiedData <- data
@@ -713,7 +721,7 @@ eDTServer <- function(
               data <- rv$modifiedData
               req(evalCanEditRow(
                       row=data[i,],
-                      canEditRow=canEditRow,
+                      canEditRow=canEditRow(),
                       statusCol=statusCol))
               data[i,] <-  fillDeductedColumns(rv$modalData(), foreignTbls())
               
@@ -758,7 +766,7 @@ eDTServer <- function(
                       currentRow <- data[i,]
                       if(!evalCanEditRow(
                           row = currentRow, 
-                          canEditRow=canEditRow, 
+                          canEditRow=canEditRow(), 
                           statusCol=statusCol
                           )
                       ){
@@ -821,7 +829,7 @@ eDTServer <- function(
               row <- data[rowNumber,]
               req(evalCanDeleteRow(
                       row = row,
-                      canDeleteRow=canDeleteRow,
+                      canDeleteRow=canDeleteRow(),
                       statusCol=statusCol
                   )
               )
@@ -865,8 +873,8 @@ eDTServer <- function(
                   df = newRow,
                   columnName = "buttons",
                   ns = ns,
-                  canDeleteRow = canDeleteRow,
-                  canEditRow = canEditRow)
+                  canDeleteRow = canDeleteRow(),
+                  canEditRow = canEditRow())
               
               # save to changelog
               newChange <- newRow
@@ -1079,8 +1087,8 @@ eDTServer <- function(
                             columnName = "buttons",
                             iCol = 'i',
                             ns = ns,
-                            canEditRow = canEditRow,
-                            canDeleteRow = canDeleteRow
+                            canEditRow = canEditRow(),
+                            canDeleteRow = canDeleteRow()
                             )
                         checkPointState[i,] <- adjustedRow
                       }
