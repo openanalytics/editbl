@@ -38,7 +38,8 @@ eDT(
   defaults = tibble(),
   env = environment(),
   canEditRow = TRUE,
-  canDeleteRow = TRUE
+  canDeleteRow = TRUE,
+  utilityColumns = NULL
 )
 }
 \arguments{
@@ -199,6 +200,17 @@ This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dyna
 \item \code{logical}, e.g. TRUE or FALSE
 \item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
 }}
+
+\item{utilityColumns}{named character vector. Defines names for (hidden) utility columns
+used by \code{eDT} to keep track of modifications. Should normally only be adjusted in rare case of name clashes with data.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{c(
+  status = '_editbl_status',
+  buttons = '_editbl_buttons',
+  identity = '_editbl_identity',
+  deleted = '_editbl_deleted'
+ )
+}\if{html}{\out{</div>}}}
 }
 \value{
 list

@@ -1,6 +1,7 @@
 1.0.5-9000
 	o Allow to block edits and deletes with row-specific logic.
 	o More performance since buttons get generated on row basis instead of dataset basis.
+	o Adjustable renamed hidden utility columns ('_editbl_identity', '_editbl_deleted', '_editbl_status', '_editbl_buttons'). Prevents name clashes.
 1.0.5
 	o Use screenshots in vignettes for speed increase and to solve CRAN checks.
 1.0.4

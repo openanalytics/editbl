@@ -147,3 +147,10 @@ test_that("standardizeArgument_editable list",{
 test_that("standardizeArgument_editable Error",{
       expect_error(standardizeArgument_editable(1))
     })
+
+test_that('overwriteDefaults works',{
+      x = c(a = 'a', b = 'b')
+      y = c(a='c')
+      result <- overwriteDefaults(x,y)
+      expect_equal(result, c(a = 'c', b = 'b'))
+    })

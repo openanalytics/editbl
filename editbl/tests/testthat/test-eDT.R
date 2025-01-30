@@ -50,7 +50,7 @@ test_that("Deletion of a row works", {
           args = list(data = data),
           expr = {
             session$flushReact()
-            test_id = rv$modifiedData[1,"i"] # generated uuid
+            test_id = rv$modifiedData[1,"_editbl_identity"] # generated uuid
             session$setInputs(current_id = paste0('delete_row_', test_id))
             session$setInputs(delete = 1)
             session$flushReact()
@@ -68,7 +68,7 @@ test_that("Can not delete row when canDeleteRow blocks it", {
           args = list(data = data, canDeleteRow = function(...){FALSE}),
           expr = {
             session$flushReact()
-            test_id = rv$modifiedData[1,"i"] # generated uuid
+            test_id = rv$modifiedData[1,"_editbl_identity"] # generated uuid
             session$setInputs(current_id = paste0('delete_row_', test_id))
             session$setInputs(delete = 1)
             session$flushReact()

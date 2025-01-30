@@ -72,6 +72,16 @@ eDTOutput <- function(id,...) {
 #'   This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
 #' @param env `environment` in which the server function is running. Should normally not be modified.
 #' @inheritParams canXXXRowTemplate
+#' @param utilityColumns named character vector. Defines names for (hidden) utility columns
+#'   used by `eDT` to keep track of modifications. Should normally only be adjusted in rare case of name clashes with data.
+#'  ``` 
+#'  c(
+#'    status = '_editbl_status',
+#'    buttons = '_editbl_buttons',
+#'    identity = '_editbl_identity',
+#'    deleted = '_editbl_deleted'
+#'   )
+#'  ```
 #' @return list
 #' - result `reactive` modified version of `data` (saved)
 #' - state `reactive` current state of the `data` (unsaved)
@@ -157,7 +167,8 @@ eDT <- function(
     defaults = tibble(),
     env = environment(),
     canEditRow = TRUE,
-    canDeleteRow = TRUE
+    canDeleteRow = TRUE,
+    utilityColumns = NULL
 ) {
   args <- as.list(environment())
   
@@ -229,8 +240,9 @@ eDTServer <- function(
     defaults = tibble(),
     env = environment(),
     canEditRow = TRUE,
-    canDeleteRow = TRUE
-) {
+    canDeleteRow = TRUE,
+    utilityColumns = NULL
+  ) {
   missingContainer <- missing(container)
   moduleServer(
       id,
@@ -245,7 +257,18 @@ eDTServer <- function(
             changelog_react = 0 # # to force refreshing even when reactive value stays the same
         )
         
-        statusCol='status'
+        # Utility columns
+        defaultUtilityColumns <- c(
+            status = '_editbl_status',
+            buttons = '_editbl_buttons',
+            identity = '_editbl_identity',
+            deleted = '_editbl_deleted'
+        )
+        utilityColumns <- overwriteDefaults(defaultUtilityColumns, utilityColumns)
+        statusCol <- utilityColumns[['status']]
+        buttonCol <- utilityColumns[['buttons']]
+        identityCol <- utilityColumns[['identity']]
+        deleteCol <- utilityColumns[['deleted']]
         
         # Make arguments reactive / set defaults
         # This way users can pass on both reactive an non reactive arguments
@@ -416,10 +439,8 @@ eDTServer <- function(
                 data <- joinForeignTbl(data,foreignTbl)
               }
               
-              # FIXME: support these column names
-              utilityColumns <- c("buttons", "i", "status", "deleted")
               if(any(utilityColumns %in% dplyr::tbl_vars(data))){
-                stop(sprintf("Due to current code design, `editbl` does not support any of following column names: %s. \n Will be fixed on a next release.",
+                stop(sprintf("Adjust the utility columns such that they don't clash with the data column names.",
                         paste(utilityColumns, collapse = ", ")))
               }
               
@@ -431,7 +452,10 @@ eDTServer <- function(
                   ns = ns,
                   canEditRow = isolate(canEditRow()),
                   canDeleteRow = isolate(canDeleteRow()),
-                  statusCol = statusCol)
+                  statusCol = statusCol,
+                  buttonCol = buttonCol,
+                  iCol = identityCol,
+                  deleteCol = deleteCol)
               rv$checkPointData <- data
               rv$modifiedData <- data
               rv$changelog <- list()
@@ -447,7 +471,7 @@ eDTServer <- function(
               req(!is.null(rv$newState) && isTruthy(rv$newState))
               castCols <- base::colnames(isolate(data()))
               data <- rv$newState
-              data <- relocate(data,  dplyr::all_of("buttons"))     
+              data <- relocate(data,  dplyr::all_of(buttonCol))     
               rv$modifiedData <- data
               
               data <- castForDisplay(data, cols = castCols)
@@ -473,14 +497,14 @@ eDTServer <- function(
               
               data <- isolate(rv$modifiedData)
               
-              baseCols <- setdiff(base::colnames(data), c("buttons", "i", "status", "deleted"))
+              baseCols <- setdiff(base::colnames(data), utilityColumns)
               baseColsI <- which(base::colnames(data) %in% baseCols)
-              buttonCol <- which(base::colnames(data) == "buttons") -1 + rownames
+              buttonColI <- which(base::colnames(data) == buttonCol) -1 + rownames
               deductedCols <- which(base::colnames(data) %in% deductedColnames()) -1 + rownames
               
               data <- castForDisplay(data)
               
-              bcol <- "buttons"
+              bcol <- buttonCol
               names(bcol) <- ""
               colnames <- c(bcol,colnames)
               
@@ -490,20 +514,20 @@ eDTServer <- function(
                   list(list(
                           visible = FALSE,
                           targets = which(base::colnames(data) %in% 
-                                  c("status", "i", "deleted")) - !rownames)
+                                  c(statusCol, identityCol, deleteCol)) - !rownames)
                   ))
               
               if(escape == TRUE){
-                escape <- -buttonCol
+                escape <- -buttonColI
               }
               else if(escape == FALSE){
                 escape <- FALSE
               }
               else if(is.numeric(escape)){
-                escape <- c(escape, -buttonCol)
+                escape <- c(escape, -buttonColI)
               } else if(is.character(escape)){
                 escape <- which(base::colnames(data) %in% escape) + rownames
-                escape <- c(escape, -buttonCol)
+                escape <- c(escape, -buttonColI)
               }
               
               # Make sure utility columns are not editable
@@ -511,10 +535,10 @@ eDTServer <- function(
               
               if(!inherits(editable, "logical")){
                 if(!"disable" %in% names(editable)){
-                  editable <- c(editable, list("disable" = list("columns" = c(buttonCol, deductedCols))))
+                  editable <- c(editable, list("disable" = list("columns" = c(buttonColI, deductedCols))))
                 } else {
                   editable$disable <- list("columns" = unique(c(editable$disable$columns,
-                              buttonCol,
+                              buttonColI,
                               deductedCols)))
                 }
               }
@@ -580,11 +604,11 @@ eDTServer <- function(
               }
               
               do.call(DT::datatable, internalArgs) %>%
-                  formatStyle("status", target='row',
+                  formatStyle(statusCol, target='row',
                       backgroundColor = styleEqual('inserted',statusColor()["insert"]))%>%
-                  formatStyle("status", target='row',
+                  formatStyle(statusCol, target='row',
                       backgroundColor = styleEqual('edited',statusColor()["update"]))%>%
-                  formatStyle("deleted", target='row',
+                  formatStyle(deleteCol, target='row',
                       backgroundColor = styleEqual(TRUE,statusColor()["delete"])) %>%
                   format()()
             })
@@ -593,7 +617,6 @@ eDTServer <- function(
         
         notInModalColumns <- reactive({              
               # Columns that should not be edited through the modal
-              status <- c("i", "buttons", "status", "deleted")
               deducted <- deductedColnames() # Therefore non-editable
               invisible <- unlist(lapply(options()$columnDefs, function(x){
                         if(!is.null(x$visible)){
@@ -604,7 +627,7 @@ eDTServer <- function(
                       }))
               notEditable <- names(rv$modifiedData)[editable_std()$disable$columns + 1]
               unique(c(
-                      status,
+                      utilityColumns,
                       deducted,
                       invisible,
                       notEditable
@@ -641,15 +664,15 @@ eDTServer <- function(
         
         clickedRow <- reactive({
               identity = sub("^.*_","",input$current_id)
-              which(rv$modifiedData[,'i'] == identity)
+              which(rv$modifiedData[,identityCol] == identity)
             })
         
         effectiveChanges <- reactive({
               data <- do.call(rbind, rv$changelog[seq_len(rv$changeLogTracker)])
               
               # get last state of the row per id
-              data <- do.call(rbind,(lapply(unique(data$i), 
-                            function(i){tail(data[data$i == i,],1)})))
+              data <- do.call(rbind,(lapply(unique(data[[identityCol]]), 
+                            function(i){tail(data[data[[identityCol]] == i,],1)})))
               data
             })
         
@@ -670,9 +693,12 @@ eDTServer <- function(
                 undoChange <- undoChanges[row,]
                 
                 lastLogState <- do.call(rbind,rv$changelog[seq_len(max(0,i-1))])
-                lastLogState <- tail(lastLogState[lastLogState$i == undoChange$i,],1)
+                lastLogState <- tail(
+                    lastLogState[lastLogState[[identityCol]] == undoChange[[identityCol]],],1
+                )
                 
-                lastCheckPointState <- rv$checkPointData[rv$checkPointData$i == undoChange$i,]
+                lastCheckPointState <- rv$checkPointData[
+                    rv$checkPointData[[identityCol]] == undoChange[[identityCol]],]
                 
                 if(!is.null(lastLogState) && nrow(lastLogState)){
                   stateBeforeChange <- lastLogState
@@ -680,12 +706,12 @@ eDTServer <- function(
                   stateBeforeChange <- lastCheckPointState
                 }
                 
-                if(undoChange$status == "inserted" && nrow(stateBeforeChange) == 0){ # delete if row did not exist before
-                  data <- data[data$i != undoChange$i,]
-                } else if (undoChange$status == "deleted" && !undoChange$i %in% data$i){ # re-insert if row is now deleted
+                if(undoChange[[statusCol]] == "inserted" && nrow(stateBeforeChange) == 0){ # delete if row did not exist before
+                  data <- data[data[[identityCol]] != undoChange[[identityCol]],]
+                } else if (undoChange[[statusCol]] == "deleted" && !undoChange[[identityCol]] %in% data[[identityCol]]){ # re-insert if row is now deleted
                   data <- cbind(undoChange, data)
                 } else { # set row to previous state
-                  data[data$i == undoChange$i,] <- stateBeforeChange
+                  data[data[[identityCol]] == undoChange[[identityCol]],] <- stateBeforeChange
                 }
               }
               
@@ -704,10 +730,10 @@ eDTServer <- function(
               
               for (iRedoChange in seq_len(nrow(redoChanges))){
                 redoChange <- redoChanges[iRedoChange,]
-                if(redoChange$status == "inserted" && !redoChange$i %in% data$i){
+                if(redoChange[[statusCol]] == "inserted" && !redoChange[[identityCol]] %in% data[[identityCol]]){
                   data <- rbind(redoChange,data)
                 } else {
-                  data[data$i == redoChange$i,] <- redoChange
+                  data[data[[identityCol]] == redoChange[[identityCol]],] <- redoChange
                 }
               }
               
@@ -725,9 +751,9 @@ eDTServer <- function(
                       statusCol=statusCol))
               data[i,] <-  fillDeductedColumns(rv$modalData(), foreignTbls())
               
-              currentStatus <- data[i,"status"]
+              currentStatus <- data[i,statusCol]
               if(currentStatus == "unmodified"){
-                data[i,"status"] <- "edited"
+                data[i,statusCol] <- "edited"
               }
               
               newChange <- data[i,]
@@ -787,9 +813,9 @@ eDTServer <- function(
                         if(!identical(currentValue, newValue)){
                           hasChanged <- TRUE
                           newRow[,j] <- newValue
-                          currentStatus <- newRow[,"status"]
+                          currentStatus <- newRow[[statusCol]]
                           if(currentStatus == "unmodified"){
-                            newRow[,"status"] <- "edited"
+                            newRow[,statusCol] <- "edited"
                           }
                         }
                       }
@@ -833,7 +859,7 @@ eDTServer <- function(
                       statusCol=statusCol
                   )
               )
-              row$deleted <- !row$deleted
+              row[[deleteCol]] <- !row[[deleteCol]]
               
               newChange <- row
               changelog <- rv$changelog[seq_len(rv$changeLogTracker)]
@@ -846,7 +872,6 @@ eDTServer <- function(
         
         observeEvent(input$add,{
               data <- rv$modifiedData
-              
               # create new row
               newRow <- data %>%
                   dplyr::filter(FALSE)
@@ -866,12 +891,13 @@ eDTServer <- function(
                   newRow[[col]] <- defaults[[col]]
                 }
               }
-              newRow$status <- "inserted"
-              newRow$deleted <- FALSE
-              newRow$i <- uuid::UUIDgenerate()
+              newRow[,statusCol] <- "inserted"
+              newRow[,deleteCol] <- FALSE
+              newRow[,identityCol] <- uuid::UUIDgenerate()
               newRow <- addButtons(
                   df = newRow,
-                  columnName = "buttons",
+                  columnName = buttonCol,
+                  iCol = identityCol,
                   ns = ns,
                   canDeleteRow = canDeleteRow(),
                   canEditRow = canEditRow())
@@ -893,22 +919,22 @@ eDTServer <- function(
         effectiveInserted <- reactive({
               modified <- effectiveChanges()         
               modified[
-                  modified$status == "inserted" &
-                      modified$deleted == FALSE,]
+                  modified[[statusCol]] == "inserted" &
+                      modified[[deleteCol]] == FALSE,]
             })
         
         effectiveEdited <- reactive({
               modified <- effectiveChanges()
               modified[
-                  modified$status == "edited" &
-                      modified$deleted == FALSE,]
+                  modified[[statusCol]] == "edited" &
+                      modified[[deleteCol]] == FALSE,]
             })
         
         effectiveDeleted <- reactive({
               modified <- effectiveChanges()
               modified[
-                  modified$status != "inserted" &
-                      modified$deleted == TRUE,]
+                  modified[[statusCol]] != "inserted" &
+                      modified[[deleteCol]] == TRUE,]
             })
         
         observeEvent(input$save,{
@@ -969,22 +995,22 @@ eDTServer <- function(
                     
                     # deletes
                     deleted <- merge(
-                        modified[modified$deleted == TRUE,"i",drop = FALSE],
+                        modified[modified[[deleteCol]] == TRUE,identityCol,drop = FALSE],
                         checkPoint,
-                        by = "i")[,keys(),drop = FALSE]
+                        by = identityCol)[,keys(),drop = FALSE]
                     
                     # edits
                     edited <- effectiveEdited()
                     if(!checkForeignTbls(edited, foreignTbls())){
                       stop("You made invalid edits to a row.")
                     }
-                    edited <- edited[, c(cols, "i")]
+                    edited <- edited[, c(cols, identityCol)]
                     match_x <-  merge(
-                        edited[,"i", drop = FALSE],
+                        edited[,identityCol, drop = FALSE],
                         checkPoint,
-                        by = "i")
-                    match_x <- match_x[order(match_x$i), keys(), drop = FALSE]
-                    match_y <- edited[order(edited$i), keys(), drop = FALSE]
+                        by = identityCol)
+                    match_x <- match_x[order(match_x[[identityCol]]), keys(), drop = FALSE]
+                    match_y <- edited[order(edited[[identityCol]]), keys(), drop = FALSE]
                     match <- list(
                         x = match_x,
                         y = match_y
@@ -1074,7 +1100,7 @@ eDTServer <- function(
                       checkPointState <- rv$modifiedData
                       
                       # Remove deleted rows
-                      checkPointState <- checkPointState[checkPointState$deleted != TRUE,]
+                      checkPointState <- checkPointState[checkPointState[[deleteCol]] != TRUE,]
                       
                       # Update inserted rows to being 'unmodified'
                       insertedRows <- which(checkPointState[,statusCol] == 'inserted')
@@ -1084,8 +1110,8 @@ eDTServer <- function(
                         adjustedRow[,statusCol] <- 'unmodified'
                         adjustedRow <- addButtons(
                             df = adjustedRow,
-                            columnName = "buttons",
-                            iCol = 'i',
+                            columnName = buttonCol,
+                            iCol = identityCol,
                             ns = ns,
                             canEditRow = canEditRow(),
                             canDeleteRow = canDeleteRow()
@@ -1094,7 +1120,7 @@ eDTServer <- function(
                       }
                       
                       # Update edited rows to being 'unmodified'
-                      checkPointState$status <- 'unmodified'
+                      checkPointState[[statusCol]] <- 'unmodified'
 
                       rv$changelog <- list()
                       rv$checkPointData <- checkPointState
@@ -1136,8 +1162,8 @@ eDTServer <- function(
               req(!is.null(rv$modifiedData) && isTruthy(rv$modifiedData))
               req(!is.null(isolate(rv$selected)) && isTruthy(isolate(rv$selected)))
               
-              currentSelection <- isolate(rv$selected)$i  
-              newIndexes <- which(rv$modifiedData$i %in% currentSelection)
+              currentSelection <- isolate(rv$selected)[[identityCol]]  
+              newIndexes <- which(rv$modifiedData[[identityCol]] %in% currentSelection)
               if(length(newIndexes)){
                 DT::selectRows(proxyDT, newIndexes)
               }
@@ -1276,6 +1302,7 @@ initData <- function(
       df = data,
       columnName = buttonCol,
       ns = ns,
+      iCol = iCol,
       canEditRow = canEditRow,
       canDeleteRow = canDeleteRow,
       statusCol=NULL) # Not to trigger unneeded logic since all values are 'unmodified'
