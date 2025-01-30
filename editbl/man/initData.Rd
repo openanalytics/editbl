@@ -11,8 +11,8 @@ initData(
   statusCol = "status",
   deleteCol = "deleted",
   iCol = "i",
-  canDeleteRow = editbl::canDeleteRow,
-  canEditRow = editbl::canEditRow
+  canDeleteRow = TRUE,
+  canEditRow = TRUE
 )
 }
 \arguments{
@@ -28,13 +28,17 @@ initData(
 
 \item{iCol}{\code{character(1)} name of column containing a unique identifier.}
 
-\item{canDeleteRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{tibble}.
-Returns \code{logical(1)}.}
+\item{canDeleteRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
 
-\item{canEditRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{tibble}.
-Returns \code{logical(1)}.}
+\item{canEditRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
 }
 \value{
 data with extra columns buttons, status, i.

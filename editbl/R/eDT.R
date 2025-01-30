@@ -115,13 +115,7 @@ eDTOutput <- function(id,...) {
 #'     value = data$mpg)})
 #' 
 #'   # Do not allow delete
-#'   editbl::eDT(mtcars, canDeleteRow = function(row,statusCol){
-#'     if(row[,statusCol] == 'inserted'){
-#'       TRUE
-#'     } else {
-#'       FALSE 
-#'     }
-#'   })
+#'   editbl::eDT(mtcars, canDeleteRow = FALSE)
 #' }
 #' 
 #' @author Jasper Schelfhout
@@ -162,8 +156,8 @@ eDT <- function(
     inputUI = editbl::inputUI,
     defaults = tibble(),
     env = environment(),
-    canEditRow = editbl::canEditRow,
-    canDeleteRow = editbl::canDeleteRow
+    canEditRow = TRUE,
+    canDeleteRow = TRUE
 ) {
   args <- as.list(environment())
   
@@ -234,8 +228,8 @@ eDTServer <- function(
     inputUI = editbl::inputUI,
     defaults = tibble(),
     env = environment(),
-    canEditRow = editbl::canEditRow,
-    canDeleteRow = editbl::canDeleteRow
+    canEditRow = TRUE,
+    canDeleteRow = TRUE
 ) {
   missingContainer <- missing(container)
   moduleServer(
@@ -717,7 +711,10 @@ eDTServer <- function(
         observeEvent(input$confirmEdit, {
               i <- clickedRow()
               data <- rv$modifiedData
-              req(canEditRow(data[i,]),statusCol=statusCol)
+              req(evalCanEditRow(
+                      row=data[i,],
+                      canEditRow=canEditRow,
+                      statusCol=statusCol))
               data[i,] <-  fillDeductedColumns(rv$modalData(), foreignTbls())
               
               currentStatus <- data[i,"status"]
@@ -759,7 +756,12 @@ eDTServer <- function(
                     for(i in sort(unique(edits$row))){
                       changes <- edits[edits$row == i,]
                       currentRow <- data[i,]
-                      if(!canEditRow(row = currentRow, statusCol=statusCol)){
+                      if(!evalCanEditRow(
+                          row = currentRow, 
+                          canEditRow=canEditRow, 
+                          statusCol=statusCol
+                          )
+                      ){
                         next
                       }
                       
@@ -817,7 +819,12 @@ eDTServer <- function(
               rowNumber <- clickedRow()
               data <- rv$modifiedData
               row <- data[rowNumber,]
-              req(canDeleteRow(row = row, statusCol=statusCol))
+              req(evalCanDeleteRow(
+                      row = row,
+                      canDeleteRow=canDeleteRow,
+                      statusCol=statusCol
+                  )
+              )
               row$deleted <- !row$deleted
               
               newChange <- row
@@ -1057,11 +1064,31 @@ eDTServer <- function(
                       rv$fullTableRefresh <- UUIDgenerate()
                     } else {
                       checkPointState <- rv$modifiedData
-                      checkPointState <- checkPointState[checkPointState$deleted != TRUE,]
-                      checkPointState$status <- 'unmodified'
-                      checkPointState$deleted <- FALSE
-                      rv$changelog <- list()
                       
+                      # Remove deleted rows
+                      checkPointState <- checkPointState[checkPointState$deleted != TRUE,]
+                      
+                      # Update inserted rows to being 'unmodified'
+                      insertedRows <- which(checkPointState[,statusCol] == 'inserted')
+                      for(i in insertedRows){
+                        currentRow <- checkPointState[i,]
+                        adjustedRow <- currentRow
+                        adjustedRow[,statusCol] <- 'unmodified'
+                        adjustedRow <- addButtons(
+                            df = adjustedRow,
+                            columnName = "buttons",
+                            iCol = 'i',
+                            ns = ns,
+                            canEditRow = canEditRow,
+                            canDeleteRow = canDeleteRow
+                            )
+                        checkPointState[i,] <- adjustedRow
+                      }
+                      
+                      # Update edited rows to being 'unmodified'
+                      checkPointState$status <- 'unmodified'
+
+                      rv$changelog <- list()
                       rv$checkPointData <- checkPointState
                       rv$newState <- checkPointState
                     }
@@ -1131,27 +1158,81 @@ eDTServer <- function(
   )
 }
 
-#' Determine if a row can be edited
-#' @param row `tibble`
+#' Determine if a row can be deleted
+#' 
+#' @details calling this around the user passed on function ensures
+#'  that newly inserted rows are being excempt from the logic.
+#'  Moreover, the output of the function can be checked.
+#' 
+#' @param row `tibble`, single row
+#' @param canDeleteRow `function` with argument 'row' defining logic on wether or
+#'    not the row can be modified. Can also be `logical` TRUE or FALSE.
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @return `boolean`
 #' 
 #' @author Jasper Schelfhout
-#' @export
-canDeleteRow <- function(row, statusCol){
-  TRUE
+evalCanDeleteRow <- function(
+    row,
+    canDeleteRow = TRUE,
+    statusCol='status'
+  ){
+  # Prevent evaluating logic and speed up for most common use-case
+  if(is.logical(canDeleteRow) && canDeleteRow){
+    return(TRUE)
+  }
+  
+  if (!is.null(statusCol) && row[[statusCol]] == 'inserted'){
+    return(TRUE)
+  }
+  
+  if(is.function(canDeleteRow)){
+    result <- canDeleteRow(row=row)
+    if(!is.logical(result)){
+      stop('canDeleteRow should return a logical value.')
+    }
+  } else if (is.logical(canDeleteRow)) {
+    result <- canDeleteRow
+  }
+  
+  return(result)
 }
 
-#' Determine if a row can be deleted
-#' @param row `tibble`
+#' Determine if a row can be edited
+#' 
+#' @details calling this around the user passed on function ensures
+#'  that newly inserted rows are being excempt from the logic.
+#'  Moreover, the output of the function can be checked.
+#' 
+#' @param row `tibble`, single row.
+#' @param canEditRow `function` with argument 'row' defining logic on wether or
+#'    not the row can be modified. Can also be `logical` TRUE or FALSE.
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @return `boolean`
 #' 
 #' @author Jasper Schelfhout
-#' @export
-canEditRow <- function(row, statusCol){
-  TRUE
+evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='status'){
+  
+  # Prevent evaluating logic and speed up for most common use-case
+  if(is.logical(canEditRow) && canEditRow){
+    return(TRUE)
+  }
+  
+  if (!is.null(statusCol) && row[[statusCol]] == 'inserted'){
+    return(TRUE)
+  }
+  
+  if(is.function(canEditRow)){
+    result <- canEditRow(row=row)
+    if(!is.logical(result)){
+      stop('canEditRow should return a logical value.')
+    }
+  } else if (is.logical(canEditRow)) {
+    result <- canEditRow
+  }
+  
+  return(result)
 }
+
 
 #' Add some extra columns to data to allow for / keep track of modifications
 #' @param data `data.frame`
@@ -1172,8 +1253,8 @@ initData <- function(
     statusCol = "status",
     deleteCol = "deleted",
     iCol = "i",
-    canDeleteRow = editbl::canDeleteRow,
-    canEditRow = editbl::canEditRow
+    canDeleteRow = TRUE,
+    canEditRow = TRUE
 ){
   data[statusCol] <- rep("unmodified", nrow(data))
   data[deleteCol] <- rep(FALSE, nrow(data))
@@ -1189,7 +1270,7 @@ initData <- function(
       ns = ns,
       canEditRow = canEditRow,
       canDeleteRow = canDeleteRow,
-      statusCol=statusCol)
+      statusCol=NULL) # Not to trigger unneeded logic since all values are 'unmodified'
   data <- relocate(data, all_of(buttonCol))
   data
 }
@@ -1200,6 +1281,7 @@ initData <- function(
 #' @param ns namespace function
 #' @param iCol `character(1)` name of column containing a unique identifier.
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
+#'    if `NULL`, the data is interpreted as 'unmodified'.
 #' @inheritParams canXXXRowTemplate
 #' @return df with extra column containing buttons
 #' @importFrom dplyr across everything rowwise
@@ -1211,8 +1293,8 @@ addButtons <- function(
     columnName,
     ns,
     iCol = 'i',
-    canEditRow = editbl::canEditRow,
-    canDeleteRow = editbl::canDeleteRow,
+    canEditRow = TRUE,
+    canDeleteRow = TRUE,
     statusCol = 'status'
 ){
   ns_char = ns("")
@@ -1288,12 +1370,12 @@ deleteButtonHTML <- createDeleteButtonHTML()
 editButtonHTML <- createEditButtonHTML()
 
 #' Re-usable documentation
-#' @param canEditRow `function`. 
-#'    Has function argument `row` which accepts a single row `tibble`.
-#'    Returns `logical(1)`.
-#' @param canDeleteRow `function`.
-#'  Has function argument `row` which accepts a single row `tibble`.
-#'  Returns `logical(1)`.
+#' @param canEditRow can be either of the following:
+#'    - `logical`, e.g. TRUE or FALSE
+#'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
+#' @param canDeleteRow can be either of the following:
+#'    - `logical`, e.g. TRUE or FALSE
+#'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
 canXXXRowTemplate <- function(canEditRow, canDeleteRow){
   NULL
 }
@@ -1304,35 +1386,39 @@ canXXXRowTemplate <- function(canEditRow, canDeleteRow){
 #' @param suffix `character(1)`
 #' @param ns `character(1)` namespace
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
+#'    if `NULL`, the data is interpreted as 'unmodified'.
 #' @inheritParams canXXXRowTemplate
 #' @return `character(1)` HTML
 createButtons <- function(
     row,
     suffix,
     ns, 
-    canEditRow = editbl::canEditRow,
-    canDeleteRow = editbl::canDeleteRow,
+    canEditRow = TRUE,
+    canDeleteRow = TRUE,
     statusCol = 'status'
 ){
-  if(canDeleteRow(row=row, statusCol=statusCol)){
+  if(evalCanDeleteRow(row=row, canDeleteRow=canDeleteRow, statusCol=statusCol)){
     deleteButton <- deleteButtonHTML
   } else {
     deleteButton <- ""
   }
-  if(canEditRow(row=row, statusCol=statusCol)){
+  if(evalCanEditRow(row=row, canEditRow=canEditRow, statusCol=statusCol)){
     editButton <- editButtonHTML
   } else {
     editButton <- ""
   }
   
-  sprintf(
-      sprintf('<div class="btn-group">%1$s%2$s</div>',
-          deleteButton,
-          editButton
-      ),
-      ns,
-      suffix
+  result <- sprintf('<div class="btn-group">%1$s%2$s</div>',
+      deleteButton,
+      editButton
   )
+  
+  # Conditional since sprintf() throws warning when no placeholders are available
+  if(editButton != '' && deleteButton != ''){
+    result <- sprintf(result,ns, suffix)
+  }
+  
+  result
 }
 
 #' Function to generate CSS to disable clicking events on a column

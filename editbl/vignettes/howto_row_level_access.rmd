@@ -22,10 +22,8 @@ df <- tibble::tibble(
 
 CURRENT_USER = 'Mickey'
 
-rowModificationLogic <- function(row,statusCol){
-        if(row[,statusCol] == 'inserted'){
-          TRUE
-        } else if (row[,'user'] == CURRENT_USER){
+rowModificationLogic <- function(row){
+        if (row[,'user'] == CURRENT_USER){
           TRUE
         } else {
           FALSE  
@@ -44,11 +42,5 @@ shiny::shinyApp(
 
 ```
 
-The function should have two arguments `row` and `statusCol`.
-The `row` will be a `data.frame` with a single row. You can use the column names
-to specify conditional logic.
-
-The `statusCol` is generated automatically by `editbl`. It currently has
-following states: `'inserted'`, `'modified'` and `'unmodified'`.
-
-
+The function should have the `row`, which is a single row of the
+displayed table in datatype `tibble`.

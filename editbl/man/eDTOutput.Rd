@@ -62,13 +62,7 @@ if(interactive()){
     value = data$mpg)})
 
   # Do not allow delete
-  editbl::eDT(mtcars, canDeleteRow = function(row,statusCol){
-    if(row[,statusCol] == 'inserted'){
-      TRUE
-    } else {
-      FALSE 
-    }
-  })
+  editbl::eDT(mtcars, canDeleteRow = FALSE)
 }
 
 }

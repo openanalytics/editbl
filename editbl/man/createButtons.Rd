@@ -8,8 +8,8 @@ createButtons(
   row,
   suffix,
   ns,
-  canEditRow = editbl::canEditRow,
-  canDeleteRow = editbl::canDeleteRow,
+  canEditRow = TRUE,
+  canDeleteRow = TRUE,
   statusCol = "status"
 )
 }
@@ -20,15 +20,20 @@ createButtons(
 
 \item{ns}{\code{character(1)} namespace}
 
-\item{canEditRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{tibble}.
-Returns \code{logical(1)}.}
+\item{canEditRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
 
-\item{canDeleteRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{tibble}.
-Returns \code{logical(1)}.}
+\item{canDeleteRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
 
-\item{statusCol}{\code{character(1)} name of column with general status (e.g. modified or not).}
+\item{statusCol}{\code{character(1)} name of column with general status (e.g. modified or not).
+if \code{NULL}, the data is interpreted as 'unmodified'.}
 }
 \value{
 \code{character(1)} HTML

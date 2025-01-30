@@ -37,8 +37,8 @@ eDT(
   inputUI = editbl::inputUI,
   defaults = tibble(),
   env = environment(),
-  canEditRow = editbl::canEditRow,
-  canDeleteRow = editbl::canDeleteRow
+  canEditRow = TRUE,
+  canDeleteRow = TRUE
 )
 }
 \arguments{
@@ -188,13 +188,17 @@ This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dyna
 
 \item{env}{\code{environment} in which the server function is running. Should normally not be modified.}
 
-\item{canEditRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{tibble}.
-Returns \code{logical(1)}.}
+\item{canEditRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
 
-\item{canDeleteRow}{\code{function}.
-Has function argument \code{row} which accepts a single row \code{tibble}.
-Returns \code{logical(1)}.}
+\item{canDeleteRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
 }
 \value{
 list
@@ -255,13 +259,7 @@ if(interactive()){
     value = data$mpg)})
 
   # Do not allow delete
-  editbl::eDT(mtcars, canDeleteRow = function(row,statusCol){
-    if(row[,statusCol] == 'inserted'){
-      TRUE
-    } else {
-      FALSE 
-    }
-  })
+  editbl::eDT(mtcars, canDeleteRow = FALSE)
 }
 
 }
