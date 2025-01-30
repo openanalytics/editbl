@@ -128,7 +128,7 @@ test_that("Row dragging works when filter is on", {
       shiny::shinyApp(ui, server)
     })
 
-testthat_("Can support all data types",{
+test_that("Can support all data types",{
       df = tibble(
           integer = 1L,
           double = 0.5,
