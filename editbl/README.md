@@ -196,4 +196,4 @@ Depending on your needs, they might be better alternatives.
 
 [Generic CRUD application](https://github.com/garrylachman/ElectroCRUD)
 
-[Example SQLite databse](https://www.sqlitetutorial.net/sqlite-sample-database/)
+[Example SQLite database](https://www.sqlitetutorial.net/sqlite-sample-database/)
