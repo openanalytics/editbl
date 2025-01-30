@@ -60,6 +60,9 @@ if(interactive()){
     ns("mpg"),
     label = "mpg",
     value = data$mpg)})
+
+  # Do not allow delete
+  editbl::eDT(mtcars, canDeleteRow = FALSE)
 }
 
 }

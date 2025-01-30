@@ -4,7 +4,15 @@
 \alias{addButtons}
 \title{Add modification buttons as a column}
 \usage{
-addButtons(df, columnName, ns)
+addButtons(
+  df,
+  columnName,
+  ns,
+  iCol = "i",
+  canEditRow = TRUE,
+  canDeleteRow = TRUE,
+  statusCol = "status"
+)
 }
 \arguments{
 \item{df}{\code{data.frame}}
@@ -12,6 +20,23 @@ addButtons(df, columnName, ns)
 \item{columnName}{\code{character(1)}}
 
 \item{ns}{namespace function}
+
+\item{iCol}{\code{character(1)} name of column containing a unique identifier.}
+
+\item{canEditRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
+
+\item{canDeleteRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
+
+\item{statusCol}{\code{character(1)} name of column with general status (e.g. modified or not).
+if \code{NULL}, the data is interpreted as 'unmodified'.}
 }
 \value{
 df with extra column containing buttons
