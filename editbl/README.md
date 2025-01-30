@@ -55,6 +55,7 @@ Advanced examples can be found in the [vignettes](https://github.com/openanalyti
 * Tackles challenges such as enforcing foreign keys and hiding of surrogate keys.
 * Transactional commits (currently for `tbl_dbi` class and non in-place editing).
 * Default values for new rows (UUID's, 'current date', 'inserted by', ...)
+* Possible to set row level security
 
 ### Constraints and normalized tables
 
@@ -113,15 +114,6 @@ modifiedData <- editbl::eDT(dplyr::tbl(conn, "Artist"), in_place = TRUE)
 DBI::dbDisconnect(conn)
 unlink(tmpFile)
 
-# excel integration
-xlsx_file <- system.file("extdata",
-            "artists.xlsx",
-            package="editbl")
-xlsx_tbl <- tibble::as_tibble(
-                  openxlsx::read.xlsx(xlsx_file)
-              )
-modified <- eDT(xlsx_tbl)
-openxlsx::write.xlsx(modified, xlsx_file)
 ```
 
 Note that there are some custom methods in the package itself for `rows_update` / `rows_delete` / `rows_insert`. The goal
