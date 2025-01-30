@@ -2,22 +2,20 @@
 % Please edit documentation in R/eDT.R
 \name{createDeleteButtonHTML}
 \alias{createDeleteButtonHTML}
-\title{Helper function to write HTML}
+\title{Generate HTML for an in-row delete button}
 \usage{
-createDeleteButtonHTML(ns = "\%1$s", suffix = "\%2$s")
+createDeleteButtonHTML(ns = "\%1$s", suffix = "\%2$s", disabled = FALSE)
 }
 \arguments{
-\item{ns}{\code{character(1)} sprintf placeholder for ns}
+\item{ns}{\code{character(1)} namespace}
 
-\item{suffix}{\code{character(1)} sprintf placeholer for suffix}
+\item{suffix}{\code{character(1)} id of the row}
+
+\item{disabled}{\code{logical(1)} wether or not the button has to be disabled}
 }
 \value{
-\code{character(1)} HTML to be filled in with \code{sprintf}
+\code{character(1)} HTML
 }
 \description{
-Helper function to write HTML
-}
-\details{
-generate HTML as character once and reuse.
-Since buttons have to be generated a lot, this otherwhise slows down the app.
+Generate HTML for an in-row delete button
 }

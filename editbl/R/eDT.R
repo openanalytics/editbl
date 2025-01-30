@@ -1320,14 +1320,17 @@ addButtons <- function(
   df
 }
 
+
 #' Helper function to write HTML
-#' @details generate HTML as character once and reuse.
-#' Since buttons have to be generated a lot, this otherwhise slows down the app.
-#' @param suffix `character(1)` sprintf placeholer for suffix
-#' @param ns `character(1)` sprintf placeholder for ns
+#' @inheritParams createDeleteButtonHTML
+#' @details only to be used interactively. sprintf() implementation
+#'   is faster.
 #' @importFrom shiny div actionButton icon
-#' @return `character(1)` HTML to be filled in with \code{sprintf}
-createDeleteButtonHTML <- function(ns = "%1$s", suffix = "%2$s"){
+#' @seealso createEditButtonHTML
+createDeleteButtonHTML_shiny <- function(
+    ns = "%1$s",
+    suffix = "%2$s",
+    disabled = FALSE){
   as.character(
       actionButton(
           inputId = sprintf("%1$sdelete_row_%2$s", ns,suffix),
@@ -1343,18 +1346,22 @@ createDeleteButtonHTML <- function(ns = "%1$s", suffix = "%2$s"){
   )
 }
 
+
 #' Helper function to write HTML
-#' @details generate HTML as character once and reuse.
-#' Since buttons have to be generated a lot, this otherwhise slows down the app.
-#' @param suffix `character(1)` sprintf placeholer for suffix
-#' @param ns `character(1)` sprintf placeholder for ns
+#' @inheritParams createEditButtonHTML
+#' @details only to be used interactively. sprintf() implementation
+#'   is faster.
+#' @seealso createEditButtonHTML
 #' @importFrom shiny div actionButton icon
-#' @return `character(1)` HTML to be filled in with \code{sprintf}
-createEditButtonHTML <- function(ns = "%1$s", suffix = "%2$s"){
+createEditButtonHTML_shiny <- function(
+    ns = "%1$s",
+    suffix = "%2$s",
+    disabled = FALSE){
   as.character(
       actionButton(
           inputId = sprintf("%1$sedit_row_%2$s", ns,suffix),
           label = "",
+          disabled = disabled,
           icon = icon("pen-to-square"),
           style = "background-color: white",
           onclick = HTML(sprintf("get_id(this.id, '%1$s');
@@ -1365,9 +1372,45 @@ createEditButtonHTML <- function(ns = "%1$s", suffix = "%2$s"){
   )
 }
 
-deleteButtonHTML <- createDeleteButtonHTML()
+#' Generate HTML for an in-row edit button
+#' @param suffix `character(1)` id of the row
+#' @param ns `character(1)` namespace
+#' @param disabled `logical(1)` wether or not the button has to be disabled
+#' @return `character(1)` HTML
+createEditButtonHTML <- function(
+    ns,
+    suffix,
+    disabled = FALSE
+){
+  if(disabled){
+    disabled_str = 'disabled'
+  } else {
+    disabled_str = ''
+  }
+  sprintf(r"(<button id="%1$sedit_row_%2$s" type="button" class="btn btn-default action-button" %3$s style="background-color: white" onclick="get_id(this.id, &#39;%1$s&#39;);&#10;                      Shiny.setInputValue(&quot;%1$sedit&quot;, Math.random(), {priority: &quot;event&quot;});">
+      <i class="far fa-pen-to-square" role="presentation" aria-label="pen-to-square icon"></i>   
+      </button>)", ns, suffix, disabled_str)
+}
 
-editButtonHTML <- createEditButtonHTML()
+#' Generate HTML for an in-row delete button
+#' @param suffix `character(1)` id of the row
+#' @param ns `character(1)` namespace
+#' @param disabled `logical(1)` wether or not the button has to be disabled
+#' @return `character(1)` HTML
+createDeleteButtonHTML <- function(
+    ns = "%1$s",
+    suffix = "%2$s",
+    disabled=FALSE){
+  if(disabled){
+    disabled_str = 'disabled'
+  } else {
+    disabled_str = ''
+  }
+  sprintf(r"(<button id="%1$sdelete_row_%2$s" type="button" class="btn btn-default action-button"  %3$s style="color: red;background-color: white" onclick="get_id(this.id, &#39;%1$s&#39;);&#10;                      Shiny.setInputValue(&quot;%1$sdelete&quot;, Math.random(), {priority: &quot;event&quot;});">
+      <i class="fas fa-trash" role="presentation" aria-label="trash icon"></i>
+      </button>)", ns, suffix, disabled_str)
+}
+
 
 #' Re-usable documentation
 #' @param canEditRow can be either of the following:
@@ -1397,26 +1440,19 @@ createButtons <- function(
     canDeleteRow = TRUE,
     statusCol = 'status'
 ){
-  if(evalCanDeleteRow(row=row, canDeleteRow=canDeleteRow, statusCol=statusCol)){
-    deleteButton <- deleteButtonHTML
-  } else {
-    deleteButton <- ""
-  }
-  if(evalCanEditRow(row=row, canEditRow=canEditRow, statusCol=statusCol)){
-    editButton <- editButtonHTML
-  } else {
-    editButton <- ""
-  }
-  
+  deleteButton <- createDeleteButtonHTML(
+      ns=ns,
+      suffix=suffix,
+      disabled = !evalCanDeleteRow(row=row, canDeleteRow=canDeleteRow, statusCol=statusCol))
+  editButton <- createEditButtonHTML(
+       ns=ns,
+       suffix=suffix,
+       disabled = !evalCanEditRow(row=row, canEditRow=canEditRow, statusCol=statusCol))
+
   result <- sprintf('<div class="btn-group">%1$s%2$s</div>',
       deleteButton,
       editButton
   )
-  
-  # Conditional since sprintf() throws warning when no placeholders are available
-  if(editButton != '' && deleteButton != ''){
-    result <- sprintf(result,ns, suffix)
-  }
   
   result
 }
@@ -1431,7 +1467,7 @@ disableDoubleClickButtonCss <- function(id){
           #%1$s > .dataTables_wrapper > table tbody td:nth-child(1) {pointer-events: none;}
           #%1$s > .dataTables_wrapper > table tbody td:nth-child(1)>div {pointer-events: auto;}
           ",id)
-} 
+}
 
 keyTableJS <- c(
     # Trigger doubleclick by enter
