@@ -296,3 +296,23 @@ customButton <- function(id, label, icon = "", disabled = FALSE){
                       }", id))
       )
 }
+
+
+#' Overwrite default settings with provided settings
+#' @param defaults named character vector
+#' @param settings named character vector
+#' @return named character vector
+#' 
+#' @author Jasper Schelfhout
+overwriteDefaults <- function(defaults,settings){
+  
+  if(is.null(settings)){
+    return(defaults)
+  }
+  
+  result <- defaults
+  for(entry in names(settings)){
+    result[entry] <- settings[entry]
+  }
+  result
+}
