@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
-Sometimes you don not want to give a user access to the entire dataset.
+Sometimes you do not want to give a user access to the entire dataset.
 You can either hide rows or give read-only access.
 
 ## Hide rows completely
@@ -47,7 +47,7 @@ shiny::shinyApp(
 
 print(tibble)
 
-dbDisconnect(mydb)
+DBI::dbDisconnect(conn)
 ```
 
 ## Read-only access
