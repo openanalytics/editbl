@@ -9,12 +9,59 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
-The arguments `canEditRow` and `canDeleteRow` can be used
-to specify logic describing if modfications are allowed.
+Sometimes you don not want to give a user access to the entire dataset.
+You can either hide rows or give read-only access.
 
-In this example we only allow user Mickey to modify his own row.
+## Hide rows completely
+
+In this example we only allow user Mickey to see his own row.
+
+We simply can use `dplyr::filter()` on the table.
+Note that is most useful if you combine this with backends that support 
+`in_place` editing. E.g. you can retrieve only a subset
+of rows from a database and specifically modify those.
+Take a look at the 'relational database' vignettes for more information
+on how to work with a database.
 
 ```{r, screenshot.opts = list(vwidth = 700, vheight = 500), , screenshot.alt = 'screenshots/howto_row_level_access_1.png'}
+library(editbl)
+library(shiny)
+conn <- DBI::dbConnect(RSQLite::SQLite(), "")
+df <- data.frame(
+    user = c("Albert","Donald","Mickey"),
+    email = c('albert@einstein.com', 'donald@duck.com', 'mickey@mouse.com')
+)
+DBI::dbWriteTable(conn, "characters", df)
+tibble <- dplyr::tbl(conn, 'characters')
+
+CURRENT_USER = 'Mickey'
+
+shiny::shinyApp( 
+    ui = editbl::eDTOutput('id'),
+    server =  function(input, output,session){
+      result <- eDT(id='id',
+        data = tibble %>% filter(user == CURRENT_USER),
+        in_place = TRUE
+      )
+    })
+
+print(tibble)
+
+dbDisconnect(mydb)
+```
+
+## Read-only access
+
+In this example we only allow user Mickey to modify his own row. However he can
+still read data from others.
+
+The arguments `canEditRow` and `canDeleteRow` can be used
+to specify logic describing if modfications are allowed.
+The passed on logic shoud be a function with the argument `row`. This is a
+single row of the displayed table in datatype `tibble`.
+
+```{r, screenshot.opts = list(vwidth = 700, vheight = 500), , screenshot.alt = 'screenshots/howto_row_level_access_2.png'}
+library(editbl)
 df <- tibble::tibble(
     user = c("Albert","Donald","Mickey"),
     email = c('albert@einstein.com', 'donald@duck.com', 'mickey@mouse.com')
@@ -41,6 +88,3 @@ shiny::shinyApp(
     })
 
 ```
-
-The function should have the `row`, which is a single row of the
-displayed table in datatype `tibble`.
