@@ -1,3 +1,5 @@
+1.1.0-9000
+	o State variable of eDT output does not contain deleted rows anymore.
 1.1.0
 	o Allow to block edits and deletes with row-specific logic.
 	o More performance since buttons get generated on row basis instead of dataset basis.
