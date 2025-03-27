@@ -1185,7 +1185,7 @@ eDTServer <- function(
         
         return(list(
                 result = result,
-                state = reactive({castToTemplate(rv$modifiedData[,dataVars()], data())}),
+                state = reactive({castToTemplate(rv$modifiedData[!rv$modifiedData[[deleteCol]],dataVars()], data())}),
                 selected = reactive({castToTemplate(selected()[,dataVars()], data())})
             ))
       }
