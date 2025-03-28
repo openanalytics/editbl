@@ -94,10 +94,12 @@ test_that("working with selectInputDT works.", {
       ui <- eDTOutput("app")
       server <- function(input,output,session){
         eDTServer(id = "app",
-            data = songs,
-            foreignTbls = list(
-                foreignTbl(songs, artists, by = "artist_id", naturalKey = c("first_name", "last_name"))
-                ))
+          data = songs,
+          foreignTbls = list(
+            foreignTbl(songs, artists, by = "artist_id", naturalKey = c("first_name", "last_name"))
+          ),
+          columnOrder = c("artist_id", "last_name", "first_name", "song")    
+        )
       }
       
       # Test if using edit a second time still works
