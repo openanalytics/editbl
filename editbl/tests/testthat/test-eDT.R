@@ -98,7 +98,7 @@ test_that("working with selectInputDT works.", {
           foreignTbls = list(
             foreignTbl(songs, artists, by = "artist_id", naturalKey = c("first_name", "last_name"))
           ),
-          foreignTblsColumnOrder = c("artist_id", "last_name", "first_name", "song")    
+          columnOrder = c("artist_id", "last_name", "first_name", "song")    
         )
       }
       

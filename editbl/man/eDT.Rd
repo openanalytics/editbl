@@ -33,7 +33,7 @@ eDT(
      x
  },
   foreignTbls = list(),
-  foreignTblsColumnOrder = c(),
+  columnOrder = c(),
   statusColor = c(insert = "#e6e6e6", update = "#32a6d3", delete = "#e52323"),
   inputUI = editbl::inputUI,
   defaults = tibble(),
@@ -179,7 +179,7 @@ set for all \code{Date} columns.}
 
 \item{foreignTbls}{\code{list}. List of objects created by \code{\link{foreignTbl}}}
 
-\item{foreignTblsColumnOrder}{\code{vector}. Order of columns (both from original data and foreignTbls. Defaults to no order specified.}
+\item{columnOrder}{\code{vector}. Order of columns (both from original data and foreignTbls. Defaults to no order specified.}
 
 \item{statusColor}{named \code{character}. Colors to indicate status of the row.}
 
