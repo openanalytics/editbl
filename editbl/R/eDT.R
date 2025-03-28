@@ -64,7 +64,7 @@ eDTOutput <- function(id,...) {
 #' @param format function accepting and returning a \code{\link[DT]{datatable}}
 #' @param in_place `logical`. Whether to modify the data object in place or to return a modified copy.
 #' @param foreignTbls `list`. List of objects created by \code{\link{foreignTbl}}
-#' @param columnOrder `vector`. Order of columns (both from original data and foreignTbls. Defaults to no order specified.
+#' @param columnOrder `vector`. Order of columns, original data and foreignTbls combined. Defaults to no order specified.
 #' @param statusColor named `character`. Colors to indicate status of the row.
 #' @param inputUI `function`. UI function of a shiny module with at least arguments `id` `data` and `...`.
 #' #'   elements with inputIds identical to one of the column names are used to update the data.
