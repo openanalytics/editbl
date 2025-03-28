@@ -64,6 +64,7 @@ eDTOutput <- function(id,...) {
 #' @param format function accepting and returning a \code{\link[DT]{datatable}}
 #' @param in_place `logical`. Whether to modify the data object in place or to return a modified copy.
 #' @param foreignTbls `list`. List of objects created by \code{\link{foreignTbl}}
+#' @param foreignTblsColumnOrder `vector`. Order of columns (both from original data and foreignTbls. Defaults to no order specified.
 #' @param statusColor named `character`. Colors to indicate status of the row.
 #' @param inputUI `function`. UI function of a shiny module with at least arguments `id` `data` and `...`.
 #' #'   elements with inputIds identical to one of the column names are used to update the data.
@@ -162,6 +163,7 @@ eDT <- function(
     in_place = FALSE,
     format = function(x){x},
     foreignTbls = list(),
+    foreignTblsColumnOrder = c(),
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
@@ -235,6 +237,7 @@ eDTServer <- function(
     in_place = FALSE,
     format = function(x){x},
     foreignTbls = list(),
+    foreignTblsColumnOrder = c(),
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
@@ -375,6 +378,10 @@ eDTServer <- function(
           foreignTbls <- shiny::reactive(foreignTbls, env = argEnv)
         }
         
+        if(!shiny::is.reactive(foreignTblsColumnOrder)){
+          foreignTblsColumnOrder <- shiny::reactive(foreignTblsColumnOrder, env = argEnv)
+        }
+        
         if(!shiny::is.reactive(statusColor)){
           statusColor <- shiny::reactive(statusColor, env = argEnv)
         }
@@ -437,6 +444,23 @@ eDTServer <- function(
               
               for(foreignTbl in foreignTbls()){
                 data <- joinForeignTbl(data,foreignTbl)
+              }
+              
+              # Order the columns of the full dataframe
+              if (length(foreignTblsColumnOrder()) > 0) {
+                if (length( setdiff(foreignTblsColumnOrder(), names(data)) ) > 0) {
+                  warning(sprintf("The foreignTblsColumnOrder contains columns that are not present in the data. Ignoring the following redundant columns: %s.",
+                      paste(setdiff(foreignTblsColumnOrder(), names(data)), collapse = ", ")))
+                  columnOrder <- foreignTblsColumnOrder()[foreignTblsColumnOrder() %in% names(data)]
+                  data <- data %>% dplyr::select(columnOrder)
+                } else if (length( setdiff(names(data), foreignTblsColumnOrder()) ) > 0) {
+                  warning(sprintf("Not all columns are included in the foreignTblsColumnOrder. Adding the following missing columns to the right of the table: %s.",
+                      paste(setdiff(names(data), foreignTblsColumnOrder()), collapse = ", ")))
+                  columnOrder <- c(foreignTblsColumnOrder(), setdiff(names(data), foreignTblsColumnOrder()))
+                  data <- data %>% dplyr::select(columnOrder)
+                } else {
+                  data <- data %>% dplyr::select(foreignTblsColumnOrder())
+                }
               }
               
               if(any(utilityColumns %in% dplyr::tbl_vars(data))){
