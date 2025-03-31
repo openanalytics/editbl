@@ -1,6 +1,6 @@
-1.1.0-9001
-	o State variable of eDT output does not contain deleted rows anymore.
-	o Allow to order the columns of the full table (including columns from foreignTbls).
+1.2.0
+	o FIX: State variable of eDT output does not contain deleted rows anymore.
+	o FEAT: Allow to order the columns of the full table (including columns from foreignTbls). ([issue](https://github.com/openanalytics/editbl/issues/5))
 1.1.0
 	o Allow to block edits and deletes with row-specific logic.
 	o More performance since buttons get generated on row basis instead of dataset basis.

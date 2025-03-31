@@ -179,7 +179,7 @@ set for all \code{Date} columns.}
 
 \item{foreignTbls}{\code{list}. List of objects created by \code{\link{foreignTbl}}}
 
-\item{columnOrder}{\code{vector}. Order of columns (both from original data and foreignTbls. Defaults to no order specified.}
+\item{columnOrder}{\code{vector}. Order of columns, original data and foreignTbls combined. Defaults to no order specified.}
 
 \item{statusColor}{named \code{character}. Colors to indicate status of the row.}
 

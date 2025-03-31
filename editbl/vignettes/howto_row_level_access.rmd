@@ -17,7 +17,7 @@ You can either hide rows or give read-only access.
 In this example we only allow user Mickey to see his own row.
 
 We simply can use `dplyr::filter()` on the table.
-Note that is most useful if you combine this with backends that support 
+Note that this is most useful if you combine this with backends that support 
 `in_place` editing. E.g. you can retrieve only a subset
 of rows from a database and specifically modify those.
 Take a look at the 'relational database' vignettes for more information
@@ -52,8 +52,8 @@ DBI::dbDisconnect(conn)
 
 ## Read-only access
 
-In this example we only allow user Mickey to modify his own row. However he can
-still read data from others.
+In this example we only allow user Mickey to modify his own row. In contrast to
+the previous example, he can still read data from others.
 
 The arguments `canEditRow` and `canDeleteRow` can be used
 to specify logic describing if modfications are allowed.
