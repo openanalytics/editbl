@@ -1,5 +1,6 @@
 1.2.0-9000
 	o FIX: castToTemplate removed first row of adapted data in case the template was empty.
+	o FEAT: Add a clone button for each row.
 1.2.0
 	o FIX: State variable of eDT output does not contain deleted rows anymore.
 	o FEAT: Allow to order the columns of the full table (including columns from foreignTbls). ([issue](https://github.com/openanalytics/editbl/issues/5))
