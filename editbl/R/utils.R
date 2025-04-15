@@ -142,10 +142,13 @@ castToTemplate <- function(x, template){
   
   rowNames <- attr(x, 'row.names')
   
-  result <- rbind(
-      dplyr::collect(dplyr::filter(template, dplyr::row_number()==1)),
-      x
-  )[-1,]
+  templateRow <- dplyr::collect(dplyr::filter(template, dplyr::row_number()==1))
+  # In case the template is empty, templateRow will only contain the format (without content)
+  # Add an empty row to make sure that the format will be correctly inherited
+  if (nrow(templateRow) == 0) {
+    templateRow[1,] <- NA
+  }
+  result <- rbind(templateRow,x)[-1,]
   
   # Tbl doesn't properly support row names
   if(!inherits(template, 'tbl')){
