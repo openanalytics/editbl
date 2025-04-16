@@ -37,6 +37,7 @@ eDT(
   statusColor = c(insert = "#e6e6e6", update = "#32a6d3", delete = "#e52323"),
   inputUI = editbl::inputUI,
   defaults = tibble(),
+  cloneDefaults = c(),
   env = environment(),
   canEditRow = TRUE,
   canDeleteRow = TRUE,
@@ -190,6 +191,9 @@ set for all \code{Date} columns.}
 \item{defaults}{expression that evaluates to a \code{tibble} with (a subset of) columns of the data.
 It will be evaluated for each new row in the environment defined by 'env'.
 This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.}
+
+\item{cloneDefaults}{\code{vector}. Columns that should be overwritten by a default when cloning a row.
+By default no columns of the cloned row will be overwritten by a default.}
 
 \item{env}{\code{environment} in which the server function is running. Should normally not be modified.}
 

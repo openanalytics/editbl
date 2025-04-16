@@ -71,6 +71,8 @@ eDTOutput <- function(id,...) {
 #' @param defaults expression that evaluates to a `tibble` with (a subset of) columns of the data.
 #'   It will be evaluated for each new row in the environment defined by 'env'.
 #'   This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
+#' @param cloneDefaults `vector`. Columns that should be overwritten by a default when cloning a row.
+#'   By default no columns of the cloned row will be overwritten by a default. 
 #' @param env `environment` in which the server function is running. Should normally not be modified.
 #' @inheritParams canXXXRowTemplate
 #' @param utilityColumns named character vector. Defines names for (hidden) utility columns
@@ -167,6 +169,7 @@ eDT <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
+    cloneDefaults = c(),
     env = environment(),
     canEditRow = TRUE,
     canDeleteRow = TRUE,
@@ -242,6 +245,7 @@ eDTServer <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
+    cloneDefaults = c(),
     env = environment(),
     canEditRow = TRUE,
     canDeleteRow = TRUE,
@@ -397,6 +401,10 @@ eDTServer <- function(
                 eval(substitute(defaults, env))
               },
               env = argEnv)
+        }
+        
+        if(!shiny::is.reactive(cloneDefaults)){
+          cloneDefaults <- shiny::reactive(cloneDefaults, env = argEnv)
         }
         
         if(!shiny::is.reactive(canEditRow)){
@@ -914,7 +922,7 @@ eDTServer <- function(
               
               newRow <- data[rowNumber,]
               defaults <- defaultsAddBound()
-              for(col in base::colnames(defaults)){
+              for(col in intersect(base::colnames(defaults), cloneDefaults())){
                 currentClass <- base::class(data[[col]])
                 defaultClass <- base::class(defaults[[col]])
                 
@@ -945,8 +953,9 @@ eDTServer <- function(
               rv$changelog <- changelog
               
               data <- rbind(
+                data[0:(rowNumber-1),],
                 newRow,
-                data
+                data[rowNumber:nrow(data),]
               )
               
               rv$newState <- data
@@ -1364,7 +1373,7 @@ evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='status'){
 #' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
 #' @return `boolean`
 #' 
-#' @author Jasper Schelfhout
+#' @author Saar Junius
 evalCanCloneRow <- function(row, canCloneRow = TRUE, statusCol='status'){
   
   # Prevent evaluating logic and speed up for most common use-case
@@ -1379,7 +1388,7 @@ evalCanCloneRow <- function(row, canCloneRow = TRUE, statusCol='status'){
   if(is.function(canCloneRow)){
     result <- canCloneRow(row=row)
     if(!is.logical(result)){
-      stop('canEditRow should return a logical value.')
+      stop('canCloneRow should return a logical value.')
     }
   } else if (is.logical(canCloneRow)) {
     result <- canCloneRow

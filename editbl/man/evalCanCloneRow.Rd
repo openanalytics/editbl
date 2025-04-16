@@ -26,5 +26,5 @@ that newly inserted rows are being excempt from the logic.
 Moreover, the output of the function can be checked.
 }
 \author{
-Jasper Schelfhout
+Saar Junius
 }
