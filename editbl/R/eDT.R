@@ -73,6 +73,7 @@ eDTOutput <- function(id,...) {
 #'   This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
 #' @param cloneDefaults expression that evaluates to a `tibble` with (a subset of) columns of the data.
 #'   It will be evaluated for each cloned row in the environment defined by 'env'.
+#' @param env `environment` in which the server function is running. Should normally not be modified.
 #' @inheritParams canXXXRowTemplate
 #' @param utilityColumns named character vector. Defines names for (hidden) utility columns
 #'   used by `eDT` to keep track of modifications. Should normally only be adjusted in rare case of name clashes with data.

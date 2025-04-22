@@ -4,7 +4,7 @@
 \alias{evalCanDeleteRow}
 \title{Determine if a row can be deleted}
 \usage{
-evalCanDeleteRow(row, canDeleteRow = TRUE, statusCol = "status")
+evalCanDeleteRow(row, canDeleteRow = TRUE, statusCol = "_editbl_status")
 }
 \arguments{
 \item{row}{\code{tibble}, single row}

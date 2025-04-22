@@ -4,7 +4,7 @@
 \alias{evalCanEditRow}
 \title{Determine if a row can be edited}
 \usage{
-evalCanEditRow(row, canEditRow = TRUE, statusCol = "status")
+evalCanEditRow(row, canEditRow = TRUE, statusCol = "_editbl_status")
 }
 \arguments{
 \item{row}{\code{tibble}, single row.}

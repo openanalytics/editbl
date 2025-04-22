@@ -4,7 +4,7 @@
 \alias{evalCanCloneRow}
 \title{Determine if a row can be cloned}
 \usage{
-evalCanCloneRow(row, canCloneRow = TRUE, statusCol = "status")
+evalCanCloneRow(row, canCloneRow = TRUE, statusCol = "_editbl_status")
 }
 \arguments{
 \item{row}{\code{tibble}, single row.}

@@ -12,7 +12,7 @@ addButtons(
   canEditRow = TRUE,
   canDeleteRow = TRUE,
   canCloneRow = TRUE,
-  statusCol = "status"
+  statusCol = "_editbl_status"
 )
 }
 \arguments{
