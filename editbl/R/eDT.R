@@ -944,7 +944,9 @@ eDTServer <- function(
                 ns = ns,
                 canDeleteRow = canDeleteRow(),
                 canEditRow = canEditRow(),
-                canCloneRow = canCloneRow())
+                canCloneRow = canCloneRow(),
+                statusCol = statusCol
+              )
               
               # save to changelog
               newChange <- newRow
@@ -992,7 +994,8 @@ eDTServer <- function(
                   ns = ns,
                   canDeleteRow = canDeleteRow(),
                   canEditRow = canEditRow(),
-                  canCloneRow = canCloneRow())
+                  canCloneRow = canCloneRow(),
+                  statusCol = statusCol)
               
               # save to changelog
               newChange <- newRow
@@ -1207,7 +1210,8 @@ eDTServer <- function(
                             ns = ns,
                             canEditRow = canEditRow(),
                             canDeleteRow = canDeleteRow(),
-                            canCloneRow = canCloneRow()
+                            canCloneRow = canCloneRow(),
+                            statusCol = statusCol
                             )
                         checkPointState[i,] <- adjustedRow
                       }
@@ -1301,7 +1305,7 @@ eDTServer <- function(
 evalCanDeleteRow <- function(
     row,
     canDeleteRow = TRUE,
-    statusCol='status'
+    statusCol='_editbl_status'
   ){
   # Prevent evaluating logic and speed up for most common use-case
   if(is.logical(canDeleteRow) && canDeleteRow){
@@ -1337,7 +1341,7 @@ evalCanDeleteRow <- function(
 #' @return `boolean`
 #' 
 #' @author Jasper Schelfhout
-evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='status'){
+evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='_editbl_status'){
   
   # Prevent evaluating logic and speed up for most common use-case
   if(is.logical(canEditRow) && canEditRow){
@@ -1374,7 +1378,7 @@ evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='status'){
 #' @return `boolean`
 #' 
 #' @author Saar Junius
-evalCanCloneRow <- function(row, canCloneRow = TRUE, statusCol='status'){
+evalCanCloneRow <- function(row, canCloneRow = TRUE, statusCol='_editbl_status'){
   
   # Prevent evaluating logic and speed up for most common use-case
   if(is.logical(canCloneRow) && canCloneRow){
@@ -1414,8 +1418,8 @@ initData <- function(
     data,
     ns,
     buttonCol = "buttons",
-    statusCol = "status",
-    deleteCol = "deleted",
+    statusCol = "_editbl_status",
+    deleteCol = "_editbl_deleted",
     iCol = "i",
     canDeleteRow = TRUE,
     canEditRow = TRUE,
@@ -1463,7 +1467,7 @@ addButtons <- function(
     canEditRow = TRUE,
     canDeleteRow = TRUE,
     canCloneRow = TRUE,
-    statusCol = 'status'
+    statusCol = '_editbl_status'
 ){
   ns_char = ns("")
   
@@ -1655,7 +1659,7 @@ createButtons <- function(
     canEditRow = TRUE,
     canDeleteRow = TRUE,
     canCloneRow = TRUE,
-    statusCol = 'status'
+    statusCol = '_editbl_status'
 ){
   deleteButton <- createDeleteButtonHTML(
       ns=ns,
