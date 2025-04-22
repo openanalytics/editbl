@@ -71,9 +71,8 @@ eDTOutput <- function(id,...) {
 #' @param defaults expression that evaluates to a `tibble` with (a subset of) columns of the data.
 #'   It will be evaluated for each new row in the environment defined by 'env'.
 #'   This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
-#' @param cloneDefaults `vector`. Columns that should be overwritten by a default when cloning a row.
-#'   By default no columns of the cloned row will be overwritten by a default. 
-#' @param env `environment` in which the server function is running. Should normally not be modified.
+#' @param cloneDefaults expression that evaluates to a `tibble` with (a subset of) columns of the data.
+#'   It will be evaluated for each cloned row in the environment defined by 'env'.
 #' @inheritParams canXXXRowTemplate
 #' @param utilityColumns named character vector. Defines names for (hidden) utility columns
 #'   used by `eDT` to keep track of modifications. Should normally only be adjusted in rare case of name clashes with data.
@@ -169,7 +168,7 @@ eDT <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
-    cloneDefaults = c(),
+    cloneDefaults = tibble(),
     env = environment(),
     canEditRow = TRUE,
     canDeleteRow = TRUE,
@@ -245,7 +244,7 @@ eDTServer <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
-    cloneDefaults = c(),
+    cloneDefaults = tibble(),
     env = environment(),
     canEditRow = TRUE,
     canDeleteRow = TRUE,
@@ -419,8 +418,10 @@ eDTServer <- function(
           canCloneRow <- shiny::reactive(canCloneRow, env = argEnv)
         }
         
-        # Force re-evaluting reactive for values like Sys.time(), uuid::UUIDgenerate()
-        defaultsAddBound <- defaults %>% shiny::bindEvent(input$add, input$clone)
+        # Force re-evaluting reactive after adding a new row for values like Sys.time(), uuid::UUIDgenerate()
+        defaultsAddBound <- defaults %>% shiny::bindEvent(input$add)
+        # Force re-evaluting reactive after cloning a row for values like Sys.time(), uuid::UUIDgenerate()
+        defaultsCloneBound <- cloneDefaults %>% shiny::bindEvent(input$clone)
         
         # Some arguments can have various formats.
         # Standardize first to the most expressive format to make
@@ -921,17 +922,17 @@ eDTServer <- function(
               )
               
               newRow <- data[rowNumber,]
-              defaults <- defaultsAddBound()
-              for(col in intersect(base::colnames(defaults), cloneDefaults())){
+              cloneDefaults <- defaultsCloneBound()
+              for(col in base::colnames(cloneDefaults)){
                 currentClass <- base::class(data[[col]])
-                defaultClass <- base::class(defaults[[col]])
+                defaultClass <- base::class(cloneDefaults[[col]])
                 
                 if(!col %in% base::colnames(newRow)){
                   stop(sprintf("Column %s not available. Not adding default.", col))
                 } else if (! identical(currentClass, defaultClass)){
                   stop(sprintf("Default set for %s is of type %s instead of %s", col, defaultClass, currentClass))
                 } else {
-                  newRow[[col]] <- defaults[[col]]
+                  newRow[[col]] <- cloneDefaults[[col]]
                 }
               }
               newRow[,statusCol] <- "inserted"
