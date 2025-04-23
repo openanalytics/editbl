@@ -1,18 +1,18 @@
-1.2.0-9000
-	o FIX: castToTemplate removed first row of adapted data in case the template was empty.
-	o FEAT: Add a clone button for each row.
+1.3.0
+    o FIX: castToTemplate removed first row of adapted data in case the template was empty.
+    o FEAT: Add a clone button for each row.
 1.2.0
-	o FIX: State variable of eDT output does not contain deleted rows anymore.
-	o FEAT: Allow to order the columns of the full table (including columns from foreignTbls). ([issue](https://github.com/openanalytics/editbl/issues/5))
+    o FIX: State variable of eDT output does not contain deleted rows anymore.
+    o FEAT: Allow to order the columns of the full table (including columns from foreignTbls). ([issue](https://github.com/openanalytics/editbl/issues/5))
 1.1.0
-	o Allow to block edits and deletes with row-specific logic.
-	o More performance since buttons get generated on row basis instead of dataset basis.
-	o Adjustable renamed hidden utility columns ('_editbl_identity', '_editbl_deleted', '_editbl_status', '_editbl_buttons'). Prevents name clashes.
+    o Allow to block edits and deletes with row-specific logic.
+    o More performance since buttons get generated on row basis instead of dataset basis.
+    o Adjustable renamed hidden utility columns ('_editbl_identity', '_editbl_deleted', '_editbl_status', '_editbl_buttons'). Prevents name clashes.
 1.0.5
-	o Use screenshots in vignettes for speed increase and to solve CRAN checks.
+    o Use screenshots in vignettes for speed increase and to solve CRAN checks.
 1.0.4
-	o Fixed bug when using non-English locale ([issue](https://github.com/openanalytics/editbl/issues/3)) 
-	o Added vignettes + revised documentation
+    o Fixed bug when using non-English locale ([issue](https://github.com/openanalytics/editbl/issues/3)) 
+    o Added vignettes + revised documentation
     o Prevent greyout when dragging value with increment ([issue](https://github.com/openanalytics/editbl/issues/4)).
 1.0.3
     o FIX: inputUI argument was not working, now passing on the selected row.
