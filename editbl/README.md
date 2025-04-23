@@ -1,4 +1,4 @@
-# {editbl}: DT extension for CRUD (Create, Read, Update, Delete) <img style="height: 139px;" src='https://github.com/openanalytics/editbl/blob/main/editbl_logo.svg?raw=true' align="right" />
+# {editbl}: DT extension for CRUD <img style="height: 139px;" src='https://github.com/openanalytics/editbl/blob/main/editbl_logo.svg?raw=true' align="right" />
 
 [![CRAN status](https://www.r-pkg.org/badges/version/editbl)](https://cran.r-project.org/package=editbl)
 [![R-CMD-check](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml)
