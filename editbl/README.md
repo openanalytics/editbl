@@ -1,9 +1,9 @@
+# {editbl}: DT extension for CRUD (Create, Read, Update, Delete) <img style="height: 139px;" src='https://github.com/openanalytics/editbl/blob/main/editbl_logo.png?raw=true' align="right" />
+
 [![CRAN status](https://www.r-pkg.org/badges/version/editbl)](https://cran.r-project.org/package=editbl)
 [![R-CMD-check](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml/badge.svg)](https://github.com/openanalytics/editbl/actions/workflows/check-standard.yaml)
 [![codecov](https://codecov.io/gh/openanalytics/editbl/branch/main/graph/badge.svg)](https://app.codecov.io/gh/openanalytics/editbl)
 ![CRAN downloads](https://cranlogs.r-pkg.org/badges/editbl)
-
-![](https://github.com/openanalytics/editbl/blob/main/editbl_logo.png?raw=true)
 
 `editbl` ('*edit [tibble](https://cran.r-project.org/package=tibble)*') allows you to modify tables in a spreadsheet-like fashion. Not just in-memory `data.frame` objects, but also
 data living in a database.
@@ -47,13 +47,15 @@ Advanced examples can be found in the [vignettes](https://github.com/openanalyti
 
 ### Overview of main features
 
-* Supporting multiple backends and in-place editing.
-* Customizable (lightweight [DT](https://CRAN.R-project.org/package=DT) wrapper).
-* Easy integration in [shiny](https://cran.r-project.org/package=shiny) apps.
+* Supporting multiple backends and in-place editing
+* Customizable (lightweight [DT](https://CRAN.R-project.org/package=DT) wrapper)
+* Easy integration in [shiny](https://cran.r-project.org/package=shiny) apps
 * Undo/redo button
-* No need to have all data in-memory.
-* Tackles challenges such as enforcing foreign keys and hiding of surrogate keys.
-* Transactional commits (currently for `tbl_dbi` class and non in-place editing).
+* Copy rows
+* Drag cells
+* No need to have all data in-memory
+* Tackles challenges such as enforcing foreign keys and hiding of surrogate keys
+* Transactional commits (currently for `tbl_dbi` class and non in-place editing)
 * Default values for new rows (UUID's, 'current date', 'inserted by', ...)
 * Possible to set row level security
 
