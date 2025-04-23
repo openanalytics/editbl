@@ -11,7 +11,8 @@ addButtons(
   iCol = "i",
   canEditRow = TRUE,
   canDeleteRow = TRUE,
-  statusCol = "status"
+  canCloneRow = TRUE,
+  statusCol = "_editbl_status"
 )
 }
 \arguments{
@@ -30,6 +31,12 @@ addButtons(
 }}
 
 \item{canDeleteRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
+
+\item{canCloneRow}{can be either of the following:
 \itemize{
 \item \code{logical}, e.g. TRUE or FALSE
 \item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.

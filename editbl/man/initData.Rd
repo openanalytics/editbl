@@ -8,11 +8,12 @@ initData(
   data,
   ns,
   buttonCol = "buttons",
-  statusCol = "status",
-  deleteCol = "deleted",
+  statusCol = "_editbl_status",
+  deleteCol = "_editbl_deleted",
   iCol = "i",
   canDeleteRow = TRUE,
-  canEditRow = TRUE
+  canEditRow = TRUE,
+  canCloneRow = TRUE
 )
 }
 \arguments{
@@ -35,6 +36,12 @@ initData(
 }}
 
 \item{canEditRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
+
+\item{canCloneRow}{can be either of the following:
 \itemize{
 \item \code{logical}, e.g. TRUE or FALSE
 \item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.

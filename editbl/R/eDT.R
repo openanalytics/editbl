@@ -71,6 +71,8 @@ eDTOutput <- function(id,...) {
 #' @param defaults expression that evaluates to a `tibble` with (a subset of) columns of the data.
 #'   It will be evaluated for each new row in the environment defined by 'env'.
 #'   This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.
+#' @param cloneDefaults expression that evaluates to a `tibble` with (a subset of) columns of the data.
+#'   It will be evaluated for each cloned row in the environment defined by 'env'.
 #' @param env `environment` in which the server function is running. Should normally not be modified.
 #' @inheritParams canXXXRowTemplate
 #' @param utilityColumns named character vector. Defines names for (hidden) utility columns
@@ -167,9 +169,11 @@ eDT <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
+    cloneDefaults = tibble(),
     env = environment(),
     canEditRow = TRUE,
     canDeleteRow = TRUE,
+    canCloneRow = TRUE,
     utilityColumns = NULL
 ) {
   args <- as.list(environment())
@@ -241,9 +245,11 @@ eDTServer <- function(
     statusColor = c("insert"="#e6e6e6", "update"="#32a6d3", "delete"="#e52323"),
     inputUI = editbl::inputUI,
     defaults = tibble(),
+    cloneDefaults = tibble(),
     env = environment(),
     canEditRow = TRUE,
     canDeleteRow = TRUE,
+    canCloneRow = TRUE,
     utilityColumns = NULL
   ) {
   missingContainer <- missing(container)
@@ -397,6 +403,10 @@ eDTServer <- function(
               env = argEnv)
         }
         
+        if(!shiny::is.reactive(cloneDefaults)){
+          cloneDefaults <- shiny::reactive(cloneDefaults, env = argEnv)
+        }
+        
         if(!shiny::is.reactive(canEditRow)){
           canEditRow <- shiny::reactive(canEditRow, env = argEnv)
         }
@@ -405,8 +415,14 @@ eDTServer <- function(
           canDeleteRow <- shiny::reactive(canDeleteRow, env = argEnv)
         }
         
-        # Force re-evaluting reactive for values like Sys.time(), uuid::UUIDgenerate()
+        if(!shiny::is.reactive(canCloneRow)){
+          canCloneRow <- shiny::reactive(canCloneRow, env = argEnv)
+        }
+        
+        # Force re-evaluting reactive after adding a new row for values like Sys.time(), uuid::UUIDgenerate()
         defaultsAddBound <- defaults %>% shiny::bindEvent(input$add)
+        # Force re-evaluting reactive after cloning a row for values like Sys.time(), uuid::UUIDgenerate()
+        defaultsCloneBound <- cloneDefaults %>% shiny::bindEvent(input$clone)
         
         # Some arguments can have various formats.
         # Standardize first to the most expressive format to make
@@ -476,6 +492,7 @@ eDTServer <- function(
                   ns = ns,
                   canEditRow = isolate(canEditRow()),
                   canDeleteRow = isolate(canDeleteRow()),
+                  canCloneRow = isolate(canCloneRow()),
                   statusCol = statusCol,
                   buttonCol = buttonCol,
                   iCol = identityCol,
@@ -893,6 +910,60 @@ eDTServer <- function(
               data[rowNumber,] <- row
               rv$newState <- data
             })
+          
+          observeEvent(input$clone,{
+              rowNumber <- clickedRow()
+              data <- rv$modifiedData
+              
+              req(evalCanCloneRow(
+                  row = row,
+                  canCloneRow=canCloneRow(),
+                  statusCol=statusCol
+                )
+              )
+              
+              newRow <- data[rowNumber,]
+              cloneDefaults <- defaultsCloneBound()
+              for(col in base::colnames(cloneDefaults)){
+                currentClass <- base::class(data[[col]])
+                defaultClass <- base::class(cloneDefaults[[col]])
+                
+                if(!col %in% base::colnames(newRow)){
+                  stop(sprintf("Column %s not available. Not adding default.", col))
+                } else if (! identical(currentClass, defaultClass)){
+                  stop(sprintf("Default set for %s is of type %s instead of %s", col, defaultClass, currentClass))
+                } else {
+                  newRow[[col]] <- cloneDefaults[[col]]
+                }
+              }
+              newRow[,statusCol] <- "inserted"
+              newRow[,deleteCol] <- FALSE
+              newRow[,identityCol] <- uuid::UUIDgenerate()
+              newRow <- addButtons(
+                df = newRow,
+                columnName = buttonCol,
+                iCol = identityCol,
+                ns = ns,
+                canDeleteRow = canDeleteRow(),
+                canEditRow = canEditRow(),
+                canCloneRow = canCloneRow(),
+                statusCol = statusCol
+              )
+              
+              # save to changelog
+              newChange <- newRow
+              changelog <- rv$changelog[seq_len(rv$changeLogTracker)]
+              changelog[[rv$changeLogTracker +1]] <- newChange
+              rv$changelog <- changelog
+              
+              data <- rbind(
+                data[0:(rowNumber-1),],
+                newRow,
+                data[rowNumber:nrow(data),]
+              )
+              
+              rv$newState <- data
+            })
         
         observeEvent(input$add,{
               data <- rv$modifiedData
@@ -924,7 +995,9 @@ eDTServer <- function(
                   iCol = identityCol,
                   ns = ns,
                   canDeleteRow = canDeleteRow(),
-                  canEditRow = canEditRow())
+                  canEditRow = canEditRow(),
+                  canCloneRow = canCloneRow(),
+                  statusCol = statusCol)
               
               # save to changelog
               newChange <- newRow
@@ -1138,7 +1211,9 @@ eDTServer <- function(
                             iCol = identityCol,
                             ns = ns,
                             canEditRow = canEditRow(),
-                            canDeleteRow = canDeleteRow()
+                            canDeleteRow = canDeleteRow(),
+                            canCloneRow = canCloneRow(),
+                            statusCol = statusCol
                             )
                         checkPointState[i,] <- adjustedRow
                       }
@@ -1232,7 +1307,7 @@ eDTServer <- function(
 evalCanDeleteRow <- function(
     row,
     canDeleteRow = TRUE,
-    statusCol='status'
+    statusCol='_editbl_status'
   ){
   # Prevent evaluating logic and speed up for most common use-case
   if(is.logical(canDeleteRow) && canDeleteRow){
@@ -1268,7 +1343,7 @@ evalCanDeleteRow <- function(
 #' @return `boolean`
 #' 
 #' @author Jasper Schelfhout
-evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='status'){
+evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='_editbl_status'){
   
   # Prevent evaluating logic and speed up for most common use-case
   if(is.logical(canEditRow) && canEditRow){
@@ -1292,6 +1367,43 @@ evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='status'){
 }
 
 
+#' Determine if a row can be cloned
+#' 
+#' @details calling this around the user passed on function ensures
+#'  that newly inserted rows are being excempt from the logic.
+#'  Moreover, the output of the function can be checked.
+#' 
+#' @param row `tibble`, single row.
+#' @param canCloneRow `function` with argument 'row' defining logic on wether or
+#'    not the row can be cloned. Can also be `logical` TRUE or FALSE.
+#' @param statusCol `character(1)` name of column with general status (e.g. modified or not).
+#' @return `boolean`
+#' 
+#' @author Saar Junius
+evalCanCloneRow <- function(row, canCloneRow = TRUE, statusCol='_editbl_status'){
+  
+  # Prevent evaluating logic and speed up for most common use-case
+  if(is.logical(canCloneRow) && canCloneRow){
+    return(TRUE)
+  }
+  
+  if (!is.null(statusCol) && row[[statusCol]] == 'inserted'){
+    return(TRUE)
+  }
+  
+  if(is.function(canCloneRow)){
+    result <- canCloneRow(row=row)
+    if(!is.logical(result)){
+      stop('canCloneRow should return a logical value.')
+    }
+  } else if (is.logical(canCloneRow)) {
+    result <- canCloneRow
+  }
+  
+  return(result)
+}
+
+
 #' Add some extra columns to data to allow for / keep track of modifications
 #' @param data `data.frame`
 #' @param ns namespace function
@@ -1308,11 +1420,12 @@ initData <- function(
     data,
     ns,
     buttonCol = "buttons",
-    statusCol = "status",
-    deleteCol = "deleted",
+    statusCol = "_editbl_status",
+    deleteCol = "_editbl_deleted",
     iCol = "i",
     canDeleteRow = TRUE,
-    canEditRow = TRUE
+    canEditRow = TRUE,
+    canCloneRow = TRUE
 ){
   data[statusCol] <- rep("unmodified", nrow(data))
   data[deleteCol] <- rep(FALSE, nrow(data))
@@ -1329,6 +1442,7 @@ initData <- function(
       iCol = iCol,
       canEditRow = canEditRow,
       canDeleteRow = canDeleteRow,
+      canCloneRow = canCloneRow,
       statusCol=NULL) # Not to trigger unneeded logic since all values are 'unmodified'
   data <- relocate(data, all_of(buttonCol))
   data
@@ -1354,7 +1468,8 @@ addButtons <- function(
     iCol = 'i',
     canEditRow = TRUE,
     canDeleteRow = TRUE,
-    statusCol = 'status'
+    canCloneRow = TRUE,
+    statusCol = '_editbl_status'
 ){
   ns_char = ns("")
   
@@ -1370,6 +1485,7 @@ addButtons <- function(
                 ns = !!ns_char,
                 canEditRow = !!canEditRow,
                 canDeleteRow = !!canDeleteRow,
+                canCloneRow = !!canCloneRow,
                 statusCol = !!statusCol
             )) %>%
         dplyr::ungroup() %>%
@@ -1431,6 +1547,31 @@ createEditButtonHTML_shiny <- function(
   )
 }
 
+#' Helper function to write HTML
+#' @inheritParams createCloneButtonHTML
+#' @details only to be used interactively. sprintf() implementation
+#'   is faster.
+#' @seealso createCloneButtonHTML
+#' @importFrom shiny div actionButton icon
+createCloneButtonHTML_shiny <- function(
+  ns = "%1$s",
+  suffix = "%2$s",
+  disabled = FALSE){
+  as.character(
+    actionButton(
+      inputId = sprintf("%1$sclone_row_%2$s", ns,suffix),
+      label = "",
+      disabled = disabled,
+      icon = icon("clone"),
+      style = "background-color: white",
+      onclick = HTML(sprintf("get_id(this.id, '%1$s');
+            Shiny.setInputValue(\"%1$sclone\", Math.random(), {priority: \"event\"});",
+          ns
+        ))
+    )  
+  )
+}
+
 #' Generate HTML for an in-row edit button
 #' @param suffix `character(1)` id of the row
 #' @param ns `character(1)` namespace
@@ -1470,15 +1611,37 @@ createDeleteButtonHTML <- function(
       </button>)", ns, suffix, disabled_str)
 }
 
+#' Generate HTML for an in-row clone button
+#' @param suffix `character(1)` id of the row
+#' @param ns `character(1)` namespace
+#' @param disabled `logical(1)` wether or not the button has to be disabled
+#' @return `character(1)` HTML
+createCloneButtonHTML <- function(
+  ns = "%1$s",
+  suffix = "%2$s",
+  disabled=FALSE){
+  if(disabled){
+    disabled_str = 'disabled'
+  } else {
+    disabled_str = ''
+  }
+  sprintf(r"(<button id="%1$sclone_row_%2$s" type="button" class="btn btn-default action-button"  %3$s style="background-color: white" onclick="get_id(this.id, &#39;%1$s&#39;);&#10;                      Shiny.setInputValue(&quot;%1$sclone&quot;, Math.random(), {priority: &quot;event&quot;});">
+      <i class="fa-solid fa-clone" role="presentation" aria-label="clone icon"></i>
+      </button>)", ns, suffix, disabled_str)
+}
+
 
 #' Re-usable documentation
 #' @param canEditRow can be either of the following:
 #'    - `logical`, e.g. TRUE or FALSE
 #'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
+#' @param canCloneRow can be either of the following:
+#'    - `logical`, e.g. TRUE or FALSE
+#'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
 #' @param canDeleteRow can be either of the following:
 #'    - `logical`, e.g. TRUE or FALSE
 #'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
-canXXXRowTemplate <- function(canEditRow, canDeleteRow){
+canXXXRowTemplate <- function(canEditRow, canCloneRow, canDeleteRow){
   NULL
 }
 
@@ -1497,7 +1660,8 @@ createButtons <- function(
     ns, 
     canEditRow = TRUE,
     canDeleteRow = TRUE,
-    statusCol = 'status'
+    canCloneRow = TRUE,
+    statusCol = '_editbl_status'
 ){
   deleteButton <- createDeleteButtonHTML(
       ns=ns,
@@ -1507,10 +1671,15 @@ createButtons <- function(
        ns=ns,
        suffix=suffix,
        disabled = !evalCanEditRow(row=row, canEditRow=canEditRow, statusCol=statusCol))
+  cloneButton <- createCloneButtonHTML(
+    ns = ns,
+    suffix = suffix,
+    disabled = !evalCanCloneRow(row = row, canCloneRow = canCloneRow, statusCol = statusCol))
 
-  result <- sprintf('<div class="btn-group">%1$s%2$s</div>',
+  result <- sprintf('<div class="btn-group">%1$s%2$s%3$s</div>',
       deleteButton,
-      editButton
+      editButton,
+      cloneButton
   )
   
   result

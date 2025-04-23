@@ -37,9 +37,11 @@ eDT(
   statusColor = c(insert = "#e6e6e6", update = "#32a6d3", delete = "#e52323"),
   inputUI = editbl::inputUI,
   defaults = tibble(),
+  cloneDefaults = tibble(),
   env = environment(),
   canEditRow = TRUE,
   canDeleteRow = TRUE,
+  canCloneRow = TRUE,
   utilityColumns = NULL
 )
 }
@@ -190,6 +192,9 @@ set for all \code{Date} columns.}
 It will be evaluated for each new row in the environment defined by 'env'.
 This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dynamic inputs.}
 
+\item{cloneDefaults}{expression that evaluates to a \code{tibble} with (a subset of) columns of the data.
+It will be evaluated for each cloned row in the environment defined by 'env'.}
+
 \item{env}{\code{environment} in which the server function is running. Should normally not be modified.}
 
 \item{canEditRow}{can be either of the following:
@@ -199,6 +204,12 @@ This allows for defaults like Sys.time() or uuid::UUIDgenerate() as well as dyna
 }}
 
 \item{canDeleteRow}{can be either of the following:
+\itemize{
+\item \code{logical}, e.g. TRUE or FALSE
+\item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
+}}
+
+\item{canCloneRow}{can be either of the following:
 \itemize{
 \item \code{logical}, e.g. TRUE or FALSE
 \item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
