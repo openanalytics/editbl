@@ -37,7 +37,7 @@ Run some demo apps
 ```
 editbl::runDemoApp()
 ```
-![](https://github.com/openanalytics/editbl/blob/main/editbl.mp4?raw=true)
+![](https://github.com/openanalytics/editbl/blob/main/editbl.gif?raw=true)
 
 More introductory examples can be found [here](https://github.com/openanalytics/editbl/blob/main/editbl/R/demoApp.R).
 Advanced examples can be found in the [vignettes](https://github.com/openanalytics/editbl/tree/main/editbl/vignettes).
