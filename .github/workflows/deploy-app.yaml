@@ -1,0 +1,69 @@
+# Workflow derived from https://github.com/posit-dev/r-shinylive/blob/main/.github/workflows/deploy-app.yaml
+name: deploy to gh-pages
+
+on:
+  workflow_call:
+    inputs:
+      cache-version:
+        type: string
+        default: "1"
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: rstudio/shiny-workflows/setup-r-package@v1
+        with:
+          packages: |
+            renv
+            posit-dev/r-shinylive
+            sessioninfo
+          cache-version: ${{ github.event.inputs.cache-version }}
+
+      - name: Find package dependencies
+        shell: Rscript {0}
+        id: packages
+        run: |
+          # Find package dependencies using {renv} and install with {pak}
+          pak::pak(
+            unique(renv::dependencies("./editbl")$Package)
+          )
+
+      - name: Build site
+        shell: Rscript {0}
+        run: |
+          shinylive::export("./demo", "site")
+
+      - name: Upload site artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "site"
+
+  deploy:
+    if: github.ref == 'refs/heads/gh_page'
+    needs: build
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    # Deploy to the github-pages environment
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    # Specify runner + deployment step
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
