@@ -44,7 +44,7 @@ jobs:
           shinylive::export("./demo", "site")
 
       - name: Upload site artifact
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/gh_page'
         uses: actions/upload-pages-artifact@v3
         with:
           path: "site"
