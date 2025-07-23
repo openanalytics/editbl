@@ -24,7 +24,9 @@ remotes::install_github("https://github.com/openanalytics/editbl", ref = "main",
 
 ## Get started
 
-Choose a dataset of your liking and use `eDT` to interactively explore and modify it!
+You can play around with a [live demo](https://openanalytics.github.io/editbl/).
+
+Alternatively, choose your own dataset and use `eDT` to interactively explore and modify it:
 
 ```
 modifiedData <- editbl::eDT(mtcars)
@@ -32,7 +34,7 @@ print(modifiedData)
 ```
 
 
-Run some demo apps
+The package itself also includes demo apps:
 
 ```
 editbl::runDemoApp()
