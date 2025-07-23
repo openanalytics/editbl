@@ -8,6 +8,8 @@ on:
         type: string
         default: "1"
         required: false
+  push:
+    branches: ["gh_page"]
 
 jobs:
   build:
