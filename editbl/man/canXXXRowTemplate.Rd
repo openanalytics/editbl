@@ -28,3 +28,4 @@ canXXXRowTemplate(canEditRow, canCloneRow, canDeleteRow)
 \description{
 Re-usable documentation
 }
+\keyword{internal}

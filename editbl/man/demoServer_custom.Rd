@@ -20,3 +20,4 @@ Server of the mtcars demo app
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

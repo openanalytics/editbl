@@ -23,3 +23,4 @@ Can be used to fixate possible options when editing.
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

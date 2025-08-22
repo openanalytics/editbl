@@ -20,3 +20,4 @@ Cast columns in \code{data.frame} to editable types in datatable
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

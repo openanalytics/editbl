@@ -13,3 +13,4 @@ to \code{\link[shiny:runApp]{runApp()}} will run the app.
 \description{
 Run a demo app
 }
+\keyword{internal}

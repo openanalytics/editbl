@@ -27,3 +27,4 @@ Standardize colnames argument to the format of named character vector
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

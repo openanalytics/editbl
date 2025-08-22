@@ -18,3 +18,4 @@ Cast data to tbl
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

@@ -171,6 +171,7 @@ get_db_table_name <- function(x){
 #' @param table character
 #' @param values named list, row to add. Names are database column names. Unspecified columns will get database defaults.
 #' @return integer number of affected rows.
+#' @keywords internal
 rowInsert <- function (
     conn,
     table,
@@ -206,6 +207,7 @@ rowInsert <- function (
 #' @param values named list, values to be set. Names are database column names.
 #' @param where named list, values to filter on. Names are database column names. If NULL no filter is applied.
 #' @return integer number of affected rows.
+#' @keywords internal
 rowUpdate <- function (
     conn,
     table,
@@ -247,6 +249,7 @@ rowUpdate <- function (
 #' @return x, possibly cast to different type
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 castToSQLSupportedType <- function(x){
   if(!inherits(x, c("numeric", "character"))){
     x <- as.character(x)
@@ -264,6 +267,7 @@ castToSQLSupportedType <- function(x){
 #' @return character sql
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 whereSQL <- function(
     conn,
     table,

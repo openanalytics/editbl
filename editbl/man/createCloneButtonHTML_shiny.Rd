@@ -23,3 +23,4 @@ is faster.
 \seealso{
 createCloneButtonHTML
 }
+\keyword{internal}

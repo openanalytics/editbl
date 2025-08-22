@@ -7,6 +7,7 @@
 #' @param ... arguments past to \code{\link{eDT}}
 #' @importFrom shiny shinyApp
 #' @return data (or a modified version thereof) once you click 'close'
+#' @keywords internal
 eDT_app <- function(...){
   args <- list(...)
   ui <- eDT_app_ui(eDTId = args$id)
@@ -23,6 +24,7 @@ eDT_app <- function(...){
 #' @return HTML
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 eDT_app_ui <- function(moduleId = "nevergonnagiveyouup", eDTId = "nevergonnaletyoudown") {
   ns <- NS(moduleId)
   tagList(
@@ -39,6 +41,7 @@ eDT_app_ui <- function(moduleId = "nevergonnagiveyouup", eDTId = "nevergonnalety
 #' @return moduleServer which on application stop returns version of x with made changes
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 eDT_app_server <- function(moduleId =  "nevergonnagiveyouup",...) {
   args <- list(...)
   moduleServer(

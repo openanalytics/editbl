@@ -28,3 +28,4 @@ Moreover, the output of the function can be checked.
 \author{
 Saar Junius
 }
+\keyword{internal}

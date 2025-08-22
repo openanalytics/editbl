@@ -20,3 +20,4 @@ Check if all rows in tbl fufill \code{foreignTbl} constraints
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

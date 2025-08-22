@@ -25,3 +25,4 @@ Rownames might differ or get lost.
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

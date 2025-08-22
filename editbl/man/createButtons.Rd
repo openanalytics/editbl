@@ -51,3 +51,4 @@ Create buttons to modify the row.
 \details{
 buttons used per row in the app.
 }
+\keyword{internal}

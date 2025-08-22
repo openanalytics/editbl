@@ -20,3 +20,4 @@ Will assume UTC in case no timezone is specified.
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

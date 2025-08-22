@@ -216,6 +216,7 @@ inputServer.default <- function(id, data, colnames, notEditable, foreignTbls, ..
 #' @return shiny input
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 shinyInput <- function(x, inputId, label, selected){
   if(inherits(x, "logical")){
     selectInput(inputId = inputId, label = label, choices = c(" " = NA, "TRUE" = TRUE, "FALSE" = FALSE), selected = selected)

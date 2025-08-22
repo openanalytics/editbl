@@ -19,3 +19,4 @@ createEditButtonHTML(ns, suffix, disabled = FALSE)
 \description{
 Generate HTML for an in-row edit button
 }
+\keyword{internal}

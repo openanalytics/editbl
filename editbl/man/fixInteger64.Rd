@@ -21,3 +21,4 @@ Replace instances of integer64 with actual NA values instead of weird default 92
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

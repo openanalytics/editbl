@@ -4,6 +4,7 @@
 #' 
 #' @importFrom shiny shinyApp
 #' @inherit shiny::shinyApp return
+#' @keywords internal
 runDevApp <- function(){
   conn <- connectDB()
   ui <- devUI(id = "app", conn = conn)
@@ -20,6 +21,7 @@ runDevApp <- function(){
 #' @return HTML
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 devUI <- function(id, conn) {
   ns <- NS(id)
   tagList(
@@ -40,6 +42,7 @@ devUI <- function(id, conn) {
 #' @importFrom dplyr tbl
 #' @return NULL, just executes the module server.
 #' @author Jasper Schelfhout
+#' @keywords internal
 devServer <- function(id, conn) {
   moduleServer(
       id,

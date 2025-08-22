@@ -19,3 +19,4 @@ integer number of affected rows.
 \description{
 Add a row to a table in the database.
 }
+\keyword{internal}

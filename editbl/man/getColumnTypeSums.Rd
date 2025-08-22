@@ -18,3 +18,4 @@ Get types of columns in a tbl
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

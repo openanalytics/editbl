@@ -18,3 +18,4 @@ Cast the data type to something supported by SQL.
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

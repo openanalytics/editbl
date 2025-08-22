@@ -20,3 +20,4 @@ When \code{\link{eDT}} is not used within the server of a shiny app, it will
 call this function to start up a shiny app itself. Just as \code{DT::datatable()} displays a table
 in the browser when called upon interactively.
 }
+\keyword{internal}

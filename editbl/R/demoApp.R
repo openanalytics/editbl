@@ -40,6 +40,7 @@ runDemoApp <- function(app = "database", ...){
 #' Run a demo app
 #' @importFrom shiny shinyApp
 #' @inherit shiny::shinyApp return
+#' @keywords internal
 runDemoApp_DB <- function(){
   tmpFile <- tempfile(fileext = ".sqlite")
   file.copy(system.file("extdata", "chinook.sqlite", package = 'editbl'), tmpFile)
@@ -55,6 +56,7 @@ runDemoApp_DB <- function(){
 #' Run a demo app
 #' @importFrom shiny shinyApp
 #' @inherit shiny::shinyApp return
+#' @keywords internal
 runDemoApp_mtcars <- function(){
   ui <- demoUI_mtcars(id = "app")
   server <- function(input, output, session) {
@@ -67,6 +69,7 @@ runDemoApp_mtcars <- function(){
 #' @param x `tbl`
 #' @importFrom shiny shinyApp
 #' @inherit shiny::shinyApp return
+#' @keywords internal
 runDemoApp_custom <- function(x){
   ui <- demoUI_custom(id = "app")
   server <- function(input, output, session) {
@@ -82,6 +85,7 @@ runDemoApp_custom <- function(x){
 #' @return HTML
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 demoUI_DB <- function(id, conn) {
   ns <- NS(id)
   tagList(
@@ -100,6 +104,7 @@ demoUI_DB <- function(id, conn) {
 #' @importFrom dplyr tbl
 #' @return NULL, just executes the module server.
 #' @author Jasper Schelfhout
+#' @keywords internal
 demoServer_DB <- function(id, conn) {
   moduleServer(
       id,
@@ -125,6 +130,7 @@ demoServer_DB <- function(id, conn) {
 #' @return HTML
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 demoUI_mtcars <- function(id) {
   demoUI_custom(id)
 }
@@ -134,6 +140,7 @@ demoUI_mtcars <- function(id) {
 #' @importFrom dplyr tibble
 #' @inherit demoServer_custom return
 #' @author Jasper Schelfhout
+#' @keywords internal
 demoServer_mtcars <- function(id) {
   demoServer_custom(id, dplyr::tibble(datasets::mtcars))
 }
@@ -144,6 +151,7 @@ demoServer_mtcars <- function(id) {
 #' @return HTML
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 demoUI_custom <- function(id) {
   ns <- NS(id)
   tagList(
@@ -156,6 +164,7 @@ demoUI_custom <- function(id) {
 #' @param x `tbl`
 #' @return NULL, just executes the module server.
 #' @author Jasper Schelfhout
+#' @keywords internal
 demoServer_custom <- function(id, x) {
   moduleServer(
       id,

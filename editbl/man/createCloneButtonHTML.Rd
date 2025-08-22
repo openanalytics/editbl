@@ -19,3 +19,4 @@ createCloneButtonHTML(ns = "\%1$s", suffix = "\%2$s", disabled = FALSE)
 \description{
 Generate HTML for an in-row clone button
 }
+\keyword{internal}

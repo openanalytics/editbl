@@ -1,3 +1,5 @@
+1.3.1
+	o Remove non-exported functions from documentation.
 1.3.0
     o FIX: castToTemplate removed first row of adapted data in case the template was empty.
     o FEAT: Add a clone button for each row.

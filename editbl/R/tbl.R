@@ -90,6 +90,7 @@ e_rows_update.default <- function(
 #' @param tbl `tbl`
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 beginTransaction <- function(tbl){
   if(inherits(tbl, "tbl_dbi")){
     DBI::dbBegin(tbl$src$con)
@@ -100,6 +101,7 @@ beginTransaction <- function(tbl){
 #' @param tbl `tbl`
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 commitTransaction <- function(tbl){
   if(inherits(tbl, "tbl_dbi")){
     DBI::dbCommit(tbl$src$con)
@@ -110,6 +112,7 @@ commitTransaction <- function(tbl){
 #' @param tbl `tbl`
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 rollbackTransaction <- function(tbl){
   if(inherits(tbl, "tbl_dbi")){
     DBI::dbRollback(tbl$src$con)

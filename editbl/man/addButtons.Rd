@@ -54,3 +54,4 @@ Add modification buttons as a column
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

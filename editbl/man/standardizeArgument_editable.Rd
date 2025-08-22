@@ -48,3 +48,4 @@ Standardized editable argument to be in the form of a list
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

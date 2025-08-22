@@ -28,3 +28,4 @@ checkForeignTbls to see if a valid result is obtained.
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

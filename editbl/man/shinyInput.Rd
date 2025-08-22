@@ -24,3 +24,4 @@ Get a shiny input for a column of a \code{tbl}
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

@@ -17,3 +17,4 @@ Run a development app
 This app prints some of the server objects and has a button to interactively browse the code.
 This is useful for debugging and experimenting with new features.
 }
+\keyword{internal}

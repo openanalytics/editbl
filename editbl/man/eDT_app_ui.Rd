@@ -20,3 +20,4 @@ UI of eDT_app
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

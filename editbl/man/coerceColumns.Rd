@@ -17,3 +17,4 @@ Cast columns to the type of the template
 \details{
 only affects columns in both the template and x
 }
+\keyword{internal}

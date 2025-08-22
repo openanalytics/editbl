@@ -1304,6 +1304,7 @@ eDTServer <- function(
 #' @return `boolean`
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 evalCanDeleteRow <- function(
     row,
     canDeleteRow = TRUE,
@@ -1343,6 +1344,7 @@ evalCanDeleteRow <- function(
 #' @return `boolean`
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='_editbl_status'){
   
   # Prevent evaluating logic and speed up for most common use-case
@@ -1380,6 +1382,7 @@ evalCanEditRow <- function(row, canEditRow = TRUE, statusCol='_editbl_status'){
 #' @return `boolean`
 #' 
 #' @author Saar Junius
+#' @keywords internal
 evalCanCloneRow <- function(row, canCloneRow = TRUE, statusCol='_editbl_status'){
   
   # Prevent evaluating logic and speed up for most common use-case
@@ -1416,6 +1419,7 @@ evalCanCloneRow <- function(row, canCloneRow = TRUE, statusCol='_editbl_status')
 #' @importFrom dplyr relocate all_of
 #' @importFrom uuid UUIDgenerate
 #' @author Jasper Schelfhout
+#' @keywords internal
 initData <- function(
     data,
     ns,
@@ -1461,6 +1465,7 @@ initData <- function(
 #' @importFrom rlang :=
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 addButtons <- function(
     df,
     columnName,
@@ -1502,6 +1507,7 @@ addButtons <- function(
 #'   is faster.
 #' @importFrom shiny div actionButton icon
 #' @seealso createEditButtonHTML
+#' @keywords internal
 createDeleteButtonHTML_shiny <- function(
     ns = "%1$s",
     suffix = "%2$s",
@@ -1528,6 +1534,7 @@ createDeleteButtonHTML_shiny <- function(
 #'   is faster.
 #' @seealso createEditButtonHTML
 #' @importFrom shiny div actionButton icon
+#' @keywords internal
 createEditButtonHTML_shiny <- function(
     ns = "%1$s",
     suffix = "%2$s",
@@ -1553,6 +1560,7 @@ createEditButtonHTML_shiny <- function(
 #'   is faster.
 #' @seealso createCloneButtonHTML
 #' @importFrom shiny div actionButton icon
+#' @keywords internal
 createCloneButtonHTML_shiny <- function(
   ns = "%1$s",
   suffix = "%2$s",
@@ -1577,6 +1585,7 @@ createCloneButtonHTML_shiny <- function(
 #' @param ns `character(1)` namespace
 #' @param disabled `logical(1)` wether or not the button has to be disabled
 #' @return `character(1)` HTML
+#' @keywords internal
 createEditButtonHTML <- function(
     ns,
     suffix,
@@ -1597,6 +1606,7 @@ createEditButtonHTML <- function(
 #' @param ns `character(1)` namespace
 #' @param disabled `logical(1)` wether or not the button has to be disabled
 #' @return `character(1)` HTML
+#' @keywords internal
 createDeleteButtonHTML <- function(
     ns = "%1$s",
     suffix = "%2$s",
@@ -1616,6 +1626,7 @@ createDeleteButtonHTML <- function(
 #' @param ns `character(1)` namespace
 #' @param disabled `logical(1)` wether or not the button has to be disabled
 #' @return `character(1)` HTML
+#' @keywords internal
 createCloneButtonHTML <- function(
   ns = "%1$s",
   suffix = "%2$s",
@@ -1641,6 +1652,7 @@ createCloneButtonHTML <- function(
 #' @param canDeleteRow can be either of the following:
 #'    - `logical`, e.g. TRUE or FALSE
 #'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
+#' @keywords internal
 canXXXRowTemplate <- function(canEditRow, canCloneRow, canDeleteRow){
   NULL
 }
@@ -1654,6 +1666,7 @@ canXXXRowTemplate <- function(canEditRow, canCloneRow, canDeleteRow){
 #'    if `NULL`, the data is interpreted as 'unmodified'.
 #' @inheritParams canXXXRowTemplate
 #' @return `character(1)` HTML
+#' @keywords internal
 createButtons <- function(
     row,
     suffix,
@@ -1690,6 +1703,7 @@ createButtons <- function(
 #' @details <https://stackoverflow.com/questions/60406027/how-to-disable-double-click-reactivity-for-specific-columns-in-r-datatable>
 #' @details <https://stackoverflow.com/questions/75406546/apply-css-styling-to-a-single-dt-datatable>
 #' @return `character` CSS
+#' @keywords internal
 disableDoubleClickButtonCss <- function(id){
   sprintf("
           #%1$s > .dataTables_wrapper > table tbody td:nth-child(1) {pointer-events: none;}

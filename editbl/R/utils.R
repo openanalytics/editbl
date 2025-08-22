@@ -1,5 +1,6 @@
 #' @importFrom tibble as_tibble
 #' @import fontawesome
+#' @keywords internal
 testImports <- NULL
 
 #' Cast columns to the type of the template
@@ -8,6 +9,7 @@ testImports <- NULL
 #' @param x `data.frame`
 #' 
 #' @details only affects columns in both the template and x
+#' @keywords internal
 coerceColumns <- function(template, x){
   for(col in intersect(names(x), names(template))){
     x[[col]] <-   coerceValue(x[[col]], template[[col]])
@@ -21,6 +23,8 @@ coerceColumns <- function(template, x){
 #' 
 #' @inheritParams DT::coerceValue
 #' @importFrom DT coerceValue
+#' 
+#' @keywords internal
 #' 
 #' @author Jasper Schelfhout
 coerceValue <- function(val,old){
@@ -80,6 +84,7 @@ connectDB <- function(
 #' @param ... set of arguments
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 coalesce <- function(...){
   args <- list(...)
   result <- NULL
@@ -97,6 +102,7 @@ coalesce <- function(...){
 #' @return `data.frame` with some columns cast to another type
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 castForDisplay <- function(data, cols = colnames(data)){
   stopifnot(cols %in% colnames(data))
   
@@ -115,6 +121,7 @@ castForDisplay <- function(data, cols = colnames(data)){
 #' @importFrom dplyr as_tibble is.tbl
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 castToTbl <- function(data){
   if(dplyr::is.tbl(data)){
     result <- data
@@ -136,6 +143,7 @@ castToTbl <- function(data){
 #' @return object containing data of x in the class and structure of the template.
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 castToTemplate <- function(x, template){
   if(!all(base::colnames(x) == base::colnames(template)))
     stop("Template and casted tbl should have exactly the same colums")
@@ -165,6 +173,7 @@ castToTemplate <- function(x, template){
 #' @importFrom dplyr is.tbl
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 castFromTbl <- function(tbl, template){
   if(dplyr::is.tbl(template)){
     result <- tbl
@@ -180,6 +189,7 @@ castFromTbl <- function(tbl, template){
 #' @return named character vector
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 standardizeArgument_colnames <- function(colnames, data){
   if(is.null(colnames)){
     result <- as.character(dplyr::tbl_vars(data))
@@ -203,6 +213,7 @@ standardizeArgument_colnames <- function(colnames, data){
 #' @return list of the form `list(target = foo, ...)`
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 standardizeArgument_editable <- function(
     editable,
     data
@@ -234,6 +245,7 @@ standardizeArgument_editable <- function(
 #' @return x with `integer64` columns set to `bit64::as.integer64(NA)`
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 fixInteger64 <- function(x){
   for(column in dplyr::tbl_vars(x)){
     if(inherits(x[[column]], "integer64")){
@@ -251,6 +263,7 @@ fixInteger64 <- function(x){
 #' @importFrom utils head
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 getColumnTypeSums <- function(tbl){
   tbl %>% 
       head %>% 
@@ -307,6 +320,7 @@ customButton <- function(id, label, icon = "", disabled = FALSE){
 #' @return named character vector
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 overwriteDefaults <- function(defaults,settings){
   
   if(is.null(settings)){

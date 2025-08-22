@@ -15,3 +15,4 @@ Return first non \code{NULL} argument
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

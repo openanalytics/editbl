@@ -20,3 +20,4 @@ Function to generate CSS to disable clicking events on a column
 
 \url{https://stackoverflow.com/questions/75406546/apply-css-styling-to-a-single-dt-datatable}
 }
+\keyword{internal}

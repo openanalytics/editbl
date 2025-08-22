@@ -21,3 +21,4 @@ integer number of affected rows.
 \description{
 Update rows in the database.
 }
+\keyword{internal}

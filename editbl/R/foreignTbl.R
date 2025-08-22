@@ -176,6 +176,7 @@ joinForeignTbl <- function(
 #' @return tbl
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 fillDeductedColumns <- function(tbl, foreignTbls){
   columnOrder <- names(tbl)
   nrow <- nrow(tbl)
@@ -207,6 +208,7 @@ fillDeductedColumns <- function(tbl, foreignTbls){
 #' @importFrom dplyr count pull anti_join filter if_any all_of
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 checkForeignTbls <- function(tbl, foreignTbls){
   n <- NULL # R CMD CHECK fix
   
@@ -244,6 +246,7 @@ checkForeignTbls <- function(tbl, foreignTbls){
 #' @return data.frame
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 castToFactor <- function(data, foreignTbls){
   levels <- list()
   for(foreignTbl in foreignTbls){
@@ -269,6 +272,7 @@ castToFactor <- function(data, foreignTbls){
 #' @return `character`
 #' 
 #' @author Jasper Schelfhout
+#' @keywords internal
 getNonNaturalKeyCols <- function(foreignTbls){
   result <- c()
   for(foreignTbl in foreignTbls){

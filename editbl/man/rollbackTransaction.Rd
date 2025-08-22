@@ -15,3 +15,4 @@ Start a transaction for a tibble
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}

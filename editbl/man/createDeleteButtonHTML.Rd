@@ -19,3 +19,4 @@ createDeleteButtonHTML(ns = "\%1$s", suffix = "\%2$s", disabled = FALSE)
 \description{
 Generate HTML for an in-row delete button
 }
+\keyword{internal}

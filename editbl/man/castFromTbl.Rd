@@ -20,3 +20,4 @@ Cast tbl to class of template
 \author{
 Jasper Schelfhout
 }
+\keyword{internal}
