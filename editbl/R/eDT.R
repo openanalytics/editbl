@@ -816,7 +816,7 @@ eDTServer <- function(
         
         observeEvent(input$DT_cell_edit, {
               rv$edits <- input$DT_cell_edit
-              rv$edits_react <-  rv$edits_react + 1
+              rv$edits_react <- rv$edits_react + 1
             })
         
         observeEvent(rv$edits_react, {
@@ -1080,7 +1080,7 @@ eDTServer <- function(
               }
             })
         
-        observeEvent(input$confirmCommit, {              
+        observeEvent(input$confirmCommit, {     
               req(!is.null(effectiveChanges()) && isTruthy(effectiveChanges()))
               modified <- effectiveChanges()
               cols <- as.character(dplyr::tbl_vars(data()))
@@ -1119,7 +1119,7 @@ eDTServer <- function(
                     if(!checkForeignTbls(inserted, foreignTbls())){
                       stop("You made invalid edits to a row.")
                     }
-                    inserted <- inserted[,cols]
+                    inserted <- inserted[,cols,drop=FALSE]
                     
                     if(nrow(deleted)){
                       if(inherits(result, 'tbl_dbi') & in_place()){
@@ -1149,14 +1149,15 @@ eDTServer <- function(
                         DBI::dbRemoveTable(dbplyr::remote_con(result), temp_name)
                       }
                     }
+					
                     if(nrow(edited)){
                       result <- e_rows_update(
                           x = result,
                           y = edited,
                           match = match,
                           by = keys(),
-                          in_place = in_place())
-                    }
+                          in_place = in_place())				  
+                    }					
                     
                     if(nrow(inserted)){
 # Needed code should there be a switch to dbplyr::rows_insert
@@ -1187,7 +1188,7 @@ eDTServer <- function(
                     }
                     
                     rv$committedData <- result
-                    
+					
                     # Set modified and rendered to comitted version
                     # re-read data in case of in_place modification
                     # This is because certain backends might modify the row further with defaults etc.
