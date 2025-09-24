@@ -49,6 +49,7 @@ test_that("Editing a single table column works", {
 			session$flushReact() 
 						
 			expect_true(rv$modifiedData[1,'one_column'] == 3)
+			expect_true(rv$resultMessage == 'success.')		
           })
     })
 
