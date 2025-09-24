@@ -36,10 +36,20 @@ test_that("Editing a single table column works", {
           app = eDTServer,
           args = list(data = data),
           expr = {
-            session$setInputs(edit_row_1 = 1)       
-            session$setInputs(confirmCommit = 1)
+			# Make a cell edit
+			session$setInputs(DT_cell_edit = data.frame( 
+					row = 1,
+					col = 1,
+					value = 3
+					))
+			session$flushReact() 
+            
+			# Save changes
+			session$setInputs(confirmCommit = 1)
+			session$flushReact() 
+						
+			expect_true(rv$modifiedData[1,'one_column'] == 3)
           })
-      expect_true(TRUE)
     })
 
 test_that("Deletion of a row works", {
