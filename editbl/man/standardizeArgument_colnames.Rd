@@ -10,13 +10,13 @@ standardizeArgument_colnames(colnames, data)
 \item{colnames}{if missing, the column names of the data; otherwise it can be
 an unnamed character vector of names you want to show in the table header
 instead of the default data column names; alternatively, you can provide a
-\emph{named} numeric or character vector of the form \code{'newName1' = i1,
-'newName2' = i2} or \code{c('newName1' = 'oldName1', 'newName2' =
-'oldName2', ...)}, where \code{newName} is the new name you want to show in
+\emph{named} numeric or character vector of the form \verb{'newName1' = i1, 'newName2' = i2} or \code{c('newName1' = 'oldName1', 'newName2' = 'oldName2', ...)}, where \code{newName} is the new name you want to show in
 the table, and \code{i} or \code{oldName} is the index of the current
 column name}
 
-\item{data}{\code{tbl}. The function will automatically cast to tbl if needed.}
+\item{data}{\code{tbl}. When using non-standard tibble objects as input, install the corresponding dplyr implementation.
+(\code{data.table} = dtplyr, spark = sparklyr, generic database = dbplyr,...).
+The function will try to automatically cast to \code{tbl} if required, though it is recommended cast explicitly.}
 }
 \value{
 named character vector

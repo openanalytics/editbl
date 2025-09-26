@@ -12,13 +12,11 @@ standardizeArgument_editable(editable, data)
 it to \code{"row"} to be able to edit a row, or \code{"column"} to edit a
 column, or \code{"all"} to edit all cells on the current page of the table.
 In all modes, start editing by doubleclicking on a cell. This argument can
-also be a list of the form \code{list(target = TARGET, disable =
-list(columns = INDICES))}, where \code{TARGET} can be \code{"cell"},
+also be a list of the form \code{list(target = TARGET, disable = list(columns = INDICES))}, where \code{TARGET} can be \code{"cell"},
 \code{"row"}, \code{"column"}, or \code{"all"}, and \code{INDICES} is an
 integer vector of column indices. Use the list form if you want to disable
 editing certain columns. You can also restrict the editing to accept only
-numbers by setting this argument to a list of the form \code{list(target =
-TARGET, numeric = INDICES)} where \code{INDICES} can be the vector of the
+numbers by setting this argument to a list of the form \code{list(target = TARGET, numeric = INDICES)} where \code{INDICES} can be the vector of the
 indices of the columns for which you want to restrict the editing to
 numbers or \code{"all"} to restrict the editing to numbers for all columns.
 If you don't set \code{numeric}, then the editing is restricted to numbers
@@ -30,14 +28,15 @@ list of the form \code{list(target = TARGET, area = INDICES)} where
 you want the text areas, or \code{"all"} if you want the text areas for
 all columns. Of course, you can request the numeric editing for some
 columns and the text areas for some other columns by setting
-\code{editable} to a list of the form \code{list(target = TARGET, numeric
-= INDICES1, area = INDICES2)}. Finally, you can edit date cells with a
+\code{editable} to a list of the form \code{list(target = TARGET, numeric = INDICES1, area = INDICES2)}. Finally, you can edit date cells with a
 calendar with \code{list(target = TARGET, date = INDICES)}; the target
 columns must have the \code{Date} type. If you don't set \code{date} in
 the \code{editable} list, the editing with the calendar is automatically
 set for all \code{Date} columns.}
 
-\item{data}{\code{tbl}. The function will automatically cast to tbl if needed.}
+\item{data}{\code{tbl}. When using non-standard tibble objects as input, install the corresponding dplyr implementation.
+(\code{data.table} = dtplyr, spark = sparklyr, generic database = dbplyr,...).
+The function will try to automatically cast to \code{tbl} if required, though it is recommended cast explicitly.}
 }
 \value{
 list of the form \code{list(target = foo, ...)}
