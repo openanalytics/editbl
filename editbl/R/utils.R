@@ -126,6 +126,7 @@ castToTbl <- function(data){
   if(dplyr::is.tbl(data)){
     result <- data
   } else if(inherits(data, 'data.table')){
+	requireNamespace('dtplyr')
     result <- dtplyr::lazy_dt(data)
   } else {
     result <- dplyr::as_tibble(data)

@@ -58,7 +58,9 @@ eDTOutput <- function(id,...) {
 #' @details All arguments except 'id' and 'env' can be normal objects or reactive objects.
 #' 
 #' @param id `character(1)` module id
-#' @param data `tbl`. The function will automatically cast to tbl if needed.
+#' @param data `tbl`. When using non-standard tibble objects, install the required package implementing specific methods.
+#' (`data.table`: dtplyr, spark: sparklyr, generic database: dbplyr,...).
+#' While other tabular objects like `data.frame` are supported, explicitly casting to `tbl` is recommended.
 #' @inheritParams DT::datatable
 #' @param keys `character`. Defaults to all columns under the assumption that at least every row is unique.
 #' @param format function accepting and returning a \code{\link[DT]{datatable}}
