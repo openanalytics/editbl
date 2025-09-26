@@ -34,9 +34,9 @@ columns must have the \code{Date} type. If you don't set \code{date} in
 the \code{editable} list, the editing with the calendar is automatically
 set for all \code{Date} columns.}
 
-\item{data}{\code{tbl}. When using non-standard tibble objects as input, install the corresponding dplyr implementation.
-(\code{data.table} = dtplyr, spark = sparklyr, generic database = dbplyr,...).
-The function will try to automatically cast to \code{tbl} if required, though it is recommended cast explicitly.}
+\item{data}{\code{tbl}. When using non-standard tibble objects, install the required package implementing specific methods.
+(\code{data.table}: dtplyr, spark: sparklyr, generic database: dbplyr,...).
+While other tabular objects like \code{data.frame} are supported, explicitly casting to \code{tbl} is recommended.}
 }
 \value{
 list of the form \code{list(target = foo, ...)}

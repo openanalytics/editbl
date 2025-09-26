@@ -46,9 +46,9 @@ eDT(
 )
 }
 \arguments{
-\item{data}{\code{tbl}. When using non-standard tibble objects as input, install the corresponding dplyr implementation.
-(\code{data.table} = dtplyr, spark = sparklyr, generic database = dbplyr,...).
-The function will try to automatically cast to \code{tbl} if required, though it is recommended cast explicitly.}
+\item{data}{\code{tbl}. When using non-standard tibble objects, install the required package implementing specific methods.
+(\code{data.table}: dtplyr, spark: sparklyr, generic database: dbplyr,...).
+While other tabular objects like \code{data.frame} are supported, explicitly casting to \code{tbl} is recommended.}
 
 \item{options}{a list of initialization options (see
 \url{https://datatables.net/reference/option/}); the character options
