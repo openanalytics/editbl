@@ -26,19 +26,19 @@ addButtons(
 
 \item{canEditRow}{can be either of the following:
 \itemize{
-\item \code{logical}, e.g. TRUE or FALSE
+\item \code{logical}, e.g. TRUE or FALSE. In case of \code{FALSE}, buttons will not be visible except for new rows.
 \item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
 }}
 
 \item{canDeleteRow}{can be either of the following:
 \itemize{
-\item \code{logical}, e.g. TRUE or FALSE
+\item \code{logical}, e.g. TRUE or FALSE. In case of \code{FALSE}, buttons will not be visible except for new rows.
 \item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
 }}
 
 \item{canCloneRow}{can be either of the following:
 \itemize{
-\item \code{logical}, e.g. TRUE or FALSE
+\item \code{logical}, e.g. TRUE or FALSE. In case of \code{FALSE}, buttons will not be visible except for new rows.
 \item \code{function}. Needs as input an argument \code{row} which accepts a single row \code{tibble} and as output TRUE/FALSE.
 }}
 

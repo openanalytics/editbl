@@ -1647,13 +1647,13 @@ createCloneButtonHTML <- function(
 
 #' Re-usable documentation
 #' @param canEditRow can be either of the following:
-#'    - `logical`, e.g. TRUE or FALSE
+#'    - `logical`, e.g. TRUE or FALSE. In case of `FALSE`, buttons will not be visible except for new rows.
 #'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
 #' @param canCloneRow can be either of the following:
-#'    - `logical`, e.g. TRUE or FALSE
+#'    - `logical`, e.g. TRUE or FALSE. In case of `FALSE`, buttons will not be visible except for new rows.
 #'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
 #' @param canDeleteRow can be either of the following:
-#'    - `logical`, e.g. TRUE or FALSE
+#'    - `logical`, e.g. TRUE or FALSE. In case of `FALSE`, buttons will not be visible except for new rows.
 #'    - `function`. Needs as input an argument `row` which accepts a single row `tibble` and as output TRUE/FALSE.
 #' @keywords internal
 canXXXRowTemplate <- function(canEditRow, canCloneRow, canDeleteRow){
@@ -1679,19 +1679,45 @@ createButtons <- function(
     canCloneRow = TRUE,
     statusCol = '_editbl_status'
 ){
-  deleteButton <- createDeleteButtonHTML(
-      ns=ns,
-      suffix=suffix,
-      disabled = !evalCanDeleteRow(row=row, canDeleteRow=canDeleteRow, statusCol=statusCol))
-  editButton <- createEditButtonHTML(
-       ns=ns,
-       suffix=suffix,
-       disabled = !evalCanEditRow(row=row, canEditRow=canEditRow, statusCol=statusCol))
-  cloneButton <- createCloneButtonHTML(
-    ns = ns,
-    suffix = suffix,
-    disabled = !evalCanCloneRow(row = row, canCloneRow = canCloneRow, statusCol = statusCol))
-
+  # Hide delete completely if canDeleteRow = FALSE. With the exception of newly created rows.
+  if(is.logical(canDeleteRow) 
+	&& !canDeleteRow 
+	&& (is.null(statusCol) || row[[statusCol]] != 'inserted')
+  ){
+    deleteButton <- ""
+  } else {
+    deleteButton <- createDeleteButtonHTML(
+			  ns=ns,
+			  suffix=suffix,
+			  disabled = !evalCanDeleteRow(row=row, canDeleteRow=canDeleteRow, statusCol=statusCol))
+  }
+  
+  # Hide edit completely if canEditRow = FALSE. With the exception of newly created rows.
+  if(is.logical(canEditRow) 
+		  && !canEditRow 
+		  && (is.null(statusCol) || row[[statusCol]] != 'inserted')
+		  ){
+	  editButton <- ""
+  } else {
+	  editButton <- createEditButtonHTML(
+			  ns=ns,
+			  suffix=suffix,
+			  disabled = !evalCanEditRow(row=row, canEditRow=canEditRow, statusCol=statusCol))
+  }
+  
+  # Hide clone button completely if canCloneRow = FALSE. With the exception of newly created rows.
+  if(is.logical(canCloneRow) 
+		  && !canCloneRow 
+		  && (is.null(statusCol) || row[[statusCol]] != 'inserted')
+		  ){
+	  cloneButton <- ""
+  } else {
+	  cloneButton <- createCloneButtonHTML(
+			  ns = ns,
+			  suffix = suffix,
+			  disabled = !evalCanCloneRow(row = row, canCloneRow = canCloneRow, statusCol = statusCol))
+  }
+  
   result <- sprintf('<div class="btn-group">%1$s%2$s%3$s</div>',
       deleteButton,
       editButton,
