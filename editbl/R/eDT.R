@@ -1119,7 +1119,7 @@ eDTServer <- function(
                     # inserts
                     inserted <- effectiveInserted()
                     if(!checkForeignTbls(inserted, foreignTbls())){
-                      stop("You made invalid edits to a row.")
+                      stop("You made invalid inserts.")
                     }
                     inserted <- inserted[,cols,drop=FALSE]
                     
@@ -1288,7 +1288,10 @@ eDTServer <- function(
         return(list(
                 result = result,
                 state = reactive({castToTemplate(rv$modifiedData[!rv$modifiedData[[deleteCol]],dataVars()], data())}),
-                selected = reactive({castToTemplate(selected()[,dataVars()], data())})
+                selected = reactive({castToTemplate(selected()[,dataVars()], data())}),
+				inserted = reactive({castToTemplate(effectiveInserted()[,dataVars()], data())}),
+				edited = reactive({castToTemplate(effectiveEdited()[,dataVars()], data())}),
+				deleted = reactive({castToTemplate(effectiveDeleted()[,dataVars()], data())})
             ))
       }
   )
