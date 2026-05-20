@@ -91,6 +91,9 @@ eDTOutput <- function(id,...) {
 #' - result `reactive` modified version of `data` (saved)
 #' - state `reactive` current state of the `data` (unsaved)
 #' - selected `reactive` selected rows of the `data` (unsaved)
+#' - edited `reactive` edited rows
+#' - inserted `reactive` inserted rows
+#' - deleted `reactive` deleted rows
 #' 
 #' @examples 
 #' ## Only run this example in interactive R sessions
