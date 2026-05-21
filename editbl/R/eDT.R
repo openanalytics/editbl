@@ -1143,7 +1143,7 @@ eDTServer <- function(
                                 dbplyr::remote_table(result))[base::colnames(deleted)])
                       }
                       
-                      result <- rows_delete(
+                      result <- e_rows_delete(
                           x = result,
                           y = deleted,
                           by = keys(),
@@ -1192,7 +1192,12 @@ eDTServer <- function(
 #                      }       
                     }
                     
+					# Data to return to user
                     rv$committedData <- result
+					rv$inserted <- inserted
+					rv$edited <- edited
+					rv$deleted <- deleted
+					
 					
                     # Set modified and rendered to comitted version
                     # re-read data in case of in_place modification
@@ -1292,9 +1297,9 @@ eDTServer <- function(
                 result = result,
                 state = reactive({castToTemplate(rv$modifiedData[!rv$modifiedData[[deleteCol]],dataVars()], data())}),
                 selected = reactive({castToTemplate(selected()[,dataVars()], data())}),
-				inserted = reactive({castToTemplate(effectiveInserted()[,dataVars()], data())}),
-				edited = reactive({castToTemplate(effectiveEdited()[,dataVars()], data())}),
-				deleted = reactive({castToTemplate(effectiveDeleted()[,dataVars()], data())})
+				inserted = reactive({castToTemplate(rv$inserted[,dataVars()], data())}),
+				edited = reactive({castToTemplate(rv$edited[,dataVars()], data())}),
+				deleted = reactive({castToTemplate(rv$deleted[,dataVars()], data())})
             ))
       }
   )
