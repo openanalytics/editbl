@@ -9,9 +9,11 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
-When using `eDT(in_place = TRUE)`, your modified data will be written away when
-saving. Sometimes however, you might want some specific custom behavior or extra
-checks that `editbl` doesn't support out of the box. 
+When saving your modifications, eDT will just update the data hereby only
+checking the data types and foreign tables. Sometimes however, you might want
+some specific custom behavior or extra checks that `editbl` doesn't support out
+of the box. There are two main solutions to write custom logic for the
+modifications that were made.
 
 ```{r echo = TRUE, results = 'hide'}
 library(shiny)
