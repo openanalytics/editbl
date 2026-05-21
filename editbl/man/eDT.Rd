@@ -234,9 +234,9 @@ list
 \item result \code{reactive} modified version of \code{data} (saved)
 \item state \code{reactive} current state of the \code{data} (unsaved)
 \item selected \code{reactive} selected rows of the \code{data} (unsaved)
-\item edited \code{reactive} edited rows
-\item inserted \code{reactive} inserted rows
-\item deleted \code{reactive} deleted rows
+\item edited \code{reactive} edited rows (saved)
+\item inserted \code{reactive} inserted rows (saved)
+\item deleted \code{reactive} deleted rows (saved)
 }
 }
 \description{
