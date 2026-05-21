@@ -60,6 +60,7 @@ Advanced examples can be found in the [vignettes](https://github.com/openanalyti
 * Transactional commits (currently for `tbl_dbi` class and non in-place editing)
 * Default values for new rows (UUID's, 'current date', 'inserted by', ...)
 * Possible to set row level security
+* Custom logic/checks before saving [Tutorial](https://github.com/openanalytics/editbl/blob/main/editbl/vignettes/howto_custom_logic.rmd)
 
 ### Constraints and normalized tables
 
@@ -139,7 +140,7 @@ Should you run into problems take a look [here](https://github.com/openanalytics
 It just sends its updates to the backend by matching on the keys of a row. If other users have in the meantime made conflicting adjustments,
 the changes you made might not be executed correctly or errors might be thrown.
 
-## General future goals for this package
+## Roadmap
 
 * Full `dplyr` compatibility so support for different backends is easily facilitated. Now there are 2 methods (`e_rows_update`, `e_rows_insert`) that need to be implemented to support a new backend.
 * Full `DT` compatibility, including all extensions.
