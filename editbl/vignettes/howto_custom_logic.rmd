@@ -1,0 +1,106 @@
+---
+title: "Custom logic"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{How to: implement custom logic.}
+  %\VignetteEngine{knitr::rmarkdown}
+---
+
+When saving your modifications, eDT will just update the data hereby only
+checking the data types and foreign tables. Sometimes however, you might want
+some specific custom behavior or extra checks that `editbl` doesn't support out
+of the box. There are two main solutions to write custom logic for the
+modifications that were made.
+
+```{r echo = TRUE, results = 'hide'}
+library(shiny)
+library(editbl)
+```
+
+## Option 1
+
+Add your own implementations for `e_rows_update()`, `e_rows_insert()` and/or
+`e_rows_delete`. This is arguably the most flexible approach since it nicely
+integrates with the behavior of eDT.
+
+```{r, }
+ui <- fluidPage(eDTOutput("DT"))
+
+# Define a custom update function
+e_rows_update.mtcars <- function(
+    x,
+    y,
+    by = NULL,
+    ...,
+    match = match,
+    unmatched = c("error", "ignore"),
+    copy = FALSE,
+    in_place = FALSE){		
+		
+		# Extra checks
+		if(any(y[,"mpg"] < 0)){
+			stop("mpg should be a positive value!")	
+		}
+		
+		# Logging
+		print("Updated rows:")
+		print(y)
+		
+		# Drop extra class and execute default code
+		class(x) <- class(x)[class(x) != 'mtcars']
+		e_rows_update(
+	      x = x,
+	      y = y,
+	      by = by,
+	      ... ,
+	      match = match,
+	      unmatched = unmatched,
+	      copy = copy,
+	      in_place = in_place
+	  )
+	}
+
+server <- function(input, output, session){
+	
+	# Add a new class to your data object
+	df = tibble::tibble(mtcars)
+	class(df) <- c("mtcars", class(df))
+
+	  result = eDT(
+	    id = "DT",
+	    data = df
+	)
+	   
+}
+shinyApp(ui, server)
+```
+
+
+## Option 2
+
+You can capture the modifications made by editbl and handle them downstream in
+the app. This is more straightforward, but doesn't support adding any logic
+before saving.
+
+
+```{r, }
+ui <- fluidPage(eDTOutput("DT"))
+
+server <- function(input, output, session){
+	  result = eDT(
+	    id = "DT",
+	    data = mtcars
+	  )
+	  
+	  # Some logging
+	  observe({
+		print('These rows have been permanently deleted:')
+		print(result$deleted())
+	  })
+	   
+}
+shinyApp(ui, server)
+```
