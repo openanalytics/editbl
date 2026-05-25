@@ -60,7 +60,7 @@ Advanced examples can be found in the [vignettes](https://github.com/openanalyti
 * Transactional commits (currently for `tbl_dbi` class and non in-place editing)
 * Default values for new rows (UUID's, 'current date', 'inserted by', ...)
 * Possible to set row level security
-* Custom logic/checks before saving [Tutorial](https://github.com/openanalytics/editbl/blob/main/editbl/vignettes/howto_custom_logic.rmd)
+* Custom logic/checks before saving ([guidelines](https://github.com/openanalytics/editbl/blob/main/editbl/vignettes/howto_custom_logic.rmd))
 
 ### Constraints and normalized tables
 
