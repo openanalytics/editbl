@@ -1,3 +1,5 @@
+1.3.2
+    o FEAT: add deleted, inserted and edited rows to output
 1.3.1
 	o Remove non-exported functions from documentation.
 	o FIX: saving changes for single-column data

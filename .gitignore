@@ -1,4 +1,18 @@
+# R package development
 /editbl.Rcheck/
 editbl_*.tar.gz
 .site
 .Rbuildignore
+
+# default nix output
+result
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# Roar - nix helper package
+.roar
