@@ -24,6 +24,7 @@ library(dplyr)
 library(shiny)
 library(editbl)
 library(dm)
+library(bslib)
 ```
 
 ## Creating a database connection
@@ -121,15 +122,14 @@ getForeignTbls <- function(dm, table){
 Next, let's use this to build a shiny app.
 
 ```{r}
-dbUI <- function(id) {
-  ns <- NS(id)
-  fluidPage(
-      uiOutput(outputId = ns('selectUI')),
-      eDTOutput(id = ns('DT'))
-  )
+tableUI <- function(id){
+	ns <- NS(id)
+	fluidPage(
+		eDTOutput(id = ns('DT'))
+	)
 }
 
-dbServer <- function(id, dm) {
+tableServer <- function(id, table, dm) {
   moduleServer(
       id,
       function(input, output, session) {
@@ -142,13 +142,11 @@ dbServer <- function(id, dm) {
         })
         
         data <- reactive({
-              req(input$table)
-              tables[input$table][[1]]
+              tables[table][[1]]
               })
         
         foreignTbls <-  reactive({
-              req(input$table)
-              getForeignTbls(dm, input$table)
+              getForeignTbls(dm, table)
               })
         
         eDT(
@@ -157,6 +155,45 @@ dbServer <- function(id, dm) {
             foreignTbls = foreignTbls,
             in_place = TRUE
         )
+          
+        invisible()
+      }
+  )
+}
+
+
+dbUI <- function(id) {
+  ns <- NS(id)
+  page_fluid(
+      uiOutput(outputId = ns('tablesUI'))
+  )
+}
+
+dbServer <- function(id, dm) {
+  moduleServer(
+      id,
+      function(input, output, session) {
+        ns <- session$ns
+        
+        tables <- names(dm::dm_get_tables(dm))
+		
+		output$tablesUI <- renderUI({
+			accordion(
+			lapply(tables, function(x){
+				 accordion_panel( 
+			        title = x, 
+			        tableUI(id=ns(paste0('DT_',x)))	
+			      )
+			}),
+			id = 'tables',
+			multiple = TRUE,
+			open = FALSE
+		  )
+		})
+        
+        servers <- lapply(tables, function(x){
+			tableServer(id=paste0('DT_',x), table=x, dm=dm)	
+		})
           
         invisible()
       }
