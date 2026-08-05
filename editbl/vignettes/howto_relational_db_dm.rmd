@@ -125,7 +125,8 @@ Next, let's use this to build a shiny app.
 tableUI <- function(id){
 	ns <- NS(id)
 	fluidPage(
-		eDTOutput(id = ns('DT'))
+		eDTOutput(id = ns('DT')),
+		actionButton(inputId = ns('refresh'), label = 'refresh', icon = shiny::icon('arrow-rotate-left'))
 	)
 }
 
@@ -134,15 +135,34 @@ tableServer <- function(id, table, dm) {
       id,
       function(input, output, session) {
         ns <- session$ns
-        
+        rv <- reactiveValues(refresh = 0)
         tables <- dm::dm_get_tables(dm)
         
         output$selectUI <- renderUI({
           selectInput(ns('table'), label = 'table', choices = names(tables))  
         })
-        
+        	
+		observeEvent(input$refresh,{
+			showModal(
+			modalDialog(
+				title = "Sure you want to refresh?",
+				'Changes will be lost.',
+				footer = div(
+				actionButton(inputId= ns('confirmRefresh'), label='Yes'),
+				modalButton('cancel')
+				)
+			)
+		)
+		})
+		
+		observeEvent(input$confirmRefresh,{
+		  shiny::removeModal()
+		  rv$refresh = rv$refresh + 1
+		})
+		
         data <- reactive({
-              tables[table][[1]]
+			  rv$refresh
+			  tables[table][[1]]
               })
         
         foreignTbls <-  reactive({
