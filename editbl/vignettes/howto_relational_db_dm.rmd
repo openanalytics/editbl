@@ -44,66 +44,7 @@ conn <-   DBI::dbConnect(
 ## Setting up the data model
 
 ```{r echo = TRUE, results = 'hide'}
-dm <- dm::dm_from_con(conn, learn_keys = FALSE)
-```
-
-For some databases this is all you need to do.
-Currently `dm` can not (yet) learn the keys from SQLite.
-Thus we still manually have to specify the primary and foreign keys.
-```{r echo = TRUE, results = 'hide'}
-dm <- dm %>%
-    dm_add_pk(Artist, ArtistId) %>%
-    dm_add_pk(Album, AlbumId) %>%
-    dm_add_pk(Customer, CustomerId) %>%
-    dm_add_pk(Employee, EmployeeId) %>%
-    dm_add_pk(Genre, GenreId) %>%
-    dm_add_pk(Invoice, InvoiceId) %>%
-    dm_add_pk(InvoiceLine, InvoiceLineId) %>%
-    dm_add_pk(MediaType, MediaTypeId) %>%
-    dm_add_pk(Playlist, PlaylistId) %>%
-    dm_add_pk(PlaylistTrack, c(PlaylistId, TrackId)) %>%
-    dm_add_pk(Track, TrackId)
-    
-```
-
-```{r echo = TRUE, results = 'hide'}
-dm <- dm %>%
-    dm_add_fk(
-      table = Album,
-      columns = ArtistId,
-      ref_table = Artist) %>%
-    dm_add_fk(
-      table = Invoice,
-      columns = CustomerId,
-      ref_table = Customer) %>%
-    dm_add_fk(
-      table = InvoiceLine,
-      columns = InvoiceId,
-      ref_table = Invoice) %>%
-    dm_add_fk(
-      table = InvoiceLine,
-      columns = TrackId,
-      ref_table = Track) %>%
-    dm_add_fk(
-      table = PlaylistTrack,
-      columns = TrackId,
-      ref_table = Track) %>%
-    dm_add_fk(
-      table = PlaylistTrack,
-      columns = PlaylistId,
-      ref_table = Playlist) %>%
-    dm_add_fk(
-      table = Track,
-      columns = AlbumId,
-      ref_table = Album) %>%
-    dm_add_fk(
-      table = Track,
-      columns = MediaTypeId,
-      ref_table = MediaType) %>%
-    dm_add_fk(
-      table = Track,
-      columns = GenreId,
-      ref_table = Genre)
+dm <- dm::dm_from_con(conn, learn_keys = TRUE)
 ```
 
 ## Fully fletched table editor
@@ -134,7 +75,23 @@ getForeignTbls <- function(dm, table){
   foreignTbls <- lapply(seq_len(nrow(dm_fks)), function(i){
       r <- dm_fks[i,]   
       x <- tbl_list[r$child_table][[1]]
-      y <- dm::dm_flatten_to_tbl(dm, !!(r$parent_table), .recursive = TRUE)
+	  
+	  # Try to flatten the foreign tibble
+	  # Cyclic relations give errors, hence prevent those problems
+	  y <- tryCatch({
+			tryCatch({
+				# 1 try recursive flattening
+				dm::dm_flatten_to_tbl(dm, !!(r$parent_table), .recursive = TRUE)
+			},
+			  error = function(e){
+				# 2 try non-recursive flattening
+				dm::dm_flatten_to_tbl(dm, !!(r$parent_table), .recursive = FALSE)
+			})
+	  },
+	  error = function(e){
+		# 3 return table as  is
+		tbl_list[r$parent_table][[1]]
+	  })
       
       child_fks <- unlist(r$child_fk_cols)
       parent_fks <- unlist(r$parent_key_cols)
